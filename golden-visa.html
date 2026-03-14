@@ -24,22 +24,7 @@
       flex-direction: column;
       justify-content: flex-end;
       overflow: hidden;
-      background: #080808;
-    }
-    .gv-hero-bg {
-      position: absolute;
-      inset: 0;
-      background-image: url('https://placehold.co/1920x1080/0a0a0a/161616');
-      background-size: cover;
-      background-position: center 40%;
-    }
-    .gv-hero-bg::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.88) 80%, rgba(0,0,0,0.97) 100%),
-        linear-gradient(to right, rgba(0,0,0,0.6) 0%, transparent 60%);
+      background: transparent;
     }
     /* Radial gold glow */
     .gv-hero-glow {
@@ -117,7 +102,7 @@
     .gv-stat-bar {
       position: relative;
       z-index: 3;
-      background: rgba(12,12,12,0.92);
+      background: rgba(12,12,12,0.85);
       backdrop-filter: blur(20px);
       border-top: 0.5px solid var(--gold-border);
       border-bottom: 0.5px solid rgba(255,255,255,0.05);
@@ -185,7 +170,7 @@
 
     /* ─── BENEFITS SECTION ─── */
     .gv-benefits {
-      background: var(--bg-dark);
+      background: rgba(17,17,17,0.85);
       border-bottom: 0.5px solid var(--gold-border);
     }
     .gv-benefits::before {
@@ -207,7 +192,7 @@
       overflow: hidden;
     }
     .gv-benefit-card {
-      background: var(--bg-dark2);
+      background: rgba(22,22,22,0.88);
       padding: 40px 36px;
       display: flex;
       flex-direction: column;
@@ -216,7 +201,7 @@
       position: relative;
     }
     .gv-benefit-card:hover {
-      background: var(--bg-dark3);
+      background: rgba(28,28,28,0.9);
     }
     .gv-benefit-card::after {
       content: '';
@@ -266,7 +251,7 @@
 
     /* ─── WHY DUBAI STATS ─── */
     .gv-why {
-      background: var(--bg);
+      background: rgba(10,10,10,0.85);
       border-bottom: 0.5px solid var(--gold-border);
     }
     .gv-why::before {
@@ -360,7 +345,7 @@
 
     /* ─── PROCESS SECTION ─── */
     .gv-process {
-      background: var(--bg-dark);
+      background: rgba(17,17,17,0.85);
       border-bottom: 0.5px solid var(--gold-border);
     }
     .gv-process::before {
@@ -403,14 +388,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--bg-dark2);
+      background: rgba(22,22,22,0.9);
       flex-shrink: 0;
       position: relative;
       z-index: 1;
       transition: background 0.3s ease, border-color 0.3s ease;
     }
     .gv-step:hover .gv-step-num {
-      background: var(--bg-dark3);
+      background: rgba(28,28,28,0.92);
       border-color: rgba(201,169,110,0.5);
     }
     .gv-step-num-text {
@@ -437,7 +422,7 @@
 
     /* ─── ELIGIBILITY FORM ─── */
     .gv-form-section {
-      background: var(--bg);
+      background: rgba(10,10,10,0.85);
       border-bottom: 0.5px solid var(--gold-border);
     }
     .gv-form-section::before {
@@ -507,7 +492,7 @@
 
     /* Form */
     .gv-form {
-      background: var(--bg-dark2);
+      background: rgba(22,22,22,0.9);
       border: 0.5px solid rgba(255,255,255,0.06);
       border-radius: 3px;
       padding: 48px 44px;
@@ -549,7 +534,7 @@
     .gv-field input,
     .gv-field select,
     .gv-field textarea {
-      background: var(--bg-dark3);
+      background: rgba(28,28,28,0.92);
       border: 0.5px solid rgba(255,255,255,0.1);
       border-radius: 2px;
       padding: 12px 14px;
@@ -614,7 +599,7 @@
 
     /* ─── FAQ SECTION ─── */
     .gv-faq {
-      background: var(--bg-dark);
+      background: rgba(17,17,17,0.85);
       border-bottom: 0.5px solid var(--gold-border);
     }
     .gv-faq::before {
@@ -733,7 +718,7 @@
 
     /* ─── CTA BAND ─── */
     .gv-cta {
-      background: var(--bg-dark2);
+      background: rgba(22,22,22,0.85);
       border-bottom: 0.5px solid var(--gold-border);
       padding: 80px 10%;
       display: flex;
@@ -782,6 +767,11 @@
       z-index: 1;
     }
 
+    /* ─── FOOTER OVERRIDE for particle visibility ─── */
+    footer {
+      background: rgba(17,17,17,0.85) !important;
+    }
+
     /* ─── RESPONSIVE ─── */
     @media (max-width: 1024px) {
       .gv-stat-bar { grid-template-columns: repeat(2, 1fr); }
@@ -820,7 +810,6 @@
 
   <!-- ═══════════════════════════════════════════ HERO -->
   <section class="gv-hero" id="hero">
-    <div class="gv-hero-bg"></div>
     <div class="gv-hero-glow"></div>
     <div class="gv-hero-grain"></div>
 
