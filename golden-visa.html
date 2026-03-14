@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UAE Golden Visa — FORE Property Investment</title>
+  <meta name="description" content="Secure 10-year UAE residency through property investment. 0% income tax, 100% ownership, sponsor your family. FORE guides you through every step." />
+
+  <link rel="icon" href="brand_assets/favicon.ico" />
+  <link rel="apple-touch-icon" href="brand_assets/apple-touch-icon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" crossorigin />
+
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* ─── GOLDEN VISA HERO ─── */
+    .gv-hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+      background: #080808;
+    }
+    .gv-hero-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('https://placehold.co/1920x1080/0a0a0a/161616');
+      background-size: cover;
+      background-position: center 40%;
+    }
+    .gv-hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.88) 80%, rgba(0,0,0,0.97) 100%),
+        linear-gradient(to right, rgba(0,0,0,0.6) 0%, transparent 60%);
+    }
+    /* Radial gold glow */
+    .gv-hero-glow {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 70% 30%, rgba(201,169,110,0.09) 0%, transparent 55%),
+        radial-gradient(ellipse at 10% 80%, rgba(201,169,110,0.05) 0%, transparent 45%);
+    }
+    /* Grain */
+    .gv-hero-grain {
+      position: absolute;
+      inset: 0;
+      opacity: 0.03;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+    .gv-hero-inner {
+      position: relative;
+      z-index: 2;
+      padding: 0 10% 80px;
+      max-width: 900px;
+    }
+    .gv-hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-ui);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 28px;
+    }
+    .gv-hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+    .gv-hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(48px, 6.5vw, 88px);
+      font-weight: 300;
+      line-height: 1.03;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      margin-bottom: 28px;
+    }
+    .gv-hero-title em {
+      font-style: italic;
+      color: var(--gold-light);
+    }
+    .gv-hero-sub {
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--white-50);
+      max-width: 520px;
+      margin-bottom: 44px;
+    }
+    .gv-hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    /* ─── STAT BAR ─── */
+    .gv-stat-bar {
+      position: relative;
+      z-index: 3;
+      background: rgba(12,12,12,0.92);
+      backdrop-filter: blur(20px);
+      border-top: 0.5px solid var(--gold-border);
+      border-bottom: 0.5px solid rgba(255,255,255,0.05);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .gv-stat-item {
+      padding: 28px 10%;
+      border-right: 0.5px solid rgba(255,255,255,0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .gv-stat-item:last-child { border-right: none; }
+    .gv-stat-num {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 3vw, 42px);
+      font-weight: 300;
+      line-height: 1;
+      color: var(--gold);
+      letter-spacing: -0.02em;
+    }
+    .gv-stat-label {
+      font-family: var(--font-ui);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--white-35);
+    }
+
+    /* ─── SECTION SHARED ─── */
+    .gv-section {
+      padding: 96px 10%;
+      position: relative;
+      overflow: hidden;
+    }
+    .gv-section-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .gv-section-header {
+      margin-bottom: 56px;
+    }
+    .gv-section-title {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 4vw, 54px);
+      font-weight: 300;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--white);
+    }
+    .gv-section-title em {
+      font-style: italic;
+      color: var(--gold-light);
+    }
+    .gv-section-sub {
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--white-50);
+      max-width: 560px;
+      margin-top: 16px;
+    }
+
+    /* ─── BENEFITS SECTION ─── */
+    .gv-benefits {
+      background: var(--bg-dark);
+      border-bottom: 0.5px solid var(--gold-border);
+    }
+    .gv-benefits::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 80% 20%, rgba(201,169,110,0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 5% 90%, rgba(201,169,110,0.04) 0%, transparent 45%);
+      pointer-events: none;
+    }
+    .gv-benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.05);
+      border: 0.5px solid rgba(255,255,255,0.05);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .gv-benefit-card {
+      background: var(--bg-dark2);
+      padding: 40px 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: background 0.3s ease, transform 0.3s ease;
+      position: relative;
+    }
+    .gv-benefit-card:hover {
+      background: var(--bg-dark3);
+    }
+    .gv-benefit-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: var(--gold);
+      transition: width 0.4s ease;
+    }
+    .gv-benefit-card:hover::after {
+      width: 100%;
+    }
+    .gv-benefit-icon {
+      width: 40px;
+      height: 40px;
+      border: 0.5px solid var(--gold-border);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .gv-benefit-icon svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--gold);
+      fill: none;
+      stroke-width: 1.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .gv-benefit-title {
+      font-family: var(--font-display);
+      font-size: 21px;
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1.2;
+    }
+    .gv-benefit-body {
+      font-size: 12px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--white-50);
+    }
+
+    /* ─── WHY DUBAI STATS ─── */
+    .gv-why {
+      background: var(--bg);
+      border-bottom: 0.5px solid var(--gold-border);
+    }
+    .gv-why::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(201,169,110,0.05) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .gv-why-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .gv-why-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 0.5px solid var(--gold-border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .gv-why-stat {
+      padding: 36px 32px;
+      border-right: 0.5px solid var(--gold-border);
+      border-bottom: 0.5px solid var(--gold-border);
+      position: relative;
+      overflow: hidden;
+    }
+    .gv-why-stat:nth-child(2n) { border-right: none; }
+    .gv-why-stat:nth-child(3),
+    .gv-why-stat:nth-child(4) { border-bottom: none; }
+    .gv-why-stat::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .gv-why-stat:hover::before { opacity: 1; }
+    .gv-why-stat-num {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 3.5vw, 52px);
+      font-weight: 300;
+      color: var(--gold);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .gv-why-stat-label {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--white-50);
+      margin-bottom: 6px;
+    }
+    .gv-why-stat-note {
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--white-35);
+      line-height: 1.6;
+    }
+    .gv-why-copy p {
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--white-50);
+      margin-bottom: 20px;
+    }
+    .gv-why-copy p:last-child { margin-bottom: 0; }
+    .gv-why-copy strong {
+      color: var(--white-70);
+      font-weight: 400;
+    }
+    .gv-why-pull {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-style: italic;
+      font-weight: 300;
+      color: var(--gold-light);
+      line-height: 1.5;
+      border-left: 1px solid var(--gold);
+      padding-left: 24px;
+      margin: 32px 0;
+    }
+
+    /* ─── PROCESS SECTION ─── */
+    .gv-process {
+      background: var(--bg-dark);
+      border-bottom: 0.5px solid var(--gold-border);
+    }
+    .gv-process::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 20% 60%, rgba(201,169,110,0.05) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .gv-process-steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      position: relative;
+    }
+    /* Connecting line */
+    .gv-process-steps::before {
+      content: '';
+      position: absolute;
+      top: 36px;
+      left: 7%;
+      right: 7%;
+      height: 0.5px;
+      background: linear-gradient(to right, var(--gold-border), rgba(201,169,110,0.35), var(--gold-border));
+    }
+    .gv-step {
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+    }
+    .gv-step:first-child { padding-left: 0; }
+    .gv-step:last-child { padding-right: 0; }
+    .gv-step-num {
+      width: 72px;
+      height: 72px;
+      border: 0.5px solid var(--gold-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-dark2);
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    .gv-step:hover .gv-step-num {
+      background: var(--bg-dark3);
+      border-color: rgba(201,169,110,0.5);
+    }
+    .gv-step-num-text {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .gv-step-title {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+    .gv-step-body {
+      font-size: 11.5px;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--white-50);
+    }
+
+    /* ─── ELIGIBILITY FORM ─── */
+    .gv-form-section {
+      background: var(--bg);
+      border-bottom: 0.5px solid var(--gold-border);
+    }
+    .gv-form-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 80% 30%, rgba(201,169,110,0.07) 0%, transparent 50%),
+        radial-gradient(ellipse at 15% 70%, rgba(201,169,110,0.04) 0%, transparent 45%);
+      pointer-events: none;
+    }
+    .gv-form-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .gv-form-aside {
+      position: sticky;
+      top: 100px;
+    }
+    .gv-form-aside-title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 3vw, 40px);
+      font-weight: 300;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 20px;
+    }
+    .gv-form-aside-title em {
+      font-style: italic;
+      color: var(--gold-light);
+    }
+    .gv-form-aside-body {
+      font-size: 12.5px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--white-50);
+      margin-bottom: 36px;
+    }
+    .gv-checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .gv-checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--white-70);
+      line-height: 1.6;
+    }
+    .gv-checklist li::before {
+      content: '';
+      width: 14px;
+      height: 14px;
+      border: 0.5px solid var(--gold);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 3px;
+      background: radial-gradient(circle, rgba(201,169,110,0.15) 0%, transparent 70%);
+    }
+
+    /* Form */
+    .gv-form {
+      background: var(--bg-dark2);
+      border: 0.5px solid rgba(255,255,255,0.06);
+      border-radius: 3px;
+      padding: 48px 44px;
+    }
+    .gv-form-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+    .gv-form-sub {
+      font-size: 11.5px;
+      font-weight: 300;
+      color: var(--white-35);
+      margin-bottom: 36px;
+      line-height: 1.7;
+    }
+    .gv-form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .gv-field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-bottom: 20px;
+    }
+    .gv-field.full { grid-column: 1 / -1; }
+    .gv-field label {
+      font-family: var(--font-ui);
+      font-size: 8.5px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--white-35);
+    }
+    .gv-field input,
+    .gv-field select,
+    .gv-field textarea {
+      background: var(--bg-dark3);
+      border: 0.5px solid rgba(255,255,255,0.1);
+      border-radius: 2px;
+      padding: 12px 14px;
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--white);
+      outline: none;
+      transition: border-color 0.25s ease;
+      -webkit-appearance: none;
+    }
+    .gv-field input::placeholder,
+    .gv-field textarea::placeholder {
+      color: var(--white-20);
+    }
+    .gv-field input:focus,
+    .gv-field select:focus,
+    .gv-field textarea:focus {
+      border-color: rgba(201,169,110,0.5);
+    }
+    .gv-field select option {
+      background: #1C1C1C;
+      color: var(--white);
+    }
+    .gv-field textarea {
+      resize: vertical;
+      min-height: 88px;
+    }
+    .gv-form-submit {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--gold);
+      color: var(--bg);
+      font-family: var(--font-ui);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      padding: 16px 36px;
+      border-radius: 2px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.25s ease, transform 0.2s ease;
+      width: 100%;
+      justify-content: center;
+      margin-top: 8px;
+    }
+    .gv-form-submit:hover {
+      background: var(--gold-light);
+      transform: translateY(-1px);
+    }
+    .gv-form-submit:active { transform: translateY(0); }
+    .gv-form-note {
+      font-size: 10px;
+      font-weight: 300;
+      color: var(--white-35);
+      text-align: center;
+      margin-top: 14px;
+      line-height: 1.6;
+    }
+
+    /* ─── FAQ SECTION ─── */
+    .gv-faq {
+      background: var(--bg-dark);
+      border-bottom: 0.5px solid var(--gold-border);
+    }
+    .gv-faq::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 60% 50%, rgba(201,169,110,0.05) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .gv-faq-layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .gv-faq-aside {
+      position: sticky;
+      top: 100px;
+    }
+    .gv-faq-aside-title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 3vw, 40px);
+      font-weight: 300;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 20px;
+    }
+    .gv-faq-aside-title em {
+      font-style: italic;
+      color: var(--gold-light);
+    }
+    .gv-faq-aside-body {
+      font-size: 12.5px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--white-50);
+      margin-bottom: 32px;
+    }
+    .gv-faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .gv-faq-item {
+      border-bottom: 0.5px solid rgba(255,255,255,0.06);
+    }
+    .gv-faq-item:first-child {
+      border-top: 0.5px solid rgba(255,255,255,0.06);
+    }
+    .gv-faq-q {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 0;
+      cursor: pointer;
+      gap: 20px;
+      user-select: none;
+    }
+    .gv-faq-q-text {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1.3;
+      transition: color 0.2s ease;
+    }
+    .gv-faq-item.open .gv-faq-q-text {
+      color: var(--gold-light);
+    }
+    .gv-faq-icon {
+      width: 22px;
+      height: 22px;
+      border: 0.5px solid var(--gold-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+    .gv-faq-item.open .gv-faq-icon {
+      background: rgba(201,169,110,0.12);
+      border-color: rgba(201,169,110,0.5);
+    }
+    .gv-faq-icon svg {
+      width: 10px;
+      height: 10px;
+      stroke: var(--gold);
+      stroke-width: 2;
+      stroke-linecap: round;
+      transition: transform 0.3s ease;
+    }
+    .gv-faq-item.open .gv-faq-icon svg {
+      transform: rotate(45deg);
+    }
+    .gv-faq-a {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .gv-faq-item.open .gv-faq-a {
+      max-height: 400px;
+    }
+    .gv-faq-a-inner {
+      padding-bottom: 22px;
+      font-size: 12.5px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--white-50);
+    }
+    .gv-faq-a-inner strong {
+      color: var(--white-70);
+      font-weight: 400;
+    }
+
+    /* ─── CTA BAND ─── */
+    .gv-cta {
+      background: var(--bg-dark2);
+      border-bottom: 0.5px solid var(--gold-border);
+      padding: 80px 10%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+      flex-wrap: wrap;
+      position: relative;
+      overflow: hidden;
+    }
+    .gv-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(201,169,110,0.06) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .gv-cta-text {
+      position: relative;
+      z-index: 1;
+    }
+    .gv-cta-title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 3vw, 42px);
+      font-weight: 300;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 10px;
+    }
+    .gv-cta-title em {
+      font-style: italic;
+      color: var(--gold-light);
+    }
+    .gv-cta-sub {
+      font-size: 12.5px;
+      font-weight: 300;
+      color: var(--white-50);
+    }
+    .gv-cta-actions {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .gv-stat-bar { grid-template-columns: repeat(2, 1fr); }
+      .gv-stat-item { padding: 24px 6%; }
+      .gv-stat-item:nth-child(2) { border-right: none; }
+      .gv-stat-item:nth-child(3) { border-top: 0.5px solid rgba(255,255,255,0.06); }
+      .gv-stat-item:nth-child(4) { border-top: 0.5px solid rgba(255,255,255,0.06); }
+      .gv-benefits-grid { grid-template-columns: repeat(2, 1fr); }
+      .gv-why-layout { grid-template-columns: 1fr; gap: 48px; }
+      .gv-process-steps { grid-template-columns: repeat(3, 1fr); gap: 32px; }
+      .gv-process-steps::before { display: none; }
+      .gv-form-layout { grid-template-columns: 1fr; gap: 48px; }
+      .gv-form-aside { position: static; }
+      .gv-faq-layout { grid-template-columns: 1fr; gap: 40px; }
+      .gv-faq-aside { position: static; }
+    }
+    @media (max-width: 768px) {
+      .gv-hero-inner { padding: 0 6% 64px; }
+      .gv-section { padding: 72px 6%; }
+      .gv-stat-bar { grid-template-columns: 1fr 1fr; }
+      .gv-stat-item { padding: 20px 6%; }
+      .gv-benefits-grid { grid-template-columns: 1fr; }
+      .gv-process-steps { grid-template-columns: 1fr; }
+      .gv-why-stats-grid { grid-template-columns: 1fr 1fr; }
+      .gv-form { padding: 32px 24px; }
+      .gv-form-row { grid-template-columns: 1fr; }
+      .gv-cta { flex-direction: column; align-items: flex-start; padding: 64px 6%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Component: Nav ── -->
+  <div data-component="nav"></div>
+
+  <!-- ═══════════════════════════════════════════ HERO -->
+  <section class="gv-hero" id="hero">
+    <div class="gv-hero-bg"></div>
+    <div class="gv-hero-glow"></div>
+    <div class="gv-hero-grain"></div>
+
+    <div class="gv-hero-inner">
+      <div class="gv-hero-eyebrow">UAE Golden Visa Program</div>
+      <h1 class="gv-hero-title">
+        Live, invest, and build<br />
+        in Dubai — <em>on your terms.</em>
+      </h1>
+      <p class="gv-hero-sub">
+        The UAE Golden Visa gives international property investors 10-year renewable residency with zero income tax, full business ownership, and the right to call the world's fastest-growing city home. No sponsor needed.
+      </p>
+      <div class="gv-hero-actions">
+        <a href="#eligibility" class="btn-primary">Check My Eligibility</a>
+        <a href="#process" class="btn-ghost">How It Works</a>
+      </div>
+    </div>
+
+    <!-- Key Stats Bar -->
+    <div class="gv-stat-bar">
+      <div class="gv-stat-item">
+        <div class="gv-stat-num">10</div>
+        <div class="gv-stat-label">Year Residency, Renewable</div>
+      </div>
+      <div class="gv-stat-item">
+        <div class="gv-stat-num">0%</div>
+        <div class="gv-stat-label">Income &amp; Capital Gains Tax</div>
+      </div>
+      <div class="gv-stat-item">
+        <div class="gv-stat-num">100%</div>
+        <div class="gv-stat-label">Business Ownership</div>
+      </div>
+      <div class="gv-stat-item">
+        <div class="gv-stat-num">AED 2M</div>
+        <div class="gv-stat-label">Minimum Property Value</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ BENEFITS -->
+  <section class="gv-section gv-benefits" id="benefits">
+    <div class="gv-section-inner">
+      <div class="gv-section-header">
+        <div class="section-tag">What You Gain</div>
+        <h2 class="gv-section-title">
+          More than a visa.<br />
+          <em>A new chapter.</em>
+        </h2>
+        <p class="gv-section-sub">
+          The Golden Visa is not just residency — it is a complete platform for building wealth and life in the UAE.
+        </p>
+      </div>
+
+      <div class="gv-benefits-grid">
+
+        <div class="gv-benefit-card">
+          <div class="gv-benefit-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div class="gv-benefit-title">10-Year Renewable Residency</div>
+          <div class="gv-benefit-body">
+            Unlike standard residence visas that expire every 2–3 years and require employer sponsorship, the Golden Visa is valid for a decade and renews automatically — provided you maintain the qualifying investment. Your status in the UAE is yours to keep.
+          </div>
+        </div>
+
+        <div class="gv-benefit-card">
+          <div class="gv-benefit-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="gv-benefit-title">Zero Tax Environment</div>
+          <div class="gv-benefit-body">
+            The UAE levies no personal income tax, no capital gains tax, and no inheritance tax. Rental income, property appreciation, and business profits are yours to keep in full. This is one of the most tax-efficient jurisdictions in the world for investors.
+          </div>
+        </div>
+
+        <div class="gv-benefit-card">
+          <div class="gv-benefit-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div class="gv-benefit-title">100% Business Ownership</div>
+          <div class="gv-benefit-body">
+            UAE free zone and mainland regulations allow Golden Visa holders to own 100% of their company without a local sponsor. Start, scale, or relocate a business to one of the most connected trade hubs on earth — with complete control.
+          </div>
+        </div>
+
+        <div class="gv-benefit-card">
+          <div class="gv-benefit-icon">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="gv-benefit-title">Sponsor Your Entire Family</div>
+          <div class="gv-benefit-body">
+            Bring your spouse, children of any age, and parents under your Golden Visa. Unlike dependent visas tied to employment, your family's residency status is protected independently of any job or employer — giving your household long-term stability.
+          </div>
+        </div>
+
+        <div class="gv-benefit-card">
+          <div class="gv-benefit-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+          </div>
+          <div class="gv-benefit-title">No Minimum Stay Requirement</div>
+          <div class="gv-benefit-body">
+            Standard UAE residence visas are cancelled if you leave the country for more than 6 months. Golden Visa holders face no such restriction. Travel the world, manage global businesses, and return to your Dubai property whenever you choose.
+          </div>
+        </div>
+
+        <div class="gv-benefit-card">
+          <div class="gv-benefit-icon">
+            <svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          </div>
+          <div class="gv-benefit-title">Real Estate ROI to Match</div>
+          <div class="gv-benefit-body">
+            Dubai consistently delivers 6–9% gross rental yields — among the highest of any major global city. Qualifying properties at AED 2M+ sit in prime districts where demand from residents and short-stay renters remains consistently strong year-round.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ WHY DUBAI -->
+  <section class="gv-section gv-why" id="why-dubai">
+    <div class="gv-section-inner">
+      <div class="gv-why-layout">
+
+        <div class="gv-why-copy">
+          <div class="section-tag">Why Dubai</div>
+          <h2 class="gv-section-title">
+            The numbers<br />speak for themselves.
+          </h2>
+          <blockquote class="gv-why-pull">
+            "Dubai is not a bet on a market. It is a bet on a city that refuses to stand still."
+          </blockquote>
+          <p>
+            In 2024, Dubai recorded <strong>AED 522 billion</strong> in total real estate transactions — its highest ever. More than 119,000 property deals were registered in a single year, driven by an influx of high-net-worth residents relocating from Europe, Asia, and North America.
+          </p>
+          <p>
+            The city's population has grown by over 30% in a decade, and infrastructure investment under the Dubai 2040 Urban Master Plan will continue to drive demand. Supply remains disciplined in the key districts where Golden Visa qualifying properties concentrate.
+          </p>
+          <p>
+            For international investors, the combination of high yield, strong capital appreciation, and life-changing residency benefits makes Dubai a category of its own.
+          </p>
+          <div style="margin-top:32px">
+            <a href="#eligibility" class="btn-primary">Start Your Application</a>
+          </div>
+        </div>
+
+        <div class="gv-why-stats-grid">
+          <div class="gv-why-stat">
+            <div class="gv-why-stat-num">AED 522B</div>
+            <div class="gv-why-stat-label">Real Estate Transactions</div>
+            <div class="gv-why-stat-note">Total market volume in 2024 — a new annual record for Dubai</div>
+          </div>
+          <div class="gv-why-stat">
+            <div class="gv-why-stat-num">6–9%</div>
+            <div class="gv-why-stat-label">Average Gross Rental Yield</div>
+            <div class="gv-why-stat-note">Consistent annual returns across prime Dubai districts</div>
+          </div>
+          <div class="gv-why-stat">
+            <div class="gv-why-stat-num">200+</div>
+            <div class="gv-why-stat-label">Nationalities in Dubai</div>
+            <div class="gv-why-stat-note">The most internationally diverse city on the planet</div>
+          </div>
+          <div class="gv-why-stat">
+            <div class="gv-why-stat-num">3.7M+</div>
+            <div class="gv-why-stat-label">Population &amp; Rising</div>
+            <div class="gv-why-stat-note">Dubai 2040 plan targets 5.8M residents, fuelling demand</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ PROCESS -->
+  <section class="gv-section gv-process" id="process">
+    <div class="gv-section-inner">
+      <div class="gv-section-header" style="text-align:center; max-width:600px; margin:0 auto 64px;">
+        <div class="section-tag" style="justify-content:center">The Process</div>
+        <h2 class="gv-section-title">
+          Five steps to your<br /><em>Golden Visa.</em>
+        </h2>
+        <p class="gv-section-sub" style="margin:16px auto 0; text-align:center;">
+          From property selection to residency stamp — FORE guides you through every document, every department, every step.
+        </p>
+      </div>
+
+      <div class="gv-process-steps">
+
+        <div class="gv-step">
+          <div class="gv-step-num"><span class="gv-step-num-text">01</span></div>
+          <div>
+            <div class="gv-step-title">Select a Qualifying Property</div>
+            <div class="gv-step-body">Choose a property valued at AED 2,000,000 or above. Off-plan is eligible if at least 50% of the purchase price has been paid. FORE identifies properties that qualify and offer strong rental return.</div>
+          </div>
+        </div>
+
+        <div class="gv-step">
+          <div class="gv-step-num"><span class="gv-step-num-text">02</span></div>
+          <div>
+            <div class="gv-step-title">Sign &amp; Register with DLD</div>
+            <div class="gv-step-body">Execute the Sales &amp; Purchase Agreement and register the transaction with the Dubai Land Department. The DLD registration fee is 4% of the property value. FORE handles the coordination and documentation.</div>
+          </div>
+        </div>
+
+        <div class="gv-step">
+          <div class="gv-step-num"><span class="gv-step-num-text">03</span></div>
+          <div>
+            <div class="gv-step-title">Obtain Your Title Deed</div>
+            <div class="gv-step-body">Once registered, the DLD issues a Title Deed in your name. This is the key document that proves ownership and underpins your Golden Visa application. It typically takes 3–5 working days from registration.</div>
+          </div>
+        </div>
+
+        <div class="gv-step">
+          <div class="gv-step-num"><span class="gv-step-num-text">04</span></div>
+          <div>
+            <div class="gv-step-title">Apply Through GDRFA / ICA</div>
+            <div class="gv-step-body">Submit your Golden Visa application to the General Directorate of Residency &amp; Foreigners Affairs (GDRFA) in Dubai or the Federal ICA portal. Includes medical screening and biometric registration.</div>
+          </div>
+        </div>
+
+        <div class="gv-step">
+          <div class="gv-step-num"><span class="gv-step-num-text">05</span></div>
+          <div>
+            <div class="gv-step-title">Receive Your 10-Year Visa</div>
+            <div class="gv-step-body">Approval is typically granted within 5–15 working days. You receive a 10-year residency visa stamped in your passport. Sponsor your family, open a bank account, and begin life in Dubai on your own terms.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ ELIGIBILITY FORM -->
+  <section class="gv-section gv-form-section" id="eligibility">
+    <div class="gv-section-inner">
+      <div class="gv-form-layout">
+
+        <div class="gv-form-aside">
+          <div class="section-tag">Eligibility Checker</div>
+          <h2 class="gv-form-aside-title">
+            Find out if you<br />
+            <em>qualify today.</em>
+          </h2>
+          <p class="gv-form-aside-body">
+            The UAE Golden Visa through property investment is open to nationals from most countries. Eligibility is straightforward — the primary requirement is a property valued at AED 2,000,000 or above that is fully paid or at least 50% paid for off-plan purchases.
+          </p>
+          <ul class="gv-checklist">
+            <li>Property value of AED 2,000,000 or more</li>
+            <li>Property fully paid, or off-plan with 50%+ paid</li>
+            <li>No minimum age requirement</li>
+            <li>Joint ownership allowed (each owner must meet the AED 2M threshold individually)</li>
+            <li>Mortgaged properties accepted if outstanding balance is below 50% of value</li>
+            <li>Multiple properties can be combined to reach the threshold</li>
+            <li>Applicable to ready and off-plan residential property</li>
+          </ul>
+        </div>
+
+        <div class="gv-form">
+          <div class="gv-form-title">Tell us about your situation</div>
+          <div class="gv-form-sub">We will assess your eligibility and outline the exact steps. No commitment required.</div>
+
+          <form action="mailto:info@fairopportunityrealestate.com" method="post" enctype="text/plain">
+            <div class="gv-form-row">
+              <div class="gv-field">
+                <label for="gv-first-name">First Name</label>
+                <input type="text" id="gv-first-name" name="First Name" placeholder="Your first name" required />
+              </div>
+              <div class="gv-field">
+                <label for="gv-last-name">Last Name</label>
+                <input type="text" id="gv-last-name" name="Last Name" placeholder="Your last name" required />
+              </div>
+            </div>
+
+            <div class="gv-form-row">
+              <div class="gv-field">
+                <label for="gv-email">Email Address</label>
+                <input type="email" id="gv-email" name="Email" placeholder="your@email.com" required />
+              </div>
+              <div class="gv-field">
+                <label for="gv-phone">WhatsApp / Phone</label>
+                <input type="tel" id="gv-phone" name="Phone" placeholder="+1 234 567 8900" />
+              </div>
+            </div>
+
+            <div class="gv-form-row">
+              <div class="gv-field">
+                <label for="gv-country">Country of Residence</label>
+                <select id="gv-country" name="Country of Residence">
+                  <option value="">Select country…</option>
+                  <option>United Kingdom</option>
+                  <option>Canada</option>
+                  <option>United States</option>
+                  <option>Australia</option>
+                  <option>Germany</option>
+                  <option>France</option>
+                  <option>India</option>
+                  <option>Pakistan</option>
+                  <option>Russia</option>
+                  <option>China</option>
+                  <option>South Africa</option>
+                  <option>Nigeria</option>
+                  <option>Saudi Arabia</option>
+                  <option>Kuwait</option>
+                  <option>Qatar</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="gv-field">
+                <label for="gv-budget">Investment Budget</label>
+                <select id="gv-budget" name="Budget">
+                  <option value="">Select range…</option>
+                  <option>AED 2M – 3M (approx. USD 545K – 820K)</option>
+                  <option>AED 3M – 5M (approx. USD 820K – 1.36M)</option>
+                  <option>AED 5M – 10M (approx. USD 1.36M – 2.7M)</option>
+                  <option>AED 10M+ (approx. USD 2.7M+)</option>
+                  <option>Not yet decided — need guidance</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="gv-form-row">
+              <div class="gv-field">
+                <label for="gv-property">Property Situation</label>
+                <select id="gv-property" name="Property Situation">
+                  <option value="">Select…</option>
+                  <option>I already own property in Dubai</option>
+                  <option>I am in the process of buying</option>
+                  <option>I am looking to buy specifically for the visa</option>
+                  <option>I want advice on the best approach</option>
+                </select>
+              </div>
+              <div class="gv-field">
+                <label for="gv-timeline">Timeline</label>
+                <select id="gv-timeline" name="Timeline">
+                  <option value="">Select…</option>
+                  <option>As soon as possible</option>
+                  <option>Within 3 months</option>
+                  <option>Within 6 months</option>
+                  <option>Just exploring for now</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="gv-field" style="margin-bottom:4px;">
+              <label for="gv-message">Additional Notes (optional)</label>
+              <textarea id="gv-message" name="Message" placeholder="Any specific questions, circumstances, or preferences we should know about…"></textarea>
+            </div>
+
+            <button type="submit" class="gv-form-submit">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4z"/></svg>
+              Check My Eligibility
+            </button>
+            <p class="gv-form-note">Your information is sent directly to our team at info@fairopportunityrealestate.com. We respond within one business day.</p>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ FAQ -->
+  <section class="gv-section gv-faq" id="faq">
+    <div class="gv-section-inner">
+      <div class="gv-faq-layout">
+
+        <div class="gv-faq-aside">
+          <div class="section-tag">Common Questions</div>
+          <h2 class="gv-faq-aside-title">
+            Golden Visa,<br /><em>clearly explained.</em>
+          </h2>
+          <p class="gv-faq-aside-body">
+            The UAE Golden Visa rules have been refined since 2022 and updated again in 2024. Here is what you need to know — answered plainly, without legal jargon.
+          </p>
+          <a href="#eligibility" class="btn-ghost" style="font-size:9.5px; letter-spacing:2.5px;">Still Have Questions? Contact Us</a>
+        </div>
+
+        <div class="gv-faq-list" id="faqList">
+
+          <div class="gv-faq-item open">
+            <div class="gv-faq-q">
+              <span class="gv-faq-q-text">What is the UAE Golden Visa?</span>
+              <span class="gv-faq-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            </div>
+            <div class="gv-faq-a">
+              <div class="gv-faq-a-inner">
+                The UAE Golden Visa is a long-term residency visa introduced in 2019 that allows foreigners to live, work, and study in the UAE without the need for a national sponsor. It is valid for 10 years and is renewable. Several qualifying categories exist — including property investors, entrepreneurs, specialised talent, and outstanding students. For the property investor route, the core requirement is owning UAE real estate worth at least <strong>AED 2,000,000</strong>.
+              </div>
+            </div>
+          </div>
+
+          <div class="gv-faq-item">
+            <div class="gv-faq-q">
+              <span class="gv-faq-q-text">What is the minimum investment required?</span>
+              <span class="gv-faq-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            </div>
+            <div class="gv-faq-a">
+              <div class="gv-faq-a-inner">
+                You must own UAE real estate with a minimum value of <strong>AED 2,000,000</strong> (approximately USD 545,000 at current exchange rates). The property must be fully paid — either in cash or through a completed mortgage. Off-plan properties are eligible provided you have paid at least 50% of the purchase price. You may combine multiple properties to reach the AED 2M threshold.
+              </div>
+            </div>
+          </div>
+
+          <div class="gv-faq-item">
+            <div class="gv-faq-q">
+              <span class="gv-faq-q-text">Can I use an off-plan property to qualify?</span>
+              <span class="gv-faq-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            </div>
+            <div class="gv-faq-a">
+              <div class="gv-faq-a-inner">
+                Yes. Off-plan properties from approved developers qualify for the Golden Visa, provided the total purchase price is AED 2,000,000 or above and you have paid at least 50% of the agreed price. Once you reach the 50% payment milestone, you can apply immediately — you do not need to wait for the project to complete. This makes off-plan one of the most accessible routes, particularly with the flexible payment plans common in Dubai.
+              </div>
+            </div>
+          </div>
+
+          <div class="gv-faq-item">
+            <div class="gv-faq-q">
+              <span class="gv-faq-q-text">Do I need to live in Dubai to maintain my Golden Visa?</span>
+              <span class="gv-faq-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            </div>
+            <div class="gv-faq-a">
+              <div class="gv-faq-a-inner">
+                No. Unlike standard UAE residence visas that are cancelled if you remain outside the country for more than 6 consecutive months, the Golden Visa has <strong>no minimum stay requirement</strong>. You can live anywhere in the world and your UAE Golden Visa remains valid as long as you maintain the qualifying property investment. This is one of the key advantages for international investors who are not yet ready to relocate full-time.
+              </div>
+            </div>
+          </div>
+
+          <div class="gv-faq-item">
+            <div class="gv-faq-q">
+              <span class="gv-faq-q-text">Who can I sponsor under my Golden Visa?</span>
+              <span class="gv-faq-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            </div>
+            <div class="gv-faq-a">
+              <div class="gv-faq-a-inner">
+                Golden Visa holders can sponsor their <strong>spouse, children of any age</strong> (including adult children), and <strong>parents</strong>. Domestic workers can also be sponsored. Unlike employment-based visas, your family's residency is not contingent on you remaining employed — it is tied to your investment, giving the entire family independent long-term security.
+              </div>
+            </div>
+          </div>
+
+          <div class="gv-faq-item">
+            <div class="gv-faq-q">
+              <span class="gv-faq-q-text">What if my property has a mortgage?</span>
+              <span class="gv-faq-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            </div>
+            <div class="gv-faq-a">
+              <div class="gv-faq-a-inner">
+                Mortgaged properties can qualify — but the outstanding mortgage balance must not exceed 50% of the property's current value. For example, if your property is worth AED 3M and the remaining mortgage is AED 1.2M (40%), you are eligible. If the outstanding mortgage exceeds 50%, you would need to pay it down sufficiently before applying. FORE can help you assess your current position.
+              </div>
+            </div>
+          </div>
+
+          <div class="gv-faq-item">
+            <div class="gv-faq-q">
+              <span class="gv-faq-q-text">How long does the application process take?</span>
+              <span class="gv-faq-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            </div>
+            <div class="gv-faq-a">
+              <div class="gv-faq-a-inner">
+                Once your property is registered and your Title Deed is issued by the DLD, the Golden Visa application typically takes <strong>5–15 working days</strong> to process through GDRFA or ICA. The complete timeline from property registration to visa stamp depends on the speed of DLD processing and whether medical tests are required — usually 3–4 weeks in total. FORE coordinates the entire process on your behalf.
+              </div>
+            </div>
+          </div>
+
+          <div class="gv-faq-item">
+            <div class="gv-faq-q">
+              <span class="gv-faq-q-text">What documents will I need?</span>
+              <span class="gv-faq-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            </div>
+            <div class="gv-faq-a">
+              <div class="gv-faq-a-inner">
+                Core documents typically include: valid passport (minimum 6 months validity), UAE Title Deed or DLD No-Objection Certificate for off-plan, passport-size photographs, medical test results (HIV, TB, Hepatitis B/C), and proof of health insurance. Additional documents may be requested based on nationality. FORE provides a personalised document checklist once your situation is assessed.
+              </div>
+            </div>
+          </div>
+
+          <div class="gv-faq-item">
+            <div class="gv-faq-q">
+              <span class="gv-faq-q-text">Is the Golden Visa really renewable indefinitely?</span>
+              <span class="gv-faq-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+            </div>
+            <div class="gv-faq-a">
+              <div class="gv-faq-a-inner">
+                Yes — as long as you maintain the qualifying investment, your Golden Visa renews every 10 years with no theoretical limit. There is no pathway to UAE citizenship through the Golden Visa program (the UAE does not offer citizenship through investment), but long-term renewable residency provides a stable, secure base for as long as you wish to maintain it.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ CTA BAND -->
+  <div class="gv-cta">
+    <div class="gv-cta-text">
+      <h2 class="gv-cta-title">Ready to make Dubai<br /><em>your home base?</em></h2>
+      <p class="gv-cta-sub">Speak with a FORE advisor. No pressure. Just clarity.</p>
+    </div>
+    <div class="gv-cta-actions">
+      <a href="#eligibility" class="btn-primary">Check Eligibility</a>
+      <a href="index.html#contact" class="btn-ghost" style="font-size:9.5px; letter-spacing:2.5px;">Book a Free Call</a>
+    </div>
+  </div>
+
+  <!-- ── Component: Footer ── -->
+  <div data-component="footer"></div>
+
+  <!-- ── Component: WhatsApp ── -->
+  <div data-component="whatsapp"></div>
+
+  <script src="js/components.js" defer></script>
+  <script>
+    // ─── FAQ Accordion ───
+    document.addEventListener('fore:ready', initPage);
+    document.addEventListener('DOMContentLoaded', function() {
+      // fallback if fore:ready fires before this listener attaches
+      setTimeout(initPage, 100);
+    });
+
+    let pageInited = false;
+    function initPage() {
+      if (pageInited) return;
+      pageInited = true;
+
+      // FAQ
+      document.querySelectorAll('.gv-faq-item').forEach(function(item) {
+        item.querySelector('.gv-faq-q').addEventListener('click', function() {
+          const isOpen = item.classList.contains('open');
+          document.querySelectorAll('.gv-faq-item').forEach(function(i) {
+            i.classList.remove('open');
+          });
+          if (!isOpen) item.classList.add('open');
+        });
+      });
+
+      // Fade-in on scroll
+      const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) {
+            e.target.style.opacity = '1';
+            e.target.style.transform = 'translateY(0)';
+            observer.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.12 });
+
+      document.querySelectorAll('.gv-benefit-card, .gv-step, .gv-why-stat').forEach(function(el) {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.55s ease, transform 0.55s ease';
+        observer.observe(el);
+      });
+    }
+  </script>
+</body>
+</html>

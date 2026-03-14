@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Article — FORE</title>
+  <meta name="description" content="" />
+
+  <link rel="icon" href="brand_assets/favicon.ico" />
+  <link rel="apple-touch-icon" href="brand_assets/apple-touch-icon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" crossorigin />
+
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* ─── POST HERO ─── */
+    .post-hero {
+      position: relative;
+      height: 62vh;
+      min-height: 480px;
+      background: var(--bg-dark2);
+      overflow: hidden;
+      display: flex;
+      align-items: flex-end;
+    }
+    .post-hero-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.4;
+    }
+    .post-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.55) 40%, rgba(10,10,10,0.15) 100%),
+        linear-gradient(to right, rgba(10,10,10,0.4) 0%, transparent 60%);
+    }
+    .post-hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 0 10% 64px;
+      max-width: 860px;
+      width: 100%;
+    }
+    .post-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--white-35);
+    }
+    .post-breadcrumb a {
+      color: var(--white-35);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .post-breadcrumb a:hover { color: var(--gold); }
+    .post-breadcrumb-sep { color: var(--white-20); }
+    .post-cat-badge {
+      display: inline-block;
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(10,10,10,0.78);
+      border: 0.5px solid var(--gold-border);
+      padding: 5px 12px;
+      border-radius: 1px;
+      margin-bottom: 16px;
+    }
+    .post-hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(30px, 4.5vw, 60px);
+      font-weight: 300;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 20px;
+      max-width: 760px;
+    }
+    .post-hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .post-hero-date,
+    .post-hero-readtime {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--white-35);
+    }
+    .post-hero-meta-dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--white-20);
+      flex-shrink: 0;
+    }
+
+    /* ─── POST LAYOUT ─── */
+    .post-layout {
+      padding: 72px 10%;
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 64px;
+      align-items: start;
+      background: var(--bg);
+    }
+
+    /* ─── ARTICLE BODY ─── */
+    .post-article .post-p {
+      font-size: 13.5px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.85;
+      margin-bottom: 28px;
+    }
+    .post-article .post-h2 {
+      font-family: var(--font-display);
+      font-size: clamp(22px, 2.5vw, 32px);
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      margin: 48px 0 18px;
+      padding-top: 16px;
+      border-top: 0.5px solid var(--subtle-border);
+    }
+    .post-article .post-callout {
+      margin: 40px 0;
+      padding: 28px 32px;
+      border-left: 2px solid var(--gold);
+      background: rgba(201,169,110,0.045);
+      border-radius: 0 3px 3px 0;
+    }
+    .post-article .post-callout p {
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--gold-light);
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    /* ─── SIDEBAR ─── */
+    .post-sidebar {
+      position: sticky;
+      top: 96px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .sidebar-cta-card {
+      background: var(--bg-dark2);
+      border: 0.5px solid var(--gold-border);
+      border-radius: 3px;
+      padding: 32px 28px;
+    }
+    .sidebar-cta-eyebrow {
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+    .sidebar-cta-title {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+    .sidebar-cta-body {
+      font-size: 12px;
+      color: var(--white-50);
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+    .sidebar-divider {
+      height: 0.5px;
+      background: var(--subtle-border);
+      margin: 20px 0;
+    }
+    .sidebar-contact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .sidebar-contact-label {
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--white-35);
+      margin-bottom: 2px;
+    }
+    .sidebar-contact-value {
+      font-size: 11.5px;
+      color: var(--white-70);
+    }
+    .sidebar-contact-value a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .sidebar-contact-value a:hover { color: var(--gold); }
+    .sidebar-note {
+      font-size: 10px;
+      color: var(--white-35);
+      letter-spacing: 0.5px;
+    }
+
+    /* Sidebar categories card */
+    .sidebar-cats-card {
+      background: var(--bg-dark2);
+      border: 0.5px solid var(--subtle-border);
+      border-radius: 3px;
+      padding: 24px 28px;
+    }
+    .sidebar-cats-heading {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--white-35);
+      margin-bottom: 16px;
+    }
+    .sidebar-cat-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 0.5px solid var(--subtle-border);
+      text-decoration: none;
+      font-size: 11.5px;
+      color: var(--white-50);
+      transition: color 0.2s ease;
+    }
+    .sidebar-cat-link:last-child { border-bottom: none; }
+    .sidebar-cat-link:hover { color: var(--gold); }
+    .sidebar-cat-count {
+      font-size: 9px;
+      color: var(--white-35);
+    }
+
+    /* ─── MORE ARTICLES ─── */
+    .more-articles {
+      padding: 64px 10% 96px;
+      background: var(--bg-dark);
+      border-top: 0.5px solid var(--gold-border);
+    }
+    .more-articles-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 40px;
+    }
+    .more-articles-title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 3.2vw, 46px);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    .more-articles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    /* ─── SHARED CARD (also used in more articles) ─── */
+    .blc {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-dark3);
+      border: 0.5px solid var(--subtle-border);
+      border-radius: 3px;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    .blc:hover {
+      transform: translateY(-5px);
+      border-color: rgba(201,169,110,0.3);
+    }
+    .blc-img {
+      width: 100%;
+      aspect-ratio: 16/10;
+      background: var(--bg-dark2);
+      position: relative;
+      overflow: hidden;
+    }
+    .blc-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      opacity: 0.6;
+      transition: transform 0.55s ease, opacity 0.3s ease;
+    }
+    .blc:hover .blc-img img {
+      transform: scale(1.05);
+      opacity: 0.72;
+    }
+    .blc-img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .blc-cat {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: rgba(10,10,10,0.82);
+      border: 0.5px solid var(--gold-border);
+      padding: 4px 10px;
+      border-radius: 1px;
+      z-index: 1;
+    }
+    .blc-body {
+      padding: 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .blc-date {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--white-35);
+      margin-bottom: 10px;
+    }
+    .blc-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1.25;
+      margin-bottom: 10px;
+    }
+    .blc-excerpt {
+      font-size: 12px;
+      color: var(--white-50);
+      line-height: 1.8;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .blc-read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 20px;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      padding-top: 16px;
+      border-top: 0.5px solid var(--subtle-border);
+      transition: gap 0.2s ease, color 0.2s ease;
+    }
+    .blc:hover .blc-read-more {
+      gap: 10px;
+      color: var(--gold-light);
+    }
+
+    /* ─── ERROR / LOADING ─── */
+    .post-loading {
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--white-35);
+      letter-spacing: 1px;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1100px) {
+      .post-layout {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+      .post-sidebar {
+        position: static;
+      }
+    }
+    @media (max-width: 1024px) {
+      .more-articles-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .post-hero-content { padding: 0 6% 48px; }
+      .post-layout { padding: 48px 6%; }
+      .more-articles { padding: 48px 6% 80px; }
+      .more-articles-grid { grid-template-columns: 1fr; }
+      .more-articles-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div data-component="nav"></div>
+
+  <!-- ═══════════════════════════════════════════ POST HERO -->
+  <div class="post-hero" id="postHero">
+    <div class="post-hero-overlay"></div>
+    <div class="post-hero-content" id="postHeroContent">
+      <div class="post-loading">Loading article&hellip;</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ POST LAYOUT -->
+  <div class="post-layout" id="postLayout" style="display:none;">
+    <article class="post-article" id="postArticle"></article>
+    <aside class="post-sidebar" id="postSidebar"></aside>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ MORE ARTICLES -->
+  <div class="more-articles" id="moreArticles" style="display:none;"></div>
+
+  <div data-component="footer"></div>
+  <div data-component="whatsapp"></div>
+
+  <script src="js/components.js" defer></script>
+  <script>
+    // NOTE: When posts.json is updated, paste the new array here too.
+    const POSTS_DATA = [{"slug":"biggest-mistakes-investors-make-in-dubai-real-estate","title":"Biggest Mistakes Investors Make in Dubai Real Estate","category":"Investor Guide","date":"2025-12-23","image":"https://framerusercontent.com/images/paHVIhNEbGxecA1Pf2fSVsBf0GU.jpg","excerpt":"Dubai's property market rewards disciplined investors and punishes reactive ones. Here are the most common and costly mistakes to avoid.","body":[{"type":"p","text":"The Dubai real estate market continues to attract global investors thanks to high rental yields, strong population growth, and investor-friendly regulations. However, despite Dubai being one of the most transparent property markets in the region, many investors still make avoidable mistakes that limit returns or increase risk."},{"type":"h2","text":"Investing Without Understanding the Market Cycle"},{"type":"p","text":"One of the biggest mistakes is buying at the wrong point in the market cycle. Dubai operates in clearly defined phases of growth, peak, correction, and recovery. Many buyers enter the market when prices have already peaked, driven by hype rather than data. Smart investors focus on early growth phases, upcoming infrastructure announcements, and population movement trends."},{"type":"h2","text":"Chasing Low Prices Instead of Strong Demand"},{"type":"p","text":"A cheap property does not automatically mean a good investment. Many investors focus on price per square foot while ignoring rental demand, tenant profile, and exit liquidity. In Dubai, demand is driven by job creation, visa reforms, lifestyle amenities, and proximity to business hubs. Buying in areas with weak demand often results in long vacancy periods and slow resale."},{"type":"h2","text":"Ignoring the Developer's Track Record"},{"type":"p","text":"Dubai offers many off-plan opportunities, but not all developers are equal. A common mistake is investing based solely on payment plans or marketing promises without checking the developer's delivery history. Experienced investors always evaluate past project handovers, construction quality, financial stability, and RERA registration."},{"type":"h2","text":"Underestimating the True Cost of Ownership"},{"type":"p","text":"While Dubai has no property tax, investors still need to budget for Dubai Land Department registration fees, agent commission, service charges, and maintenance funds. Ignoring these costs can distort return calculations and reduce actual net yield."},{"type":"h2","text":"Overleveraging Without a Backup Plan"},{"type":"p","text":"Easy financing and flexible payment plans can tempt investors to overextend. While leverage can increase returns, it also increases exposure during market slowdowns. Prudent investors always plan for interest rate changes, vacancy periods, and service charge increases."},{"type":"h2","text":"Choosing the Wrong Real Estate Partner"},{"type":"p","text":"Not every agent understands investment strategy, market cycles, or legal safeguards. The right real estate partner doesn't just sell — they advise. At Fair Opportunity Real Estate, investors are guided through every stage of the process, from identifying high-demand locations to understanding payment plans, rental potential, and exit strategies."}]},{"slug":"how-the-uae-government-protects-property-investors-in-dubai","title":"How the UAE Government Protects Property Investors in Dubai","category":"Market Update","date":"2025-12-16","image":"https://framerusercontent.com/images/83Sm6sGOyq4mzHsquEoodrCCUfY.png","excerpt":"From mandatory escrow accounts to real-time project monitoring, here's the full picture of investor protection in the Dubai real estate market.","body":[{"type":"p","text":"The Dubai real estate market has evolved into one of the most regulated and investor-friendly property markets globally. The UAE government has implemented strict legal frameworks, financial safeguards, and regulatory authorities to protect property investors — especially in off-plan real estate transactions."},{"type":"h2","text":"Who Controls Dubai Real Estate?"},{"type":"p","text":"Dubai's real estate sector is governed by the Dubai Land Department (DLD) and Real Estate Regulatory Agency (RERA). These authorities regulate developer licensing, project approvals, payment plans, escrow accounts, property registration, and buyer rights."},{"type":"h2","text":"Escrow Accounts: The Core Investor Protection"},{"type":"p","text":"One of the strongest investor safeguards is the mandatory escrow account law (Dubai Law No. 8 of 2007). All buyer payments are deposited into a RERA-approved bank-controlled account. Developers cannot freely access these funds — they are released only after construction milestones are independently verified."},{"type":"callout","text":"Developers must deposit 100% of buyer payments into escrow. If a project is cancelled, DLD has the authority to refund buyers directly from the escrow account."},{"type":"h2","text":"Developer Regulation and Track Record"},{"type":"p","text":"Before any developer can sell property in Dubai, they must be registered with RERA, have their project approved by DLD, and have active escrow accounts. RERA also publicly tracks past project delivery, delays, cancellations, and financial compliance — giving investors the ability to verify credibility before investing."},{"type":"h2","text":"Title Deeds and Ownership Protection"},{"type":"p","text":"Dubai ensures clarity of ownership at every stage. Off-plan buyers receive an Oqood Certificate, with a full Title Deed issued upon project completion. All ownership records are registered with DLD digitally, eliminating fraud. Foreign investors receive 100% freehold ownership in designated areas."}]},{"slug":"shahrukhz-by-danube-a-new-landmark-investment-opportunity-in-dubai-real-estate","title":"Shahrukhz by Danube: A New Landmark Investment Opportunity","category":"Property Spotlight","date":"2025-12-10","image":"https://framerusercontent.com/images/vpMYrAV5JpjvdzMC4Mv9L0WYG8.png","excerpt":"Danube Properties' latest launch combines flexible payment plans with strong rental demand — here's what investors need to know.","body":[{"type":"p","text":"Danube Properties has introduced Shahrukhz, a new project generating strong interest among investors and end users alike. Known for delivering high-quality developments with flexible payment plans, Danube's latest launch reflects everything investors look for in today's Dubai property market: accessibility, smart layouts, and long-term value."},{"type":"h2","text":"Why Shahrukhz Matters Right Now"},{"type":"p","text":"The success of the Dubai real estate market is driven by rising population growth, foreign investment, and strong demand for mid-to-premium residential communities. Projects like Shahrukhz enter the market at a time when investors are prioritising flexible payment options, strong rental demand, and reliable developers with a proven track record."},{"type":"h2","text":"Danube Properties: A Trusted Developer"},{"type":"p","text":"Danube Properties has become one of the most recognised names in Dubai real estate, particularly known for innovative payment plans. Their developments appeal to first-time investors, overseas buyers, and experienced portfolio builders — with competitive entry prices, well-planned layouts, and investor-friendly post-handover payment structures."},{"type":"h2","text":"Investment Potential"},{"type":"p","text":"In a market where rental yields average between 5–8%, off-plan developments continue to play a major role in shaping investor sentiment. Projects like Shahrukhz offer high demand from end users and tenants, payment flexibility compared to ready properties, and potential capital appreciation during construction."}]},{"slug":"dubai-2026","title":"Dubai 2026: The Ultimate Guide for Real Estate Investors and Residents","category":"Insight","date":"2025-12-08","image":"https://framerusercontent.com/images/4wCDcBF0oFTkoCOUtGn3dee9f8U.jpg","excerpt":"Etihad Rail, 349 project completions, and a record government budget — here's everything transforming Dubai in 2026 and what it means for property.","body":[{"type":"p","text":"Dubai never stands still. As we approach 2026, the emirate is unveiling a wave of transformative developments that will reshape how we live, invest, and move around the city. For real estate professionals and investors, understanding these changes is essential."},{"type":"h2","text":"Etihad Rail: The 57-Minute Game-Changer"},{"type":"p","text":"After years of anticipation, Etihad Rail passenger services launch in 2026, connecting 11 UAE cities from Al Sila in the west to Fujairah on the east coast. Abu Dhabi to Dubai in 57 minutes. Abu Dhabi to Fujairah in 105 minutes. Projected 36.5 million passengers annually by 2030. Properties within walking distance of rail stations will command premium prices — this is Dubai's equivalent of the Metro Red Line effect, but on a much larger scale."},{"type":"callout","text":"Smart investors should watch: Sharjah developments near rail stations, Al Ain residential communities, Fujairah beachfront properties, and new developments along the rail corridor."},{"type":"h2","text":"Burj Binghatti: World's Tallest Residential Tower Completes"},{"type":"p","text":"The collaboration between Binghatti Developers and luxury jeweler Jacob & Co reaches completion in 2026. Rising over 100 floors above Business Bay, ultra-luxury branded residences historically outperform standard developments in capital appreciation. High-end furnished rentals in branded buildings can achieve 6–8% yields while maintaining capital value better during market corrections."},{"type":"h2","text":"349+ Developments Delivering in 2026"},{"type":"p","text":"2026 is a massive year for project completions across Dubai. Over 349 residential properties are scheduled for handover throughout the year, spanning from budget-friendly to ultra-luxury. This creates both opportunity and competition — investors in the right locations will benefit from increased rental demand as new residents move in."}]},{"slug":"dubai-has-just-unveiled-its-largest-budget-ever-aed-303-billion-what-smart-investors-should-know","title":"Dubai's AED 303 Billion Budget: What Smart Investors Should Know","category":"Market Update","date":"2025-12-03","image":"https://framerusercontent.com/images/Mv1HkGxo5JcPsLnEoK5EznSGVII.png","excerpt":"Sheikh Mohammed has approved the largest budget in Dubai's history. Nearly half goes to infrastructure. Here's what that means for property investors.","body":[{"type":"p","text":"On 23 November 2025, Sheikh Mohammed bin Rashid Al Maktoum approved the largest budget in the emirate's history — AED 302.7 billion for 2026–2028. For 2026 alone, expenditures are projected at AED 99.5 billion, with expected revenues of AED 107.7 billion."},{"type":"callout","text":"Approximately 48% of the total spending will be allocated toward infrastructure and construction — roads, bridges, public transportation, tunnels, drainage, and related projects."},{"type":"h2","text":"What This Means for Property Investors"},{"type":"p","text":"Infrastructure spending at this scale directly supports real estate values. New roads and transport links open previously inaccessible areas to development. Public spending creates employment, which drives population growth and housing demand. Areas near planned infrastructure projects tend to see the strongest appreciation."},{"type":"h2","text":"Where to Watch"},{"type":"p","text":"With nearly half the budget going to infrastructure, investors should track announcements closely. Projects near new transport corridors, improved utility networks, and government development zones will be best positioned to capitalise on this spending cycle."}]},{"slug":"right-time-to-invest","title":"When Is the Right Time to Invest in Off-Plan Properties in Dubai?","category":"Investor Guide","date":"2025-10-21","image":"https://framerusercontent.com/images/RH8t1EOm5b04eAVe46iBc0THBmc.png","excerpt":"Timing off-plan investment correctly can be the difference between average returns and exceptional ones. Here's how to read the market.","body":[{"type":"p","text":"Dubai's real estate market is now one of the top choices for investors worldwide, with off-plan properties especially popular. Still, many investors wonder: when is the best time to invest? Choosing the right time can mean the difference between average returns and real growth."},{"type":"h2","text":"Understanding Off-Plan Investment"},{"type":"p","text":"Off-plan properties are sold before construction is complete. Investors buy at pre-construction prices, often 10–30% lower than completed units. Returns can start growing even before handover, as property values typically rise during construction."},{"type":"h2","text":"The Early Launch Phase"},{"type":"p","text":"The earliest launch phase often offers the best prices and most flexible payment plans. Developers release a limited number of units at attractive rates to create initial market momentum. Once demand increases, early investors typically enjoy the highest appreciation."},{"type":"h2","text":"During Market Stability or Recovery"},{"type":"p","text":"When Dubai's property market shows stable or recovering trends, investor confidence grows. This stage offers a balance between safety and strong upside. The current 2025–2026 conditions represent exactly this type of environment — fundamentals are strong, supply is controlled, and international demand continues to grow."},{"type":"h2","text":"Signs You're Looking at the Right Project"},{"type":"p","text":"Location with proven demand, a developer with a clean delivery record, a payment plan structured around construction milestones, and realistic rental yield projections — these are the markers of a sound off-plan investment. When all four align, timing becomes secondary to fundamentals."}]}];
+
+    document.addEventListener('fore:ready', initPost);
+
+    function formatDate(str) {
+      const d = new Date(str + 'T00:00:00');
+      return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function estimateReadTime(body) {
+      const words = body.reduce((acc, b) => acc + b.text.split(' ').length, 0);
+      return Math.max(2, Math.round(words / 200));
+    }
+
+    function renderBlock(block) {
+      switch (block.type) {
+        case 'p':
+          return `<p class="post-p">${escapeHtml(block.text)}</p>`;
+        case 'h2':
+          return `<h2 class="post-h2">${escapeHtml(block.text)}</h2>`;
+        case 'callout':
+          return `<blockquote class="post-callout"><p>${escapeHtml(block.text)}</p></blockquote>`;
+        default:
+          return `<p class="post-p">${escapeHtml(block.text)}</p>`;
+      }
+    }
+
+    function renderMoreCard(post, i) {
+      return `
+        <a href="blog-post.html?slug=${encodeURIComponent(post.slug)}"
+           class="blc"
+           style="opacity:0;transform:translateY(20px);animation:cardReveal 0.55s ease forwards;animation-delay:${i * 0.1}s">
+          <div class="blc-img">
+            <img src="${escapeHtml(post.image)}" alt="${escapeHtml(post.title)}" loading="lazy" />
+            <span class="blc-cat">${escapeHtml(post.category)}</span>
+          </div>
+          <div class="blc-body">
+            <div class="blc-date">${formatDate(post.date)}</div>
+            <div class="blc-title">${escapeHtml(post.title)}</div>
+            <p class="blc-excerpt">${escapeHtml(post.excerpt)}</p>
+            <span class="blc-read-more">Read Article &#8594;</span>
+          </div>
+        </a>
+      `;
+    }
+
+    function initPost() {
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get('slug');
+
+      const posts = POSTS_DATA;
+
+      const post = posts.find(p => p.slug === slug);
+
+      if (!post) {
+        document.title = 'Article Not Found — FORE';
+        document.getElementById('postHeroContent').innerHTML = `
+          <div class="section-tag">Not Found</div>
+          <h1 style="font-family:var(--font-display);font-size:clamp(32px,4vw,54px);font-weight:300;margin-bottom:20px;line-height:1.1;">Article not found.</h1>
+          <p style="font-size:12px;color:var(--white-50);margin-bottom:32px;">The article you're looking for doesn't exist or may have moved.</p>
+          <a href="blog.html" class="btn-primary">&#8592; Back to Blog</a>
+        `;
+        return;
+      }
+
+      // ── Page metadata ──
+      document.title = post.title + ' — FORE';
+      document.querySelector('meta[name="description"]').setAttribute('content', post.excerpt);
+
+      // ── Hero ──
+      const heroEl = document.getElementById('postHero');
+      const img = document.createElement('img');
+      img.className = 'post-hero-img';
+      img.src = post.image;
+      img.alt = post.title;
+      heroEl.insertBefore(img, heroEl.firstChild);
+
+      document.getElementById('postHeroContent').innerHTML = `
+        <nav class="post-breadcrumb" aria-label="breadcrumb">
+          <a href="index.html">Home</a>
+          <span class="post-breadcrumb-sep">/</span>
+          <a href="blog.html">Blog</a>
+          <span class="post-breadcrumb-sep">/</span>
+          <span style="color:var(--white-50);">${escapeHtml(post.category)}</span>
+        </nav>
+        <span class="post-cat-badge">${escapeHtml(post.category)}</span>
+        <h1 class="post-hero-title">${escapeHtml(post.title)}</h1>
+        <div class="post-hero-meta">
+          <span class="post-hero-date">${formatDate(post.date)}</span>
+          <span class="post-hero-meta-dot"></span>
+          <span class="post-hero-readtime">${estimateReadTime(post.body)} min read</span>
+        </div>
+      `;
+
+      // ── Article body ──
+      document.getElementById('postArticle').innerHTML = post.body.map(renderBlock).join('');
+
+      // ── Sidebar ──
+      const uniqueCats = [...new Set(posts.map(p => p.category))];
+      document.getElementById('postSidebar').innerHTML = `
+        <div class="sidebar-cta-card">
+          <div class="sidebar-cta-eyebrow">Free Consultation</div>
+          <h3 class="sidebar-cta-title">Ready to invest in Dubai?</h3>
+          <p class="sidebar-cta-body">
+            Book a free 30-minute call with one of our investment advisors. We'll match your goals and budget to the right properties and strategy.
+          </p>
+          <a href="index.html#contact" class="btn-primary" style="display:block;text-align:center;">Book a Free Call</a>
+          <div class="sidebar-divider"></div>
+          <div class="sidebar-contact-list">
+            <div>
+              <div class="sidebar-contact-label">Email</div>
+              <div class="sidebar-contact-value">
+                <a href="mailto:info@fairopportunityrealestate.com">info@fairopportunityrealestate.com</a>
+              </div>
+            </div>
+            <div>
+              <div class="sidebar-contact-label">WhatsApp</div>
+              <div class="sidebar-contact-value">+971 XX XXX XXXX</div>
+            </div>
+            <div>
+              <div class="sidebar-contact-label">Based in</div>
+              <div class="sidebar-contact-value">Dubai, UAE — serving investors globally</div>
+            </div>
+          </div>
+          <p class="sidebar-note">No commitment. No pressure. Just answers.</p>
+        </div>
+        <div class="sidebar-cats-card">
+          <div class="sidebar-cats-heading">Browse by Category</div>
+          <div>
+            ${uniqueCats.map(cat => `
+              <a href="blog.html?cat=${encodeURIComponent(cat)}" class="sidebar-cat-link">
+                ${escapeHtml(cat)}
+                <span class="sidebar-cat-count">${posts.filter(p => p.category === cat).length}</span>
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      // ── Show layout ──
+      document.getElementById('postLayout').style.display = '';
+
+      // ── More articles ──
+      const others = posts.filter(p => p.slug !== slug).slice(0, 3);
+      if (others.length > 0) {
+        const moreEl = document.getElementById('moreArticles');
+        moreEl.style.display = '';
+        moreEl.innerHTML = `
+          <div class="more-articles-header">
+            <div>
+              <div class="section-tag">More From the Blog</div>
+              <h2 class="more-articles-title">
+                More <em class="gold">articles</em> for you
+              </h2>
+            </div>
+            <a href="blog.html" class="btn-ghost">View All Articles &#8594;</a>
+          </div>
+          <div class="more-articles-grid">
+            ${others.map(renderMoreCard).join('')}
+          </div>
+        `;
+      }
+    }
+  </script>
+
+</body>
+</html>
