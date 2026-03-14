@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" crossorigin />
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     /* ══════════════════════════════════════════
@@ -868,22 +869,59 @@
       });
     }
 
+    /* ── Supabase Config ─────────────────── */
+    var SUPA_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
+    var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhbWtuZWtkYnRybXhvcHl3Z3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NjMxOTksImV4cCI6MjA4OTAzOTE5OX0.HCmQ_4cyuImr3S1wQ-V6oW2G2U4a1rzMUlLPqHC-OeA';
+    var supaClient = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+    function fetchSupabaseSecondary() {
+      return supaClient
+        .from('secondary_listings')
+        .select('*')
+        .then(function (res) {
+          if (res.error) { console.error('Supabase error:', res.error); return []; }
+          return (res.data || []).map(function (s) {
+            return {
+              _source: 'secondary',
+              project_id: s.id,
+              ShortName: s.name,
+              LayoutPriceMin: s.price,
+              Bedrooms: s.bedrooms,
+              Avatar: s.image_main || '',
+              Location: { district: s.location || '', city: { name: s.city || 'Dubai' } },
+              OffplanOrSecondary: 'secondary',
+              _supabaseStatus: s.status,
+              _supabaseLinkType: 'secondary'
+            };
+          });
+        })
+        .catch(function (err) { console.error('Supabase fetch error:', err); return []; });
+    }
+
     /* ── API Fetch ─────────────────────── */
     function fetchPage(page) {
       var base = 'https://api.behomes.tech/v3/';
       var params = 'lang=en&api_key=EAJF8XND&filter=yes&objects_per_page=50&page=' + page;
-      return Promise.all([
+      var behomesPromise = Promise.all([
         fetch(base + 'get_behomes_objects?'  + params),
-        fetch(base + 'get_secondary_objects?' + params)
       ]).then(function (responses) {
         return Promise.all(responses.map(function (r) {
           return r.ok ? r.json().catch(function () { return []; }) : Promise.resolve([]);
         }));
       }).then(function (jsons) {
-        var offplan   = extractItems(jsons[0], 'offplan');
-        var secondary = extractItems(jsons[1], 'secondary');
-        return offplan.concat(secondary);
+        var offplan = extractItems(jsons[0], 'offplan');
+        return offplan;
       });
+
+      /* On the first page, also fetch Supabase secondary listings */
+      if (page === 1) {
+        return Promise.all([behomesPromise, fetchSupabaseSecondary()])
+          .then(function (results) {
+            return results[0].concat(results[1]);
+          });
+      }
+
+      return behomesPromise;
     }
 
     /* ── Dropdowns ─────────────────────── */
@@ -971,7 +1009,9 @@
     function createCard(p, idx) {
       var a = document.createElement('a');
       a.className = 'prop-card-v2';
-      a.href = 'property-detail.html?id=' + esc(p.project_id || '');
+      a.href = p._supabaseLinkType === 'secondary'
+        ? 'property-detail.html?id=' + esc(p.project_id || '') + '&type=secondary'
+        : 'property-detail.html?id=' + esc(p.project_id || '');
       a.tabIndex = 0;
       a.style.setProperty('--card-delay', (idx % 12) * 0.042 + 's');
 

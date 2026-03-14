@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FORE — Admin Dashboard</title>
+  <link rel="icon" href="brand_assets/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* ── Reset & Variables ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #C9A96E;
+      --gold-light: #E2C99A;
+      --gold-dark: #9A7A48;
+      --gold-border: rgba(201,169,110,0.22);
+      --subtle-border: rgba(255,255,255,0.06);
+      --bg: #0A0A0A;
+      --bg-dark: #111111;
+      --bg-dark2: #161616;
+      --bg-dark3: #1C1C1C;
+      --white: #FFFFFF;
+      --white-70: rgba(255,255,255,0.7);
+      --white-50: rgba(255,255,255,0.5);
+      --white-35: rgba(255,255,255,0.35);
+      --white-20: rgba(255,255,255,0.2);
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-ui: 'Montserrat', sans-serif;
+      --success: #4CAF50;
+      --error: #F44336;
+      --warning: #FF9800;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--font-ui);
+      font-weight: 300;
+      font-size: 13px;
+      line-height: 1.8;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    /* ── Login Screen ── */
+    .login-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .login-card {
+      background: var(--bg-dark2);
+      border: 0.5px solid var(--gold-border);
+      border-radius: 3px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-logo {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 5px;
+      margin-bottom: 8px;
+    }
+
+    .login-subtitle {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      color: var(--white-35);
+      margin-bottom: 40px;
+    }
+
+    .login-input {
+      width: 100%;
+      background: var(--bg);
+      border: 0.5px solid var(--subtle-border);
+      border-radius: 2px;
+      color: var(--white);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 300;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .login-input:focus {
+      border-color: var(--gold-border);
+    }
+
+    .login-input::placeholder {
+      color: var(--white-35);
+    }
+
+    .login-btn {
+      width: 100%;
+      margin-top: 16px;
+      background: var(--gold);
+      color: var(--bg);
+      font-family: var(--font-ui);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 2px;
+      padding: 14px 30px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .login-btn:hover { background: var(--gold-light); }
+    .login-btn:active { background: var(--gold-dark); }
+    .login-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+    .login-error {
+      color: var(--error);
+      font-size: 11px;
+      margin-top: 12px;
+      display: none;
+    }
+
+    /* ── Dashboard ── */
+    .dashboard { display: none; min-height: 100vh; }
+
+    .dash-header {
+      background: var(--bg-dark);
+      border-bottom: 0.5px solid var(--gold-border);
+      padding: 0 32px;
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dash-logo {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 5px;
+    }
+
+    .dash-header-right {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .dash-header-label {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--white-35);
+    }
+
+    .dash-logout {
+      background: none;
+      border: none;
+      color: var(--white-50);
+      font-family: var(--font-ui);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .dash-logout:hover { color: var(--gold); }
+    .dash-logout:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+    .dash-body { padding: 32px; }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 0.5px solid var(--subtle-border);
+      margin-bottom: 32px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--white-50);
+      font-family: var(--font-ui);
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      padding: 12px 24px;
+      cursor: pointer;
+      transition: color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .tab-btn:hover { color: var(--white-70); }
+    .tab-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+
+    .tab-btn.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Table ── */
+    .listings-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-dark2);
+      border: 0.5px solid var(--subtle-border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .listings-table th {
+      background: var(--bg-dark);
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--white-35);
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 0.5px solid var(--subtle-border);
+    }
+
+    .listings-table td {
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--white-70);
+      border-bottom: 0.5px solid var(--subtle-border);
+      vertical-align: middle;
+    }
+
+    .listings-table tr:last-child td { border-bottom: none; }
+
+    .listings-table tr:hover td { background: var(--bg-dark3); }
+
+    .listing-thumb {
+      width: 64px;
+      height: 44px;
+      object-fit: cover;
+      border-radius: 2px;
+      border: 0.5px solid var(--subtle-border);
+    }
+
+    .status-badge {
+      display: inline-block;
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 2px;
+    }
+
+    .status-vacant {
+      background: rgba(76,175,80,0.15);
+      color: var(--success);
+    }
+
+    .status-rented {
+      background: rgba(255,152,0,0.15);
+      color: var(--warning);
+    }
+
+    .action-btn {
+      background: none;
+      border: 0.5px solid var(--subtle-border);
+      color: var(--white-50);
+      font-family: var(--font-ui);
+      font-size: 8.5px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: border-color 0.3s ease, color 0.3s ease;
+      margin-right: 6px;
+    }
+
+    .action-btn:hover {
+      border-color: var(--gold-border);
+      color: var(--gold);
+    }
+
+    .action-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+    .action-btn.delete:hover {
+      border-color: rgba(244,67,54,0.4);
+      color: var(--error);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 64px 24px;
+      color: var(--white-35);
+      font-size: 12px;
+    }
+
+    .table-loading {
+      text-align: center;
+      padding: 48px;
+      color: var(--white-35);
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* ── Form ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 900px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.full { grid-column: 1 / -1; }
+
+    .form-label {
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--white-35);
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      background: var(--bg);
+      border: 0.5px solid var(--subtle-border);
+      border-radius: 2px;
+      color: var(--white);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 300;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: var(--gold-border);
+    }
+
+    .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.35)' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    .form-select option {
+      background: var(--bg-dark2);
+      color: var(--white);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+      line-height: 1.7;
+    }
+
+    /* Toggle */
+    .toggle-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-top: 4px;
+    }
+
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      cursor: pointer;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--bg);
+      border: 0.5px solid var(--subtle-border);
+      border-radius: 12px;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      background: var(--white-35);
+      border-radius: 50%;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    .toggle input:checked + .toggle-track {
+      background: rgba(201,169,110,0.2);
+      border-color: var(--gold-border);
+    }
+
+    .toggle input:checked + .toggle-track::after {
+      transform: translateX(20px);
+      background: var(--gold);
+    }
+
+    .toggle input:focus-visible + .toggle-track {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+
+    .toggle-label {
+      font-size: 12px;
+      color: var(--white-50);
+    }
+
+    /* Form actions */
+    .form-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .btn-submit {
+      background: var(--gold);
+      color: var(--bg);
+      font-family: var(--font-ui);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 2px;
+      padding: 14px 32px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .btn-submit:hover { background: var(--gold-light); }
+    .btn-submit:active { background: var(--gold-dark); }
+    .btn-submit:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-cancel {
+      background: none;
+      border: 0.5px solid var(--subtle-border);
+      color: var(--white-50);
+      font-family: var(--font-ui);
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      border-radius: 2px;
+      padding: 14px 24px;
+      cursor: pointer;
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+
+    .btn-cancel:hover { border-color: var(--gold-border); color: var(--white-70); }
+    .btn-cancel:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      background: var(--bg-dark3);
+      border: 0.5px solid var(--gold-border);
+      border-radius: 3px;
+      padding: 14px 24px;
+      font-size: 12px;
+      color: var(--white-70);
+      transform: translateY(20px);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    .toast.visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.error { border-color: rgba(244,67,54,0.4); color: var(--error); }
+
+    /* Confirm modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .modal-overlay.visible { display: flex; }
+
+    .modal-box {
+      background: var(--bg-dark2);
+      border: 0.5px solid var(--gold-border);
+      border-radius: 3px;
+      padding: 32px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 300;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .modal-text {
+      font-size: 12px;
+      color: var(--white-50);
+      margin-bottom: 24px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .btn-danger {
+      background: var(--error);
+      color: var(--white);
+      font-family: var(--font-ui);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 2px;
+      padding: 12px 24px;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    .btn-danger:hover { opacity: 0.85; }
+    .btn-danger:focus-visible { outline: 2px solid var(--error); outline-offset: 2px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      .dash-body { padding: 24px 16px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .listings-table { font-size: 11px; }
+      .dash-header { padding: 0 16px; }
+      .dash-header-label { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ LOGIN ═══ -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="login-logo">FORE</div>
+      <div class="login-subtitle">Admin Dashboard</div>
+      <form id="loginForm">
+        <input type="password" class="login-input" id="loginPassword" placeholder="Enter password" autocomplete="current-password" />
+        <button type="submit" class="login-btn">Sign In</button>
+        <div class="login-error" id="loginError">Incorrect password. Please try again.</div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══ DASHBOARD ═══ -->
+  <div class="dashboard" id="dashboard">
+    <header class="dash-header">
+      <div class="dash-logo">FORE</div>
+      <div class="dash-header-right">
+        <span class="dash-header-label">Secondary Listings</span>
+        <button class="dash-logout" id="logoutBtn">Logout</button>
+      </div>
+    </header>
+
+    <div class="dash-body">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="listings">All Listings</button>
+        <button class="tab-btn" data-tab="add">Add New Listing</button>
+      </div>
+
+      <!-- ── All Listings Tab ── -->
+      <div class="tab-panel active" id="tab-listings">
+        <div class="table-loading" id="tableLoading">Loading listings...</div>
+        <div style="overflow-x:auto;">
+          <table class="listings-table" id="listingsTable" style="display:none;">
+            <thead>
+              <tr>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Beds</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="listingsBody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="emptyState" style="display:none;">No listings found. Add your first listing to get started.</div>
+      </div>
+
+      <!-- ── Add / Edit Listing Tab ── -->
+      <div class="tab-panel" id="tab-add">
+        <form id="listingForm" class="form-grid">
+          <input type="hidden" id="editId" />
+
+          <div class="form-group full">
+            <label class="form-label" for="title">Listing Name / Title</label>
+            <input class="form-input" type="text" id="title" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="price">Price (AED)</label>
+            <input class="form-input" type="number" id="price" min="0" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="bedrooms">Bedrooms</label>
+            <select class="form-select" id="bedrooms" required>
+              <option value="">Select</option>
+              <option value="Studio">Studio</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5+">5+</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="bathrooms">Bathrooms</label>
+            <input class="form-input" type="number" id="bathrooms" min="0" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="area">Area (sq ft)</label>
+            <input class="form-input" type="number" id="area" min="0" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="floor">Floor</label>
+            <input class="form-input" type="text" id="floor" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="location">Location / Community</label>
+            <input class="form-input" type="text" id="location" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="city">City</label>
+            <input class="form-input" type="text" id="city" value="Dubai" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="status">Status</label>
+            <select class="form-select" id="status" required>
+              <option value="">Select</option>
+              <option value="Vacant">Vacant</option>
+              <option value="Rented">Rented</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="furnished">Furnished</label>
+            <select class="form-select" id="furnished" required>
+              <option value="">Select</option>
+              <option value="Furnished">Furnished</option>
+              <option value="Unfurnished">Unfurnished</option>
+              <option value="Shell">Shell</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="view">View</label>
+            <input class="form-input" type="text" id="view" placeholder="e.g. Sea View, Golf View" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Parking</label>
+            <div class="toggle-wrap">
+              <label class="toggle">
+                <input type="checkbox" id="parking" />
+                <span class="toggle-track"></span>
+              </label>
+              <span class="toggle-label" id="parkingLabel">No</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="serviceCharge">Service Charge / Year (AED)</label>
+            <input class="form-input" type="number" id="serviceCharge" min="0" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="agent">Agent Name</label>
+            <select class="form-select" id="agent" required>
+              <option value="">Select</option>
+              <option value="Elena Guseva">Elena Guseva</option>
+              <option value="Sabbir Khan">Sabbir Khan</option>
+              <option value="Anastasiia Guseva">Anastasiia Guseva</option>
+            </select>
+          </div>
+
+          <div class="form-group full">
+            <label class="form-label" for="description">Description</label>
+            <textarea class="form-textarea" id="description" rows="4"></textarea>
+          </div>
+
+          <div class="form-group full">
+            <label class="form-label" for="features">Features (comma separated)</label>
+            <input class="form-input" type="text" id="features" placeholder="e.g. Pool, Gym, Concierge, Balcony" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="mainImage">Main Image URL (Cloudinary)</label>
+            <input class="form-input" type="url" id="mainImage" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="floorPlan">Floor Plan Image URL</label>
+            <input class="form-input" type="url" id="floorPlan" />
+          </div>
+
+          <div class="form-group full">
+            <label class="form-label" for="additionalImages">Additional Image URLs (up to 5, one per line)</label>
+            <textarea class="form-textarea" id="additionalImages" rows="5" placeholder="https://res.cloudinary.com/...&#10;https://res.cloudinary.com/..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="dldPermit">DLD Permit Number</label>
+            <input class="form-input" type="text" id="dldPermit" />
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-submit" id="submitBtn">Save Listing</button>
+            <button type="button" class="btn-cancel" id="cancelEditBtn" style="display:none;">Cancel Edit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Delete Confirm Modal ── -->
+  <div class="modal-overlay" id="deleteModal">
+    <div class="modal-box">
+      <div class="modal-title">Delete Listing</div>
+      <div class="modal-text">Are you sure you want to delete this listing? This action cannot be undone.</div>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancelDelete">Cancel</button>
+        <button class="btn-danger" id="confirmDelete">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toast ── -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ── Supabase Config (replace with real credentials) ──
+    const SUPABASE_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhbWtuZWtkYnRybXhvcHl3Z3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NjMxOTksImV4cCI6MjA4OTAzOTE5OX0.HCmQ_4cyuImr3S1wQ-V6oW2G2U4a1rzMUlLPqHC-OeA';
+    const TABLE = 'secondary_listings';
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ── Password ──
+    const ADMIN_PASSWORD = 'FORE2024';
+
+    // ── DOM Refs ──
+    const loginScreen = document.getElementById('loginScreen');
+    const dashboard = document.getElementById('dashboard');
+    const loginForm = document.getElementById('loginForm');
+    const loginPassword = document.getElementById('loginPassword');
+    const loginError = document.getElementById('loginError');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tableLoading = document.getElementById('tableLoading');
+    const listingsTable = document.getElementById('listingsTable');
+    const listingsBody = document.getElementById('listingsBody');
+    const emptyState = document.getElementById('emptyState');
+    const listingForm = document.getElementById('listingForm');
+    const editIdInput = document.getElementById('editId');
+    const submitBtn = document.getElementById('submitBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
+    const deleteModal = document.getElementById('deleteModal');
+    const toast = document.getElementById('toast');
+    const parkingCheckbox = document.getElementById('parking');
+    const parkingLabel = document.getElementById('parkingLabel');
+
+    let deleteTargetId = null;
+
+    // ── Auth ──
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (loginPassword.value === ADMIN_PASSWORD) {
+        loginScreen.style.display = 'none';
+        dashboard.style.display = 'block';
+        sessionStorage.setItem('fore_admin', '1');
+        loadListings();
+      } else {
+        loginError.style.display = 'block';
+        loginPassword.value = '';
+        loginPassword.focus();
+      }
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      sessionStorage.removeItem('fore_admin');
+      dashboard.style.display = 'none';
+      loginScreen.style.display = 'flex';
+      loginPassword.value = '';
+      loginError.style.display = 'none';
+    });
+
+    // Session persistence
+    if (sessionStorage.getItem('fore_admin') === '1') {
+      loginScreen.style.display = 'none';
+      dashboard.style.display = 'block';
+      loadListings();
+    }
+
+    // ── Tabs ──
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    // ── Parking toggle label ──
+    parkingCheckbox.addEventListener('change', () => {
+      parkingLabel.textContent = parkingCheckbox.checked ? 'Yes' : 'No';
+    });
+
+    // ── Toast ──
+    function showToast(msg, isError = false) {
+      toast.textContent = msg;
+      toast.className = 'toast' + (isError ? ' error' : '');
+      requestAnimationFrame(() => toast.classList.add('visible'));
+      setTimeout(() => toast.classList.remove('visible'), 3000);
+    }
+
+    // ── Load Listings ──
+    async function loadListings() {
+      tableLoading.style.display = 'block';
+      listingsTable.style.display = 'none';
+      emptyState.style.display = 'none';
+
+      try {
+        const { data, error } = await supabase
+          .from(TABLE)
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+          tableLoading.style.display = 'none';
+          emptyState.style.display = 'block';
+          return;
+        }
+
+        listingsBody.innerHTML = '';
+        data.forEach(item => {
+          const tr = document.createElement('tr');
+          const statusClass = (item.status || '').toLowerCase() === 'rented' ? 'status-rented' : 'status-vacant';
+          const statusText = item.status || 'N/A';
+          const imgSrc = item.image_main || 'https://placehold.co/64x44/1C1C1C/555?text=No+img';
+
+          tr.innerHTML = `
+            <td><img src="${escHtml(imgSrc)}" alt="" class="listing-thumb" loading="lazy" /></td>
+            <td style="color:var(--white);font-weight:400;">${escHtml(item.name || '')}</td>
+            <td>AED ${Number(item.price || 0).toLocaleString()}</td>
+            <td>${escHtml(String(item.bedrooms || ''))}</td>
+            <td><span class="status-badge ${statusClass}">${escHtml(statusText)}</span></td>
+            <td>
+              <button class="action-btn" onclick="editListing('${item.id}')">Edit</button>
+              <button class="action-btn delete" onclick="promptDelete('${item.id}')">Delete</button>
+            </td>
+          `;
+          listingsBody.appendChild(tr);
+        });
+
+        tableLoading.style.display = 'none';
+        listingsTable.style.display = 'table';
+      } catch (err) {
+        tableLoading.textContent = 'Failed to load listings. Check Supabase credentials.';
+        console.error(err);
+      }
+    }
+
+    function escHtml(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    // ── Form Submit (Add / Update) ──
+    listingForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Saving...';
+
+      const additionalRaw = document.getElementById('additionalImages').value.trim();
+      const images = additionalRaw ? additionalRaw.split('\n').map(u => u.trim()).filter(Boolean).slice(0, 5).join(',') : '';
+      const features = document.getElementById('features').value.trim();
+
+      const payload = {
+        name: document.getElementById('title').value.trim(),
+        price: Number(document.getElementById('price').value) || 0,
+        bedrooms: document.getElementById('bedrooms').value,
+        bathrooms: Number(document.getElementById('bathrooms').value) || 0,
+        area_sqft: Number(document.getElementById('area').value) || 0,
+        floor: document.getElementById('floor').value.trim(),
+        location: document.getElementById('location').value.trim(),
+        city: document.getElementById('city').value.trim(),
+        status: document.getElementById('status').value,
+        furnished: document.getElementById('furnished').value,
+        view: document.getElementById('view').value.trim(),
+        parking: parkingCheckbox.checked,
+        service_charge: Number(document.getElementById('serviceCharge').value) || 0,
+        description: document.getElementById('description').value.trim(),
+        features,
+        image_main: document.getElementById('mainImage').value.trim(),
+        images,
+        floor_plan: document.getElementById('floorPlan').value.trim(),
+        dld_permit: document.getElementById('dldPermit').value.trim(),
+        agent: document.getElementById('agent').value,
+      };
+
+      try {
+        const editId = editIdInput.value;
+        let error;
+
+        if (editId) {
+          ({ error } = await supabase.from(TABLE).update(payload).eq('id', editId));
+        } else {
+          ({ error } = await supabase.from(TABLE).insert([payload]));
+        }
+
+        if (error) throw error;
+
+        showToast(editId ? 'Listing updated successfully.' : 'Listing added successfully.');
+        resetForm();
+        switchToTab('listings');
+        loadListings();
+      } catch (err) {
+        showToast('Error saving listing. Check console.', true);
+        console.error(err);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Save Listing';
+      }
+    });
+
+    // ── Edit ──
+    async function editListing(id) {
+      try {
+        const { data, error } = await supabase.from(TABLE).select('*').eq('id', id).single();
+        if (error) throw error;
+
+        editIdInput.value = data.id;
+        document.getElementById('title').value = data.name || '';
+        document.getElementById('price').value = data.price || '';
+        document.getElementById('bedrooms').value = data.bedrooms || '';
+        document.getElementById('bathrooms').value = data.bathrooms || '';
+        document.getElementById('area').value = data.area_sqft || '';
+        document.getElementById('floor').value = data.floor || '';
+        document.getElementById('location').value = data.location || '';
+        document.getElementById('city').value = data.city || '';
+        document.getElementById('status').value = data.status || '';
+        document.getElementById('furnished').value = data.furnished || '';
+        document.getElementById('view').value = data.view || '';
+        parkingCheckbox.checked = !!data.parking;
+        parkingLabel.textContent = data.parking ? 'Yes' : 'No';
+        document.getElementById('serviceCharge').value = data.service_charge || '';
+        document.getElementById('description').value = data.description || '';
+        document.getElementById('features').value = data.features || '';
+        document.getElementById('mainImage').value = data.image_main || '';
+        document.getElementById('floorPlan').value = data.floor_plan || '';
+        document.getElementById('additionalImages').value = (data.images || '').split(',').filter(Boolean).join('\n');
+        document.getElementById('dldPermit').value = data.dld_permit || '';
+        document.getElementById('agent').value = data.agent || '';
+
+        submitBtn.textContent = 'Update Listing';
+        cancelEditBtn.style.display = 'inline-block';
+        switchToTab('add');
+      } catch (err) {
+        showToast('Error loading listing.', true);
+        console.error(err);
+      }
+    }
+
+    // ── Delete ──
+    function promptDelete(id) {
+      deleteTargetId = id;
+      deleteModal.classList.add('visible');
+    }
+
+    document.getElementById('cancelDelete').addEventListener('click', () => {
+      deleteModal.classList.remove('visible');
+      deleteTargetId = null;
+    });
+
+    document.getElementById('confirmDelete').addEventListener('click', async () => {
+      if (!deleteTargetId) return;
+      try {
+        const { error } = await supabase.from(TABLE).delete().eq('id', deleteTargetId);
+        if (error) throw error;
+        showToast('Listing deleted.');
+        loadListings();
+      } catch (err) {
+        showToast('Error deleting listing.', true);
+        console.error(err);
+      } finally {
+        deleteModal.classList.remove('visible');
+        deleteTargetId = null;
+      }
+    });
+
+    // ── Helpers ──
+    function resetForm() {
+      listingForm.reset();
+      editIdInput.value = '';
+      parkingLabel.textContent = 'No';
+      submitBtn.textContent = 'Save Listing';
+      cancelEditBtn.style.display = 'none';
+    }
+
+    cancelEditBtn.addEventListener('click', () => {
+      resetForm();
+      switchToTab('listings');
+    });
+
+    function switchToTab(name) {
+      tabBtns.forEach(b => {
+        b.classList.toggle('active', b.dataset.tab === name);
+      });
+      document.querySelectorAll('.tab-panel').forEach(p => {
+        p.classList.toggle('active', p.id === 'tab-' + name);
+      });
+    }
+  </script>
+</body>
+</html>
