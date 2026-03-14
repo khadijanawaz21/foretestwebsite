@@ -858,6 +858,7 @@
     function extractItems(data, source) {
       var items = [];
       if (Array.isArray(data))           items = data;
+      else if (Array.isArray(data && data.response)) items = data.response;
       else if (Array.isArray(data && data.objects)) items = data.objects;
       else if (Array.isArray(data && data.data))    items = data.data;
       else if (Array.isArray(data && data.items))   items = data.items;
