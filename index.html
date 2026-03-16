@@ -34,17 +34,17 @@
   <section class="hero" id="hero">
     <div class="hero-slides" id="heroSlides">
       <div class="hero-slide active">
-        <video autoplay muted loop playsinline>
+        <video autoplay muted loop playsinline preload="metadata" poster="https://placehold.co/1920x1080/0a0a0a/0a0a0a">
           <source src="assets/videos/hero-1.mp4" type="video/mp4" />
         </video>
       </div>
       <div class="hero-slide">
-        <video muted loop playsinline>
+        <video muted loop playsinline preload="metadata" poster="https://placehold.co/1920x1080/0a0a0a/0a0a0a">
           <source src="assets/videos/hero-2.mp4" type="video/mp4" />
         </video>
       </div>
       <div class="hero-slide">
-        <video muted loop playsinline>
+        <video muted loop playsinline preload="metadata" poster="https://placehold.co/1920x1080/0a0a0a/0a0a0a">
           <source src="assets/videos/hero-3.mp4" type="video/mp4" />
         </video>
       </div>
@@ -80,18 +80,22 @@
   <!-- ═══════════════════════════════════════════ STATS -->
   <div class="stats-bar" id="statsBar">
     <div class="stat-item">
+      <svg class="stat-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
       <div class="stat-number" data-target="0" data-suffix="%" data-prefix="">0%</div>
       <div class="stat-label">Income &amp; Capital Gains Tax</div>
     </div>
     <div class="stat-item">
+      <svg class="stat-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"><path d="M23 6l-9.5 9.5-5-5L1 18"/><path d="M17 6h6v6"/></svg>
       <div class="stat-number" data-target="12" data-suffix="%" data-prefix="8–">8–12%</div>
       <div class="stat-label">Average Rental Yield</div>
     </div>
     <div class="stat-item">
-      <div class="stat-number" data-target="750" data-suffix="K" data-prefix="AED ">AED 750K</div>
-      <div class="stat-label">Golden Visa Entry Point</div>
+      <svg class="stat-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      <div class="stat-number" data-target="2" data-suffix="M" data-prefix="AED ">AED 2M</div>
+      <div class="stat-label">Golden Visa Threshold</div>
     </div>
     <div class="stat-item">
+      <svg class="stat-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><ellipse cx="12" cy="12" rx="4" ry="10"/></svg>
       <div class="stat-number" data-target="1" data-suffix="" data-prefix="#">#1</div>
       <div class="stat-label">Global City for Investment</div>
     </div>
@@ -159,7 +163,65 @@
 
     <!-- View All -->
     <div class="property-view-all fade-in">
-      <a href="#contact" class="btn-ghost">View All Properties &rarr;</a>
+      <a href="properties.html" class="btn-ghost">View All Properties &rarr;</a>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════════════════════════════════ ROI CALCULATOR -->
+  <section class="roi-calc" id="roi-calculator">
+    <div class="roi-calc-header fade-in">
+      <div class="section-tag" style="justify-content:center;">Investment Calculator</div>
+      <h2 class="roi-calc-title">
+        See your potential<br>
+        <em class="gold">returns.</em>
+      </h2>
+      <p class="roi-calc-sub">Enter a purchase price to estimate rental yield, annual income, and 5-year appreciation.</p>
+    </div>
+
+    <div class="roi-calc-card fade-in">
+      <div class="roi-calc-inputs">
+        <div class="roi-field">
+          <label class="form-label">Purchase Price (AED)</label>
+          <input class="form-input" type="text" id="roiPrice" placeholder="1,500,000" inputmode="numeric" />
+        </div>
+        <div class="roi-field">
+          <label class="form-label">Estimated Rental Yield</label>
+          <div class="roi-range-wrap">
+            <input type="range" id="roiYield" min="4" max="12" step="0.5" value="7" class="roi-range" />
+            <span class="roi-range-val" id="roiYieldVal">7%</span>
+          </div>
+        </div>
+        <div class="roi-field">
+          <label class="form-label">Annual Appreciation</label>
+          <div class="roi-range-wrap">
+            <input type="range" id="roiAppreciation" min="0" max="15" step="0.5" value="5" class="roi-range" />
+            <span class="roi-range-val" id="roiAppreciationVal">5%</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="roi-calc-results" id="roiResults">
+        <div class="roi-result-item">
+          <div class="roi-result-label">Annual Rental Income</div>
+          <div class="roi-result-value" id="roiAnnualIncome">AED 105,000</div>
+        </div>
+        <div class="roi-result-item">
+          <div class="roi-result-label">Monthly Rental Income</div>
+          <div class="roi-result-value" id="roiMonthlyIncome">AED 8,750</div>
+        </div>
+        <div class="roi-result-item">
+          <div class="roi-result-label">Property Value in 5 Years</div>
+          <div class="roi-result-value" id="roi5YearValue">AED 1,914,422</div>
+        </div>
+        <div class="roi-result-item">
+          <div class="roi-result-label">Total 5-Year Return</div>
+          <div class="roi-result-value roi-highlight" id="roi5YearReturn">AED 939,422</div>
+        </div>
+      </div>
+
+      <p class="roi-disclaimer">Estimates for illustration only. Actual returns depend on market conditions, property type, location, and management. Service charges and DLD fees not included.</p>
     </div>
   </section>
 
@@ -182,7 +244,7 @@
         <li>10-year renewable residency for you, your spouse, and dependents</li>
         <li>No requirement to stay in the UAE — travel freely on your terms</li>
         <li>Open UAE bank accounts and access the full financial ecosystem</li>
-        <li>Qualify with a property purchase from AED 750,000</li>
+        <li>Qualify with a property purchase from AED 2,000,000</li>
         <li>Zero income tax. Zero capital gains tax. Zero inheritance tax.</li>
       </ul>
       <a href="golden-visa.html" class="btn-primary">Learn How to Qualify</a>
@@ -256,47 +318,41 @@
         you <em class="gold">invest.</em>
       </h2>
       <p class="academy-sub">
-        Our free 7-day email course gives you everything you need to understand Dubai real estate — market dynamics, legal structure, financing options, and how to identify a genuine opportunity. No sales pitch. Just education.
+        Our free 7-day course gives you everything you need to understand Dubai real estate — market dynamics, legal structure, financing options, and how to identify a genuine opportunity. No sales pitch. Just education.
       </p>
     </div>
 
-    <div class="academy-modules fade-in">
+    <div class="academy-modules fade-in" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));max-width:900px;margin:0 auto;">
       <div class="academy-module">
-        <div class="module-day">Day 01</div>
-        <div class="module-title">Market Reality: Why Dubai is NOT a Bubble</div>
-        <p class="module-text">The data-driven case for Dubai — why the fundamentals are real and where the market is actually headed.</p>
+        <div class="module-day">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M3 3h18v18H3z"/><path d="M7 7h10M7 12h6"/></svg>
+        </div>
+        <div class="module-title">The Macro Case for Dubai</div>
+        <p class="module-text">Why the fundamentals are real — data-driven analysis of where the market is actually headed.</p>
       </div>
       <div class="academy-module">
-        <div class="module-day">Day 02</div>
-        <div class="module-title">How Investors Think: The Trinity Framework</div>
-        <p class="module-text">The three-pillar framework smart investors use to evaluate every Dubai property opportunity.</p>
+        <div class="module-day">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <div class="module-title">Off-Plan vs Ready</div>
+        <p class="module-text">Risks, returns, and which strategy fits your timeline — a side-by-side comparison.</p>
       </div>
       <div class="academy-module">
-        <div class="module-day">Day 03</div>
-        <div class="module-title">Best Locations: Growth vs Yield</div>
-        <p class="module-text">Which areas deliver capital appreciation, which deliver rental yield, and how to pick the right one for your goals.</p>
+        <div class="module-day">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="module-title">Real Numbers & ROI</div>
+        <p class="module-text">How to calculate true ROI — including fees, service charges, and realistic rental assumptions.</p>
       </div>
       <div class="academy-module">
-        <div class="module-day">Day 04</div>
-        <div class="module-title">The Real Numbers: 60-Second Calculator</div>
-        <p class="module-text">How to calculate true ROI in under a minute — including fees, service charges, and realistic rental assumptions.</p>
-      </div>
-      <div class="academy-module">
-        <div class="module-day">Day 05</div>
-        <div class="module-title">Off-Plan vs Ready: Which Wins?</div>
-        <p class="module-text">A side-by-side comparison of both strategies — risks, returns, and which approach fits your timeline.</p>
-      </div>
-      <div class="academy-module">
-        <div class="module-day">Day 06</div>
-        <div class="module-title">Real Cases: 3 Investors, 3 Wins</div>
-        <p class="module-text">Three real investor stories — different budgets, different strategies, same result: informed decisions that paid off.</p>
-      </div>
-      <div class="academy-module">
-        <div class="module-day">Day 07</div>
-        <div class="module-title">The Invitation: Strategy Not Stress</div>
-        <p class="module-text">How to take the next step with confidence — a clear, no-pressure path from education to action.</p>
+        <div class="module-day">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="module-title">Legal Framework & Protection</div>
+        <p class="module-text">Escrow accounts, RERA regulation, title deeds — the safeguards that protect your investment.</p>
       </div>
     </div>
+    <p style="text-align:center;font-size:11px;color:var(--white-35);margin-top:16px;">+ 3 more lessons covering locations, case studies, and next steps</p>
 
     <div class="academy-cta-area fade-in">
       <a href="academy.html" class="btn-primary">Start Free Course</a>
@@ -551,11 +607,11 @@
         <div class="testimonial-stars">
           <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
         </div>
-        <p class="testimonial-text">"I'd been researching Dubai property for two years but couldn't find an agency that didn't make me feel like I needed a million dollars to start. FORE walked me through everything, and I closed on my first unit within three months."</p>
+        <p class="testimonial-text">"I'd been researching Dubai property for two years but couldn't find an agency that didn't make me feel like I needed a million dollars to start. FORE walked me through JVC off-plan options, and I closed on my first studio within three months."</p>
         <div class="testimonial-author">
-          <div class="author-avatar">S</div>
+          <div class="author-avatar" style="background:linear-gradient(135deg, var(--gold-dark), var(--gold));color:var(--bg);font-weight:600;">S</div>
           <div>
-            <div class="author-name">Sarah K.</div>
+            <div class="author-name">Sarah K. <span style="display:inline-block;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);background:rgba(201,169,110,0.12);border:0.5px solid var(--gold-border);padding:2px 8px;border-radius:1px;margin-left:8px;vertical-align:middle;font-weight:500;">Verified Investor</span></div>
             <div class="author-location">London, UK</div>
           </div>
         </div>
@@ -565,11 +621,11 @@
         <div class="testimonial-stars">
           <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
         </div>
-        <p class="testimonial-text">"The Academy alone is worth more than most paid courses I've seen. Honest, no fluff — just the actual information you need. Ended up buying two units and getting my Golden Visa in the same transaction."</p>
+        <p class="testimonial-text">"The Academy alone is worth more than most paid courses I've seen. Honest, no fluff — just the actual information you need. Ended up buying two apartments in Business Bay and getting my Golden Visa in the same transaction."</p>
         <div class="testimonial-author">
-          <div class="author-avatar">M</div>
+          <div class="author-avatar" style="background:linear-gradient(135deg, var(--gold-dark), var(--gold));color:var(--bg);font-weight:600;">M</div>
           <div>
-            <div class="author-name">Marcus O.</div>
+            <div class="author-name">Marcus O. <span style="display:inline-block;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);background:rgba(201,169,110,0.12);border:0.5px solid var(--gold-border);padding:2px 8px;border-radius:1px;margin-left:8px;vertical-align:middle;font-weight:500;">Verified Investor</span></div>
             <div class="author-location">Toronto, Canada</div>
           </div>
         </div>
@@ -579,21 +635,23 @@
         <div class="testimonial-stars">
           <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
         </div>
-        <p class="testimonial-text">"As someone outside the UAE, I was nervous about the whole process. FORE handled the legal side, coordinated with the developer, and kept me updated throughout. It genuinely felt like having a trusted friend who knows Dubai inside out."</p>
+        <p class="testimonial-text">"As someone outside the UAE, I was nervous about buying off-plan remotely. FORE handled the legal side, coordinated with Emaar directly, and kept me updated throughout. It genuinely felt like having a trusted friend who knows Dubai inside out."</p>
         <div class="testimonial-author">
-          <div class="author-avatar">A</div>
+          <div class="author-avatar" style="background:linear-gradient(135deg, var(--gold-dark), var(--gold));color:var(--bg);font-weight:600;">A</div>
           <div>
-            <div class="author-name">Anika R.</div>
+            <div class="author-name">Anika R. <span style="display:inline-block;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);background:rgba(201,169,110,0.12);border:0.5px solid var(--gold-border);padding:2px 8px;border-radius:1px;margin-left:8px;vertical-align:middle;font-weight:500;">Verified Investor</span></div>
             <div class="author-location">Singapore</div>
           </div>
         </div>
       </div>
     </div>
+    <p style="text-align:center;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--white-20);margin-top:32px;">Reviews via verified client feedback</p>
   </section>
 
   <!-- ═══════════════════════════════════════════ DEVELOPER PARTNERS -->
   <section class="dev-ticker-section fade-in" aria-label="Trusted Developer Partners">
     <p class="dev-ticker-label">Trusted Developer Partners</p>
+    <p style="text-align:center;font-size:10px;color:var(--white-35);letter-spacing:0.5px;margin-top:-4px;margin-bottom:12px;">Authorized channel partner for Dubai's leading developers</p>
     <div class="dev-ticker-viewport">
 
       <!-- Row 1 — scrolls LEFT -->
@@ -677,11 +735,12 @@
           <div>
             <div class="contact-item-label">WhatsApp</div>
             <!-- REPLACE WITH REAL NUMBER -->
-            <div class="contact-item-value">+971 XX XXX XXXX</div>
+            <div class="contact-item-value"><a href="https://wa.me/971561408556" style="color:inherit;text-decoration:none;">+971 56 140 8556</a></div>
           </div>
           <div>
-            <div class="contact-item-label">Based in</div>
-            <div class="contact-item-value">Dubai, UAE — serving investors globally</div>
+            <div class="contact-item-label">Office</div>
+            <div class="contact-item-value">Office 3602, 36th Floor, Burj Al Salam Tower, Trade Center, Dubai, UAE</div>
+            <div class="contact-item-value" style="color:var(--white-35);font-size:11px;margin-top:4px;">Serving investors globally</div>
           </div>
         </div>
       </div>
@@ -719,7 +778,14 @@
         </div>
         <div class="form-field">
           <label class="form-label">What are you most interested in?</label>
-          <textarea class="form-textarea" name="interest" placeholder="e.g. Off-plan investment, Golden Visa, short-term rental yield..."></textarea>
+          <select class="form-select" name="interest">
+            <option value="" disabled selected>Select your primary interest</option>
+            <option>Off-plan investment</option>
+            <option>Ready / secondary property</option>
+            <option>Golden Visa qualification</option>
+            <option>Rental income strategy</option>
+            <option>General consultation</option>
+          </select>
         </div>
         <button type="submit" id="contact-submit-btn" class="btn-primary" style="align-self:flex-start;">Send Message</button>
       </form>
@@ -768,6 +834,44 @@
           '<p style="font-family:sans-serif;font-size:0.875rem;color:#e05c5c;margin-bottom:1rem;">Something went wrong — please email us at <a href="mailto:info@fairopportunityrealestate.com" style="color:inherit;">info@fairopportunityrealestate.com</a></p>');
       }
     }
+  </script>
+  <script>
+    // ── ROI Calculator ──
+    (function() {
+      function parseNum(str) {
+        return parseFloat(String(str).replace(/[^0-9.]/g, '')) || 0;
+      }
+      function fmtAED(n) {
+        return 'AED ' + Math.round(n).toLocaleString();
+      }
+      function calc() {
+        var price = parseNum(document.getElementById('roiPrice').value);
+        var yld = parseFloat(document.getElementById('roiYield').value);
+        var app = parseFloat(document.getElementById('roiAppreciation').value);
+        if (!price) price = 1500000;
+        var annual = price * (yld / 100);
+        var monthly = annual / 12;
+        var futureVal = price * Math.pow(1 + app / 100, 5);
+        var totalReturn = (annual * 5) + (futureVal - price);
+        document.getElementById('roiAnnualIncome').textContent = fmtAED(annual);
+        document.getElementById('roiMonthlyIncome').textContent = fmtAED(monthly);
+        document.getElementById('roi5YearValue').textContent = fmtAED(futureVal);
+        document.getElementById('roi5YearReturn').textContent = fmtAED(totalReturn);
+        document.getElementById('roiYieldVal').textContent = yld + '%';
+        document.getElementById('roiAppreciationVal').textContent = app + '%';
+      }
+      document.addEventListener('DOMContentLoaded', function() {
+        var priceEl = document.getElementById('roiPrice');
+        var yieldEl = document.getElementById('roiYield');
+        var appEl = document.getElementById('roiAppreciation');
+        if (priceEl) {
+          priceEl.addEventListener('input', calc);
+          yieldEl.addEventListener('input', calc);
+          appEl.addEventListener('input', calc);
+          calc();
+        }
+      });
+    })();
   </script>
   <script>
     // NOTE: When posts.json is updated, paste the new array here too.

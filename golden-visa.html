@@ -270,31 +270,38 @@
     .gv-why-stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0;
-      border: 0.5px solid var(--gold-border);
-      border-radius: 3px;
-      overflow: hidden;
+      gap: 16px;
     }
     .gv-why-stat {
       padding: 36px 32px;
-      border-right: 0.5px solid var(--gold-border);
-      border-bottom: 0.5px solid var(--gold-border);
+      background: var(--bg-dark3, #1C1C1C);
+      border: 0.5px solid var(--subtle-border, rgba(255,255,255,0.06));
+      border-radius: 3px;
       position: relative;
       overflow: hidden;
+      transition: border-color 0.3s ease, transform 0.3s ease;
     }
-    .gv-why-stat:nth-child(2n) { border-right: none; }
-    .gv-why-stat:nth-child(3),
-    .gv-why-stat:nth-child(4) { border-bottom: none; }
+    .gv-why-stat:hover {
+      border-color: rgba(201,169,110,0.35);
+      transform: translateY(-2px);
+    }
     .gv-why-stat::before {
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(to right, var(--gold), transparent);
+      height: 2px;
+      background: linear-gradient(to right, var(--gold), rgba(201,169,110,0.2));
       opacity: 0;
       transition: opacity 0.3s ease;
     }
     .gv-why-stat:hover::before { opacity: 1; }
+    .gv-why-stat::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(201,169,110,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
     .gv-why-stat-num {
       font-family: var(--font-display);
       font-size: clamp(36px, 3.5vw, 52px);
@@ -302,7 +309,7 @@
       color: var(--gold);
       letter-spacing: -0.02em;
       line-height: 1;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
     .gv-why-stat-label {
       font-family: var(--font-ui);
@@ -343,7 +350,7 @@
       margin: 32px 0;
     }
 
-    /* ─── PROCESS SECTION ─── */
+    /* ─── PROCESS SECTION (Vertical Timeline) ─── */
     .gv-process {
       background: rgba(17,17,17,0.85);
       border-bottom: 0.5px solid var(--gold-border);
@@ -356,68 +363,77 @@
       pointer-events: none;
     }
     .gv-process-steps {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      display: flex;
+      flex-direction: column;
       gap: 0;
       position: relative;
+      max-width: 720px;
+      margin: 0 auto;
     }
-    /* Connecting line */
+    /* Vertical connecting line */
     .gv-process-steps::before {
       content: '';
       position: absolute;
-      top: 36px;
-      left: 7%;
-      right: 7%;
-      height: 0.5px;
-      background: linear-gradient(to right, var(--gold-border), rgba(201,169,110,0.35), var(--gold-border));
+      top: 0;
+      bottom: 0;
+      left: 28px;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--gold-border), rgba(201,169,110,0.35), var(--gold-border));
     }
     .gv-step {
-      padding: 0 24px;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: flex-start;
-      gap: 20px;
+      gap: 28px;
+      padding: 0 0 48px 0;
+      position: relative;
     }
-    .gv-step:first-child { padding-left: 0; }
-    .gv-step:last-child { padding-right: 0; }
+    .gv-step:last-child { padding-bottom: 0; }
     .gv-step-num {
-      width: 72px;
-      height: 72px;
-      border: 0.5px solid var(--gold-border);
+      width: 56px;
+      height: 56px;
+      min-width: 56px;
+      border: 1px solid var(--gold);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(22,22,22,0.9);
+      background: rgba(22,22,22,0.95);
       flex-shrink: 0;
       position: relative;
       z-index: 1;
-      transition: background 0.3s ease, border-color 0.3s ease;
+      transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 12px rgba(201,169,110,0.1), 0 0 0 4px rgba(22,22,22,0.95);
     }
     .gv-step:hover .gv-step-num {
-      background: rgba(28,28,28,0.92);
-      border-color: rgba(201,169,110,0.5);
+      background: rgba(28,28,28,0.95);
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(201,169,110,0.2), 0 0 0 4px rgba(22,22,22,0.95);
     }
     .gv-step-num-text {
       font-family: var(--font-display);
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 400;
       color: var(--gold);
       line-height: 1;
     }
+    .gv-step-content {
+      padding-top: 12px;
+    }
     .gv-step-title {
       font-family: var(--font-display);
-      font-size: 17px;
+      font-size: 19px;
       font-weight: 400;
       color: var(--white);
       line-height: 1.3;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .gv-step-body {
-      font-size: 11.5px;
+      font-size: 12.5px;
       font-weight: 300;
-      line-height: 1.75;
+      line-height: 1.8;
       color: var(--white-50);
+      max-width: 540px;
     }
 
     /* ─── ELIGIBILITY FORM ─── */
@@ -468,26 +484,36 @@
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
     .gv-checklist li {
       display: flex;
       align-items: flex-start;
-      gap: 12px;
+      gap: 14px;
       font-size: 12px;
       font-weight: 300;
       color: var(--white-70);
       line-height: 1.6;
+      background: rgba(28,28,28,0.7);
+      border: 0.5px solid rgba(255,255,255,0.06);
+      border-radius: 3px;
+      padding: 14px 16px;
+      transition: border-color 0.25s ease, background 0.25s ease;
     }
-    .gv-checklist li::before {
-      content: '';
-      width: 14px;
-      height: 14px;
-      border: 0.5px solid var(--gold);
-      border-radius: 50%;
+    .gv-checklist li:hover {
+      border-color: rgba(76,175,80,0.25);
+      background: rgba(32,32,32,0.8);
+    }
+    .gv-checklist-icon {
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
       flex-shrink: 0;
-      margin-top: 3px;
-      background: radial-gradient(circle, rgba(201,169,110,0.15) 0%, transparent 70%);
+      margin-top: 0;
+    }
+    .gv-checklist-icon svg {
+      width: 20px;
+      height: 20px;
     }
 
     /* Form */
@@ -781,8 +807,7 @@
       .gv-stat-item:nth-child(4) { border-top: 0.5px solid rgba(255,255,255,0.06); }
       .gv-benefits-grid { grid-template-columns: repeat(2, 1fr); }
       .gv-why-layout { grid-template-columns: 1fr; gap: 48px; }
-      .gv-process-steps { grid-template-columns: repeat(3, 1fr); gap: 32px; }
-      .gv-process-steps::before { display: none; }
+      .gv-process-steps { max-width: 600px; }
       .gv-form-layout { grid-template-columns: 1fr; gap: 48px; }
       .gv-form-aside { position: static; }
       .gv-faq-layout { grid-template-columns: 1fr; gap: 40px; }
@@ -794,7 +819,7 @@
       .gv-stat-bar { grid-template-columns: 1fr 1fr; }
       .gv-stat-item { padding: 20px 6%; }
       .gv-benefits-grid { grid-template-columns: 1fr; }
-      .gv-process-steps { grid-template-columns: 1fr; }
+      .gv-process-steps { max-width: 100%; }
       .gv-why-stats-grid { grid-template-columns: 1fr 1fr; }
       .gv-form { padding: 32px 24px; }
       .gv-form-row { grid-template-columns: 1fr; }
@@ -986,12 +1011,12 @@
   <!-- ═══════════════════════════════════════════ PROCESS -->
   <section class="gv-section gv-process" id="process">
     <div class="gv-section-inner">
-      <div class="gv-section-header" style="text-align:center; max-width:600px; margin:0 auto 64px;">
-        <div class="section-tag" style="justify-content:center">The Process</div>
+      <div class="gv-section-header" style="max-width:720px; margin:0 auto 64px;">
+        <div class="section-tag">The Process</div>
         <h2 class="gv-section-title">
           Five steps to your<br /><em>Golden Visa.</em>
         </h2>
-        <p class="gv-section-sub" style="margin:16px auto 0; text-align:center;">
+        <p class="gv-section-sub" style="margin-top:16px;">
           From property selection to residency stamp — FORE guides you through every document, every department, every step.
         </p>
       </div>
@@ -1000,7 +1025,7 @@
 
         <div class="gv-step">
           <div class="gv-step-num"><span class="gv-step-num-text">01</span></div>
-          <div>
+          <div class="gv-step-content">
             <div class="gv-step-title">Select a Qualifying Property</div>
             <div class="gv-step-body">Choose a property valued at AED 2,000,000 or above. Off-plan is eligible if at least 50% of the purchase price has been paid. FORE identifies properties that qualify and offer strong rental return.</div>
           </div>
@@ -1008,7 +1033,7 @@
 
         <div class="gv-step">
           <div class="gv-step-num"><span class="gv-step-num-text">02</span></div>
-          <div>
+          <div class="gv-step-content">
             <div class="gv-step-title">Sign &amp; Register with DLD</div>
             <div class="gv-step-body">Execute the Sales &amp; Purchase Agreement and register the transaction with the Dubai Land Department. The DLD registration fee is 4% of the property value. FORE handles the coordination and documentation.</div>
           </div>
@@ -1016,7 +1041,7 @@
 
         <div class="gv-step">
           <div class="gv-step-num"><span class="gv-step-num-text">03</span></div>
-          <div>
+          <div class="gv-step-content">
             <div class="gv-step-title">Obtain Your Title Deed</div>
             <div class="gv-step-body">Once registered, the DLD issues a Title Deed in your name. This is the key document that proves ownership and underpins your Golden Visa application. It typically takes 3–5 working days from registration.</div>
           </div>
@@ -1024,7 +1049,7 @@
 
         <div class="gv-step">
           <div class="gv-step-num"><span class="gv-step-num-text">04</span></div>
-          <div>
+          <div class="gv-step-content">
             <div class="gv-step-title">Apply Through GDRFA / ICA</div>
             <div class="gv-step-body">Submit your Golden Visa application to the General Directorate of Residency &amp; Foreigners Affairs (GDRFA) in Dubai or the Federal ICA portal. Includes medical screening and biometric registration.</div>
           </div>
@@ -1032,7 +1057,7 @@
 
         <div class="gv-step">
           <div class="gv-step-num"><span class="gv-step-num-text">05</span></div>
-          <div>
+          <div class="gv-step-content">
             <div class="gv-step-title">Receive Your 10-Year Visa</div>
             <div class="gv-step-body">Approval is typically granted within 5–15 working days. You receive a 10-year residency visa stamped in your passport. Sponsor your family, open a bank account, and begin life in Dubai on your own terms.</div>
           </div>
@@ -1057,13 +1082,13 @@
             The UAE Golden Visa through property investment is open to nationals from most countries. Eligibility is straightforward — the primary requirement is a property valued at AED 2,000,000 or above that is fully paid or at least 50% paid for off-plan purchases.
           </p>
           <ul class="gv-checklist">
-            <li>Property value of AED 2,000,000 or more</li>
-            <li>Property fully paid, or off-plan with 50%+ paid</li>
-            <li>No minimum age requirement</li>
-            <li>Joint ownership allowed (each owner must meet the AED 2M threshold individually)</li>
-            <li>Mortgaged properties accepted if outstanding balance is below 50% of value</li>
-            <li>Multiple properties can be combined to reach the threshold</li>
-            <li>Applicable to ready and off-plan residential property</li>
+            <li><span class="gv-checklist-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#4CAF50" stroke-width="1.5" fill="rgba(76,175,80,0.08)"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>Property value of AED 2,000,000 or more</li>
+            <li><span class="gv-checklist-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#4CAF50" stroke-width="1.5" fill="rgba(76,175,80,0.08)"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>Property fully paid, or off-plan with 50%+ paid</li>
+            <li><span class="gv-checklist-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#4CAF50" stroke-width="1.5" fill="rgba(76,175,80,0.08)"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>No minimum age requirement</li>
+            <li><span class="gv-checklist-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#4CAF50" stroke-width="1.5" fill="rgba(76,175,80,0.08)"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>Joint ownership allowed (each owner must meet the AED 2M threshold individually)</li>
+            <li><span class="gv-checklist-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#4CAF50" stroke-width="1.5" fill="rgba(76,175,80,0.08)"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>Mortgaged properties accepted if outstanding balance is below 50% of value</li>
+            <li><span class="gv-checklist-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#4CAF50" stroke-width="1.5" fill="rgba(76,175,80,0.08)"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>Multiple properties can be combined to reach the threshold</li>
+            <li><span class="gv-checklist-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="11" stroke="#4CAF50" stroke-width="1.5" fill="rgba(76,175,80,0.08)"/><path d="M7 12.5l3.5 3.5 6.5-7" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></span>Applicable to ready and off-plan residential property</li>
           </ul>
         </div>
 

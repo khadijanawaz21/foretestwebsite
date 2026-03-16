@@ -431,6 +431,8 @@
 
     .lesson-item.active {
       border-color: rgba(201,169,110,0.35);
+      border-left: 2px solid var(--gold);
+      background: rgba(201,169,110,0.03);
     }
 
     .lesson-header {
@@ -463,6 +465,25 @@
       flex-shrink: 0;
       min-width: 60px;
       text-align: center;
+    }
+
+    .lesson-icon {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lesson-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--gold);
+      stroke-width: 1.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .lesson-title-block {
@@ -1258,7 +1279,7 @@
       <div class="acad-hero-meta">
         <div class="acad-hero-meta-item">
           <div class="acad-hero-meta-val">7</div>
-          <div class="acad-hero-meta-label">Video Lessons</div>
+          <div class="acad-hero-meta-label">Lessons</div>
         </div>
         <div class="acad-hero-meta-item">
           <div class="acad-hero-meta-val">0</div>
@@ -1345,6 +1366,7 @@
       <div class="lesson-item" data-lesson="1">
         <div class="lesson-header">
           <div class="lesson-day-badge">Day 1</div>
+          <div class="lesson-icon"><svg viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
           <div class="lesson-title-block">
             <div class="lesson-tag">The Macro Case</div>
             <div class="lesson-title">Why Dubai, Why Now</div>
@@ -1374,6 +1396,7 @@
       <div class="lesson-item" data-lesson="2">
         <div class="lesson-header">
           <div class="lesson-day-badge">Day 2</div>
+          <div class="lesson-icon"><svg viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 14 18.469V19a2 2 0 1 1-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
           <div class="lesson-title-block">
             <div class="lesson-tag">Buying Strategy</div>
             <div class="lesson-title">Off-Plan vs Ready: The Strategy Decision</div>
@@ -1403,6 +1426,7 @@
       <div class="lesson-item" data-lesson="3">
         <div class="lesson-header">
           <div class="lesson-day-badge">Day 3</div>
+          <div class="lesson-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
           <div class="lesson-title-block">
             <div class="lesson-tag">Legal Framework</div>
             <div class="lesson-title">Your Rights as a Foreign Property Owner</div>
@@ -1432,6 +1456,7 @@
       <div class="lesson-item" data-lesson="4">
         <div class="lesson-header">
           <div class="lesson-day-badge">Day 4</div>
+          <div class="lesson-icon"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/><line x1="8" y1="18" x2="12" y2="18"/><line x1="15" y1="14" x2="15" y2="18"/><line x1="13" y1="16" x2="17" y2="16"/></svg></div>
           <div class="lesson-title-block">
             <div class="lesson-tag">Financial Analysis</div>
             <div class="lesson-title">How to Calculate Real Returns</div>
@@ -1461,6 +1486,7 @@
       <div class="lesson-item" data-lesson="5">
         <div class="lesson-header">
           <div class="lesson-day-badge">Day 5</div>
+          <div class="lesson-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="3" x2="12" y2="21"/><polyline points="1 12 12 3 23 12"/><line x1="1" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="23" y2="12"/><circle cx="5" cy="12" r="1.5" fill="none"/><circle cx="19" cy="12" r="1.5" fill="none"/></svg></div>
           <div class="lesson-title-block">
             <div class="lesson-tag">Financing</div>
             <div class="lesson-title">Financing Your Investment as a Non-Resident</div>
@@ -1490,6 +1516,7 @@
       <div class="lesson-item" data-lesson="6">
         <div class="lesson-header">
           <div class="lesson-day-badge">Day 6</div>
+          <div class="lesson-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
           <div class="lesson-title-block">
             <div class="lesson-tag">Developer Due Diligence</div>
             <div class="lesson-title">Choosing a Developer You Can Trust</div>
@@ -1519,6 +1546,7 @@
       <div class="lesson-item" data-lesson="7">
         <div class="lesson-header">
           <div class="lesson-day-badge">Day 7</div>
+          <div class="lesson-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
           <div class="lesson-title-block">
             <div class="lesson-tag">Portfolio Strategy</div>
             <div class="lesson-title">Building a Real Portfolio Over Time</div>
@@ -1563,9 +1591,9 @@
 
       <div class="quiz-progress-wrap">
         <div class="quiz-progress-track">
-          <div class="quiz-progress-fill" id="quizProgressFill"></div>
+          <div class="quiz-progress-fill" id="quizProgressFill" style="width:14.28%"></div>
         </div>
-        <div class="quiz-progress-label" id="quizProgressLabel">Question 1 of 7</div>
+        <div class="quiz-progress-label" id="quizProgressLabel">1 / 7</div>
       </div>
 
       <!-- Q1 -->
@@ -1653,16 +1681,16 @@
       </div>
 
       <!-- Q7 -->
-      <div class="quiz-card" data-q="7" data-answer="B">
+      <div class="quiz-card" data-q="7" data-answer="D">
         <div class="quiz-q-number">Question 7 — Lesson 7</div>
-        <div class="quiz-q-text">What is the minimum property investment value required to qualify for a UAE Golden Visa?</div>
+        <div class="quiz-q-text">What is the minimum property investment value required to qualify for a 10-year UAE Golden Visa?</div>
         <div class="quiz-options">
           <button class="quiz-option" data-opt="A"><span class="quiz-option-letter">A</span>AED 500,000</button>
           <button class="quiz-option" data-opt="B"><span class="quiz-option-letter">B</span>AED 750,000</button>
           <button class="quiz-option" data-opt="C"><span class="quiz-option-letter">C</span>AED 1,000,000</button>
           <button class="quiz-option" data-opt="D"><span class="quiz-option-letter">D</span>AED 2,000,000</button>
         </div>
-        <div class="quiz-feedback">Correct. The UAE Golden Visa requires a minimum real estate investment of AED 750,000 — qualifying you for a 10-year renewable residency visa that covers you, your spouse, and dependents. This threshold applies to the property's registered value with the DLD.</div>
+        <div class="quiz-feedback">Correct. The 10-year UAE Golden Visa requires a minimum real estate investment of AED 2,000,000 — qualifying you for a renewable residency visa that covers you, your spouse, and dependents. This threshold applies to the property's registered value with the DLD.</div>
         <div class="quiz-nav"><button class="quiz-next-btn" data-next="result">See My Results &rarr;</button></div>
       </div>
 
@@ -1851,9 +1879,9 @@
     function updateProgress(q) {
       var fill = document.getElementById('quizProgressFill');
       var label = document.getElementById('quizProgressLabel');
-      var pct = ((q - 1) / totalQuestions) * 100;
+      var pct = (q / totalQuestions) * 100;
       fill.style.width = pct + '%';
-      label.textContent = 'Question ' + q + ' of ' + totalQuestions;
+      label.textContent = q + ' / ' + totalQuestions;
     }
 
     document.querySelectorAll('.quiz-option').forEach(function(btn) {

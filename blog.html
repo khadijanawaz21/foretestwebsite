@@ -233,6 +233,117 @@
       color: var(--white-35);
     }
 
+    /* ─── SKELETON / SHIMMER LOADING ─── */
+    @keyframes shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+    .skeleton-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-dark3);
+      border: 0.5px solid var(--subtle-border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .skeleton-img {
+      width: 100%;
+      aspect-ratio: 16/10;
+      background: var(--bg-dark2);
+    }
+    .skeleton-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .skeleton-line {
+      height: 12px;
+      border-radius: 2px;
+      background: linear-gradient(
+        90deg,
+        var(--bg-dark2) 0%,
+        rgba(255,255,255,0.04) 40%,
+        rgba(255,255,255,0.06) 50%,
+        rgba(255,255,255,0.04) 60%,
+        var(--bg-dark2) 100%
+      );
+      background-size: 800px 100%;
+      animation: shimmer 1.6s ease-in-out infinite;
+    }
+    .skeleton-line--date {
+      width: 35%;
+      height: 8px;
+    }
+    .skeleton-line--title {
+      width: 85%;
+      height: 16px;
+      margin-top: 2px;
+    }
+    .skeleton-line--title-short {
+      width: 55%;
+      height: 16px;
+    }
+    .skeleton-line--text {
+      width: 100%;
+      height: 10px;
+    }
+    .skeleton-line--text-med {
+      width: 80%;
+      height: 10px;
+    }
+    .skeleton-line--text-short {
+      width: 60%;
+      height: 10px;
+    }
+    .skeleton-line--cta {
+      width: 30%;
+      height: 8px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 0.5px solid var(--subtle-border);
+    }
+    /* Stagger the shimmer across cards */
+    .skeleton-card:nth-child(2) .skeleton-line { animation-delay: 0.15s; }
+    .skeleton-card:nth-child(3) .skeleton-line { animation-delay: 0.3s; }
+    .skeleton-card:nth-child(4) .skeleton-line { animation-delay: 0.45s; }
+    .skeleton-card:nth-child(5) .skeleton-line { animation-delay: 0.6s; }
+    .skeleton-card:nth-child(6) .skeleton-line { animation-delay: 0.75s; }
+
+    /* ─── LOAD-FAIL FALLBACK ─── */
+    .blog-fallback {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 80px 40px;
+    }
+    .blog-fallback p {
+      font-size: 13px;
+      color: var(--white-35);
+      letter-spacing: 0.5px;
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+    .blog-fallback a {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      transition: color 0.2s ease, gap 0.2s ease;
+    }
+    .blog-fallback a:hover {
+      color: var(--gold-light);
+      gap: 10px;
+    }
+    .blog-fallback a:focus-visible {
+      outline: 2px solid var(--gold-border);
+      outline-offset: 4px;
+    }
+
     /* ─── RESPONSIVE ─── */
     @media (max-width: 1024px) {
       .blog-full-grid { grid-template-columns: repeat(2, 1fr); }
@@ -269,7 +380,13 @@
   <!-- ═══════════════════════════════════════════ BLOG LISTING -->
   <section class="blog-listing-section">
     <div class="blog-full-grid" id="blogGrid">
-      <div class="blog-empty">Loading articles&hellip;</div>
+      <!-- Skeleton loading cards (replaced once fore:ready fires) -->
+      <div class="skeleton-card" aria-hidden="true"><div class="skeleton-img skeleton-line"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--date"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--title-short"></div><div class="skeleton-line skeleton-line--text"></div><div class="skeleton-line skeleton-line--text-med"></div><div class="skeleton-line skeleton-line--text-short"></div><div class="skeleton-line skeleton-line--cta"></div></div></div>
+      <div class="skeleton-card" aria-hidden="true"><div class="skeleton-img skeleton-line"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--date"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--title-short"></div><div class="skeleton-line skeleton-line--text"></div><div class="skeleton-line skeleton-line--text-med"></div><div class="skeleton-line skeleton-line--text-short"></div><div class="skeleton-line skeleton-line--cta"></div></div></div>
+      <div class="skeleton-card" aria-hidden="true"><div class="skeleton-img skeleton-line"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--date"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--title-short"></div><div class="skeleton-line skeleton-line--text"></div><div class="skeleton-line skeleton-line--text-med"></div><div class="skeleton-line skeleton-line--text-short"></div><div class="skeleton-line skeleton-line--cta"></div></div></div>
+      <div class="skeleton-card" aria-hidden="true"><div class="skeleton-img skeleton-line"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--date"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--title-short"></div><div class="skeleton-line skeleton-line--text"></div><div class="skeleton-line skeleton-line--text-med"></div><div class="skeleton-line skeleton-line--text-short"></div><div class="skeleton-line skeleton-line--cta"></div></div></div>
+      <div class="skeleton-card" aria-hidden="true"><div class="skeleton-img skeleton-line"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--date"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--title-short"></div><div class="skeleton-line skeleton-line--text"></div><div class="skeleton-line skeleton-line--text-med"></div><div class="skeleton-line skeleton-line--text-short"></div><div class="skeleton-line skeleton-line--cta"></div></div></div>
+      <div class="skeleton-card" aria-hidden="true"><div class="skeleton-img skeleton-line"></div><div class="skeleton-body"><div class="skeleton-line skeleton-line--date"></div><div class="skeleton-line skeleton-line--title"></div><div class="skeleton-line skeleton-line--title-short"></div><div class="skeleton-line skeleton-line--text"></div><div class="skeleton-line skeleton-line--text-med"></div><div class="skeleton-line skeleton-line--text-short"></div><div class="skeleton-line skeleton-line--cta"></div></div></div>
     </div>
   </section>
 
@@ -294,6 +411,20 @@
     const POSTS_DATA = [{"slug":"biggest-mistakes-investors-make-in-dubai-real-estate","title":"Biggest Mistakes Investors Make in Dubai Real Estate","category":"Investor Guide","date":"2025-12-23","image":"https://framerusercontent.com/images/paHVIhNEbGxecA1Pf2fSVsBf0GU.jpg","excerpt":"Dubai's property market rewards disciplined investors and punishes reactive ones. Here are the most common and costly mistakes to avoid.","body":[{"type":"p","text":"The Dubai real estate market continues to attract global investors thanks to high rental yields, strong population growth, and investor-friendly regulations. However, despite Dubai being one of the most transparent property markets in the region, many investors still make avoidable mistakes that limit returns or increase risk."},{"type":"h2","text":"Investing Without Understanding the Market Cycle"},{"type":"p","text":"One of the biggest mistakes is buying at the wrong point in the market cycle. Dubai operates in clearly defined phases of growth, peak, correction, and recovery. Many buyers enter the market when prices have already peaked, driven by hype rather than data. Smart investors focus on early growth phases, upcoming infrastructure announcements, and population movement trends."},{"type":"h2","text":"Chasing Low Prices Instead of Strong Demand"},{"type":"p","text":"A cheap property does not automatically mean a good investment. Many investors focus on price per square foot while ignoring rental demand, tenant profile, and exit liquidity. In Dubai, demand is driven by job creation, visa reforms, lifestyle amenities, and proximity to business hubs. Buying in areas with weak demand often results in long vacancy periods and slow resale."},{"type":"h2","text":"Ignoring the Developer's Track Record"},{"type":"p","text":"Dubai offers many off-plan opportunities, but not all developers are equal. A common mistake is investing based solely on payment plans or marketing promises without checking the developer's delivery history. Experienced investors always evaluate past project handovers, construction quality, financial stability, and RERA registration."},{"type":"h2","text":"Underestimating the True Cost of Ownership"},{"type":"p","text":"While Dubai has no property tax, investors still need to budget for Dubai Land Department registration fees, agent commission, service charges, and maintenance funds. Ignoring these costs can distort return calculations and reduce actual net yield."},{"type":"h2","text":"Overleveraging Without a Backup Plan"},{"type":"p","text":"Easy financing and flexible payment plans can tempt investors to overextend. While leverage can increase returns, it also increases exposure during market slowdowns. Prudent investors always plan for interest rate changes, vacancy periods, and service charge increases."},{"type":"h2","text":"Choosing the Wrong Real Estate Partner"},{"type":"p","text":"Not every agent understands investment strategy, market cycles, or legal safeguards. The right real estate partner doesn't just sell — they advise. At Fair Opportunity Real Estate, investors are guided through every stage of the process, from identifying high-demand locations to understanding payment plans, rental potential, and exit strategies."}]},{"slug":"how-the-uae-government-protects-property-investors-in-dubai","title":"How the UAE Government Protects Property Investors in Dubai","category":"Market Update","date":"2025-12-16","image":"https://framerusercontent.com/images/83Sm6sGOyq4mzHsquEoodrCCUfY.png","excerpt":"From mandatory escrow accounts to real-time project monitoring, here's the full picture of investor protection in the Dubai real estate market.","body":[{"type":"p","text":"The Dubai real estate market has evolved into one of the most regulated and investor-friendly property markets globally. The UAE government has implemented strict legal frameworks, financial safeguards, and regulatory authorities to protect property investors — especially in off-plan real estate transactions."},{"type":"h2","text":"Who Controls Dubai Real Estate?"},{"type":"p","text":"Dubai's real estate sector is governed by the Dubai Land Department (DLD) and Real Estate Regulatory Agency (RERA). These authorities regulate developer licensing, project approvals, payment plans, escrow accounts, property registration, and buyer rights."},{"type":"h2","text":"Escrow Accounts: The Core Investor Protection"},{"type":"p","text":"One of the strongest investor safeguards is the mandatory escrow account law (Dubai Law No. 8 of 2007). All buyer payments are deposited into a RERA-approved bank-controlled account. Developers cannot freely access these funds — they are released only after construction milestones are independently verified."},{"type":"callout","text":"Developers must deposit 100% of buyer payments into escrow. If a project is cancelled, DLD has the authority to refund buyers directly from the escrow account."},{"type":"h2","text":"Developer Regulation and Track Record"},{"type":"p","text":"Before any developer can sell property in Dubai, they must be registered with RERA, have their project approved by DLD, and have active escrow accounts. RERA also publicly tracks past project delivery, delays, cancellations, and financial compliance — giving investors the ability to verify credibility before investing."},{"type":"h2","text":"Title Deeds and Ownership Protection"},{"type":"p","text":"Dubai ensures clarity of ownership at every stage. Off-plan buyers receive an Oqood Certificate, with a full Title Deed issued upon project completion. All ownership records are registered with DLD digitally, eliminating fraud. Foreign investors receive 100% freehold ownership in designated areas."}]},{"slug":"shahrukhz-by-danube-a-new-landmark-investment-opportunity-in-dubai-real-estate","title":"Shahrukhz by Danube: A New Landmark Investment Opportunity","category":"Property Spotlight","date":"2025-12-10","image":"https://framerusercontent.com/images/vpMYrAV5JpjvdzMC4Mv9L0WYG8.png","excerpt":"Danube Properties' latest launch combines flexible payment plans with strong rental demand — here's what investors need to know.","body":[{"type":"p","text":"Danube Properties has introduced Shahrukhz, a new project generating strong interest among investors and end users alike. Known for delivering high-quality developments with flexible payment plans, Danube's latest launch reflects everything investors look for in today's Dubai property market: accessibility, smart layouts, and long-term value."},{"type":"h2","text":"Why Shahrukhz Matters Right Now"},{"type":"p","text":"The success of the Dubai real estate market is driven by rising population growth, foreign investment, and strong demand for mid-to-premium residential communities. Projects like Shahrukhz enter the market at a time when investors are prioritising flexible payment options, strong rental demand, and reliable developers with a proven track record."},{"type":"h2","text":"Danube Properties: A Trusted Developer"},{"type":"p","text":"Danube Properties has become one of the most recognised names in Dubai real estate, particularly known for innovative payment plans. Their developments appeal to first-time investors, overseas buyers, and experienced portfolio builders — with competitive entry prices, well-planned layouts, and investor-friendly post-handover payment structures."},{"type":"h2","text":"Investment Potential"},{"type":"p","text":"In a market where rental yields average between 5–8%, off-plan developments continue to play a major role in shaping investor sentiment. Projects like Shahrukhz offer high demand from end users and tenants, payment flexibility compared to ready properties, and potential capital appreciation during construction."}]},{"slug":"dubai-2026","title":"Dubai 2026: The Ultimate Guide for Real Estate Investors and Residents","category":"Insight","date":"2025-12-08","image":"https://framerusercontent.com/images/4wCDcBF0oFTkoCOUtGn3dee9f8U.jpg","excerpt":"Etihad Rail, 349 project completions, and a record government budget — here's everything transforming Dubai in 2026 and what it means for property.","body":[{"type":"p","text":"Dubai never stands still. As we approach 2026, the emirate is unveiling a wave of transformative developments that will reshape how we live, invest, and move around the city. For real estate professionals and investors, understanding these changes is essential."},{"type":"h2","text":"Etihad Rail: The 57-Minute Game-Changer"},{"type":"p","text":"After years of anticipation, Etihad Rail passenger services launch in 2026, connecting 11 UAE cities from Al Sila in the west to Fujairah on the east coast. Abu Dhabi to Dubai in 57 minutes. Abu Dhabi to Fujairah in 105 minutes. Projected 36.5 million passengers annually by 2030. Properties within walking distance of rail stations will command premium prices — this is Dubai's equivalent of the Metro Red Line effect, but on a much larger scale."},{"type":"callout","text":"Smart investors should watch: Sharjah developments near rail stations, Al Ain residential communities, Fujairah beachfront properties, and new developments along the rail corridor."},{"type":"h2","text":"Burj Binghatti: World's Tallest Residential Tower Completes"},{"type":"p","text":"The collaboration between Binghatti Developers and luxury jeweler Jacob & Co reaches completion in 2026. Rising over 100 floors above Business Bay, ultra-luxury branded residences historically outperform standard developments in capital appreciation. High-end furnished rentals in branded buildings can achieve 6–8% yields while maintaining capital value better during market corrections."},{"type":"h2","text":"349+ Developments Delivering in 2026"},{"type":"p","text":"2026 is a massive year for project completions across Dubai. Over 349 residential properties are scheduled for handover throughout the year, spanning from budget-friendly to ultra-luxury. This creates both opportunity and competition — investors in the right locations will benefit from increased rental demand as new residents move in."}]},{"slug":"dubai-has-just-unveiled-its-largest-budget-ever-aed-303-billion-what-smart-investors-should-know","title":"Dubai's AED 303 Billion Budget: What Smart Investors Should Know","category":"Market Update","date":"2025-12-03","image":"https://framerusercontent.com/images/Mv1HkGxo5JcPsLnEoK5EznSGVII.png","excerpt":"Sheikh Mohammed has approved the largest budget in Dubai's history. Nearly half goes to infrastructure. Here's what that means for property investors.","body":[{"type":"p","text":"On 23 November 2025, Sheikh Mohammed bin Rashid Al Maktoum approved the largest budget in the emirate's history — AED 302.7 billion for 2026–2028. For 2026 alone, expenditures are projected at AED 99.5 billion, with expected revenues of AED 107.7 billion."},{"type":"callout","text":"Approximately 48% of the total spending will be allocated toward infrastructure and construction — roads, bridges, public transportation, tunnels, drainage, and related projects."},{"type":"h2","text":"What This Means for Property Investors"},{"type":"p","text":"Infrastructure spending at this scale directly supports real estate values. New roads and transport links open previously inaccessible areas to development. Public spending creates employment, which drives population growth and housing demand. Areas near planned infrastructure projects tend to see the strongest appreciation."},{"type":"h2","text":"Where to Watch"},{"type":"p","text":"With nearly half the budget going to infrastructure, investors should track announcements closely. Projects near new transport corridors, improved utility networks, and government development zones will be best positioned to capitalise on this spending cycle."}]},{"slug":"right-time-to-invest","title":"When Is the Right Time to Invest in Off-Plan Properties in Dubai?","category":"Investor Guide","date":"2025-10-21","image":"https://framerusercontent.com/images/RH8t1EOm5b04eAVe46iBc0THBmc.png","excerpt":"Timing off-plan investment correctly can be the difference between average returns and exceptional ones. Here's how to read the market.","body":[{"type":"p","text":"Dubai's real estate market is now one of the top choices for investors worldwide, with off-plan properties especially popular. Still, many investors wonder: when is the best time to invest? Choosing the right time can mean the difference between average returns and real growth."},{"type":"h2","text":"Understanding Off-Plan Investment"},{"type":"p","text":"Off-plan properties are sold before construction is complete. Investors buy at pre-construction prices, often 10–30% lower than completed units. Returns can start growing even before handover, as property values typically rise during construction."},{"type":"h2","text":"The Early Launch Phase"},{"type":"p","text":"The earliest launch phase often offers the best prices and most flexible payment plans. Developers release a limited number of units at attractive rates to create initial market momentum. Once demand increases, early investors typically enjoy the highest appreciation."},{"type":"h2","text":"During Market Stability or Recovery"},{"type":"p","text":"When Dubai's property market shows stable or recovering trends, investor confidence grows. This stage offers a balance between safety and strong upside. The current 2025–2026 conditions represent exactly this type of environment — fundamentals are strong, supply is controlled, and international demand continues to grow."},{"type":"h2","text":"Signs You're Looking at the Right Project"},{"type":"p","text":"Location with proven demand, a developer with a clean delivery record, a payment plan structured around construction milestones, and realistic rental yield projections — these are the markers of a sound off-plan investment. When all four align, timing becomes secondary to fundamentals."}]}];
 
     document.addEventListener('fore:ready', initBlog);
+
+    // Fallback: if fore:ready never fires (e.g. components.js fails), show fallback after 8s
+    const _skeletonTimeout = setTimeout(function() {
+      const grid = document.getElementById('blogGrid');
+      if (grid.querySelector('.skeleton-card')) {
+        grid.innerHTML =
+          '<div class="blog-fallback">' +
+            '<p>We couldn\u2019t load the articles right now.</p>' +
+            '<a href="https://www.fairopportunityrealestate.com" target="_blank" rel="noopener">' +
+              'Visit our main site for the latest articles &#8594;' +
+            '</a>' +
+          '</div>';
+      }
+    }, 8000);
 
     function formatDate(str) {
       const d = new Date(str + 'T00:00:00');
@@ -338,6 +469,7 @@
     }
 
     function initBlog() {
+      clearTimeout(_skeletonTimeout);
       const posts = POSTS_DATA;
 
       // Detect ?cat= param for deep linking from post sidebar
