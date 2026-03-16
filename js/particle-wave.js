@@ -1,7 +1,8 @@
 /**
  * FORE Gold Particle Wave Background
- * Fixed fullscreen canvas behind all content.
- * Brand gold #C9A96E at 0.3 opacity, 40×60 grid, sine wave animation.
+ * Fixed fullscreen canvas — visible only in hero/header area.
+ * Fades out as user scrolls past the hero section.
+ * Brand gold #C9A96E at 0.12 opacity, 40×60 grid, sine wave animation.
  */
 (function () {
   var scene = new THREE.Scene();
@@ -40,11 +41,13 @@
 
   geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
+  // Reduced base opacity for subtlety
+  var BASE_OPACITY = 0.12;
   var material = new THREE.PointsMaterial({
     color: 0xC9A96E,
     size: 6,
     transparent: true,
-    opacity: 0.3,
+    opacity: BASE_OPACITY,
     sizeAttenuation: true
   });
 
@@ -52,9 +55,40 @@
   scene.add(particles);
 
   var count = 0;
+  var currentOpacity = BASE_OPACITY;
+
+  // Scroll-based fade: particles visible in hero, fade out in content
+  var heroHeight = window.innerHeight;
+  var fadeStart = heroHeight * 0.3;
+  var fadeEnd = heroHeight * 1.0;
+
+  window.addEventListener('scroll', function () {
+    var scrollY = window.scrollY;
+    if (scrollY <= fadeStart) {
+      currentOpacity = BASE_OPACITY;
+    } else if (scrollY >= fadeEnd) {
+      currentOpacity = 0;
+    } else {
+      currentOpacity = BASE_OPACITY * (1 - (scrollY - fadeStart) / (fadeEnd - fadeStart));
+    }
+  }, { passive: true });
 
   function animate() {
     requestAnimationFrame(animate);
+
+    // Skip rendering when fully transparent
+    if (currentOpacity <= 0.001) {
+      if (renderer.domElement.style.visibility !== 'hidden') {
+        renderer.domElement.style.visibility = 'hidden';
+      }
+      return;
+    }
+    if (renderer.domElement.style.visibility === 'hidden') {
+      renderer.domElement.style.visibility = 'visible';
+    }
+
+    material.opacity = currentOpacity;
+
     var pos = geometry.attributes.position.array;
     var i = 0;
     for (var iy = 0; iy < ROWS; iy++) {
@@ -74,5 +108,8 @@
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    heroHeight = window.innerHeight;
+    fadeStart = heroHeight * 0.3;
+    fadeEnd = heroHeight * 1.0;
   });
 })();

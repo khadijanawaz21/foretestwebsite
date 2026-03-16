@@ -461,8 +461,17 @@ section {
   font-weight: 300;
   color: rgba(201,169,110,0.15);
   line-height: 1;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
+.pillar-icon {
+  width: 36px;
+  height: 36px;
+  color: var(--gold);
+  margin-bottom: 16px;
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+.pillar:hover .pillar-icon { opacity: 1; }
 .pillar-title {
   font-family: var(--font-display);
   font-size: 22px;
@@ -1928,6 +1937,7 @@ footer {
   .stats-bar { grid-template-columns: repeat(2, 1fr); gap: 32px; }
   .stat-item { border-right: none; padding: 0; border-bottom: 0.5px solid var(--subtle-border); padding-bottom: 24px; }
   .stat-item:nth-child(even) { border-bottom: none; }
+  .stat-item:last-child { border-bottom: none; }
   .why-fore-header { grid-template-columns: 1fr; gap: 24px; }
   .pillars { grid-template-columns: 1fr; }
   .property-grid { grid-template-columns: repeat(2, 1fr); }

@@ -48,14 +48,15 @@
     pointer-events: none;
   }
 
-  /* ── Stats bar border fix ── */
+  /* ── Stats bar: remove all dividers, use gap spacing ── */
   .stat-item {
     border-right: none !important;
-    border-bottom: 0.5px solid var(--subtle-border);
-    padding-bottom: 20px;
+    border-bottom: none !important;
+    padding: 0 !important;
+    padding-bottom: 0 !important;
   }
-  .stat-item:nth-last-child(-n+2) {
-    border-bottom: none;
+  .stats-bar {
+    gap: 32px !important;
   }
 
   /* ── Golden Visa card: show content by default ── */
