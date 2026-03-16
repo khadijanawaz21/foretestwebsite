@@ -107,6 +107,7 @@
   #propertyGrid {
     display: flex !important;
     overflow-x: auto;
+    overflow-y: hidden;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     gap: 16px;
@@ -153,6 +154,7 @@
   .testimonial-grid {
     display: flex !important;
     overflow-x: auto;
+    overflow-y: hidden;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     gap: 16px;

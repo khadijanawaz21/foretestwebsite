@@ -296,11 +296,15 @@
     var autoInterval;
 
     function advance() {
+      // Only auto-advance when the carousel is visible on screen
+      var rect = grid.getBoundingClientRect();
+      if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+
       currentIdx = (currentIdx + 1) % cards.length;
       var cardLeft = cards[currentIdx].offsetLeft;
       var cardWidth = cards[currentIdx].offsetWidth;
       var containerWidth = grid.offsetWidth;
-      grid.scrollTo({ left: cardLeft - (containerWidth - cardWidth) / 2, behavior: 'smooth' });
+      grid.scrollLeft = cardLeft - (containerWidth - cardWidth) / 2;
     }
 
     function startAuto() {

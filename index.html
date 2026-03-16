@@ -577,9 +577,10 @@
   </section>
 
   <script>
-    // Touch/click flip for mobile
+    // Click/keyboard flip for desktop — mobile handled by mobile.js
     document.querySelectorAll('.team-flip-card').forEach(function(card) {
       card.addEventListener('click', function() {
+        if (window.matchMedia('(max-width: 768px)').matches) return;
         this.classList.toggle('flipped');
       });
       card.addEventListener('keydown', function(e) {
