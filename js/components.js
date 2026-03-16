@@ -21,11 +21,22 @@ document.addEventListener('DOMContentLoaded', function () {
       .then(function (html) {
         const tmp = document.createElement('div');
         tmp.innerHTML = html;
+        // Collect scripts to execute after DOM insertion
+        const scripts = [];
         // Replace the placeholder with the fetched nodes
         while (tmp.firstChild) {
-          el.parentNode.insertBefore(tmp.firstChild, el);
+          var node = tmp.firstChild;
+          el.parentNode.insertBefore(node, el);
+          if (node.nodeName === 'SCRIPT') scripts.push(node);
         }
         el.parentNode.removeChild(el);
+        // Re-create script elements so the browser executes them
+        scripts.forEach(function (old) {
+          var s = document.createElement('script');
+          if (old.src) s.src = old.src;
+          else s.textContent = old.textContent;
+          old.parentNode.replaceChild(s, old);
+        });
       })
       .catch(function (err) {
         console.warn('[FORE] Component load error:', err.message);
