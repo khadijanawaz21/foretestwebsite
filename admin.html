@@ -222,6 +222,40 @@
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
+    /* ── Sub-tabs (for Blog panel) ── */
+    .sub-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 0.5px solid var(--subtle-border);
+      margin-bottom: 24px;
+    }
+
+    .sub-tab-btn {
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--white-35);
+      font-family: var(--font-ui);
+      font-size: 8.5px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .sub-tab-btn:hover { color: var(--white-50); }
+    .sub-tab-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+
+    .sub-tab-btn.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+    }
+
+    .sub-panel { display: none; }
+    .sub-panel.active { display: block; }
+
     /* ── Table ── */
     .listings-table {
       width: 100%;
@@ -281,6 +315,16 @@
     }
 
     .status-rented {
+      background: rgba(255,152,0,0.15);
+      color: var(--warning);
+    }
+
+    .status-published {
+      background: rgba(76,175,80,0.15);
+      color: var(--success);
+    }
+
+    .status-draft {
       background: rgba(255,152,0,0.15);
       color: var(--warning);
     }
@@ -501,6 +545,210 @@
     .btn-cancel:hover { border-color: var(--gold-border); color: var(--white-70); }
     .btn-cancel:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
+    /* ── Image Upload Component ── */
+    .upload-zone {
+      background: var(--bg);
+      border: 1px dashed var(--subtle-border);
+      border-radius: 3px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.3s ease, background 0.3s ease;
+      position: relative;
+    }
+
+    .upload-zone:hover,
+    .upload-zone.dragover {
+      border-color: var(--gold-border);
+      background: rgba(201,169,110,0.03);
+    }
+
+    .upload-zone-icon {
+      display: block;
+      margin: 0 auto 8px;
+      opacity: 0.35;
+    }
+
+    .upload-zone-text {
+      font-size: 11px;
+      color: var(--white-35);
+      pointer-events: none;
+    }
+
+    .upload-zone-hint {
+      font-size: 9px;
+      color: var(--white-20);
+      margin-top: 4px;
+      pointer-events: none;
+    }
+
+    .upload-zone input[type="file"] {
+      display: none;
+    }
+
+    .upload-preview {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+    }
+
+    .upload-preview img {
+      width: 80px;
+      height: 56px;
+      object-fit: cover;
+      border-radius: 2px;
+      border: 0.5px solid var(--subtle-border);
+    }
+
+    .upload-preview-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .upload-preview-name {
+      font-size: 11px;
+      color: var(--white-70);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .upload-preview-size {
+      font-size: 9px;
+      color: var(--white-35);
+    }
+
+    .upload-remove {
+      background: none;
+      border: none;
+      color: var(--white-35);
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px 8px;
+      line-height: 1;
+      transition: color 0.2s ease;
+    }
+
+    .upload-remove:hover { color: var(--error); }
+
+    .upload-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--subtle-border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Multi-image upload */
+    .multi-upload-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .multi-upload-thumb {
+      position: relative;
+      width: 80px;
+      height: 56px;
+    }
+
+    .multi-upload-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 2px;
+      border: 0.5px solid var(--subtle-border);
+    }
+
+    .multi-upload-thumb .upload-remove {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: var(--bg-dark);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      padding: 0;
+      border: 0.5px solid var(--subtle-border);
+    }
+
+    .multi-upload-add {
+      width: 80px;
+      height: 56px;
+      background: var(--bg);
+      border: 1px dashed var(--subtle-border);
+      border-radius: 2px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white-35);
+      font-size: 22px;
+      transition: border-color 0.3s ease, color 0.3s ease;
+    }
+
+    .multi-upload-add:hover {
+      border-color: var(--gold-border);
+      color: var(--gold);
+    }
+
+    .multi-upload-add.disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* ── Markdown Toolbar ── */
+    .md-toolbar {
+      display: flex;
+      gap: 2px;
+      padding: 6px 8px;
+      background: var(--bg-dark);
+      border: 0.5px solid var(--subtle-border);
+      border-bottom: none;
+      border-radius: 2px 2px 0 0;
+    }
+
+    .md-btn {
+      background: none;
+      border: 0.5px solid transparent;
+      color: var(--white-35);
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+      line-height: 1.2;
+    }
+
+    .md-btn:hover {
+      color: var(--gold);
+      border-color: var(--gold-border);
+      background: rgba(201,169,110,0.05);
+    }
+
+    .md-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+
+    .md-body {
+      border-radius: 0 0 2px 2px;
+      min-height: 300px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 12px;
+      line-height: 1.8;
+      tab-size: 2;
+    }
+
     /* Toast */
     .toast {
       position: fixed;
@@ -593,6 +841,7 @@
       .listings-table { font-size: 11px; }
       .dash-header { padding: 0 16px; }
       .dash-header-label { display: none; }
+      .tabs { overflow-x: auto; }
     }
   </style>
 </head>
@@ -616,7 +865,7 @@
     <header class="dash-header">
       <div class="dash-logo">FORE</div>
       <div class="dash-header-right">
-        <span class="dash-header-label">Secondary Listings</span>
+        <span class="dash-header-label">Admin Dashboard</span>
         <button class="dash-logout" id="logoutBtn">Logout</button>
       </div>
     </header>
@@ -625,6 +874,7 @@
       <div class="tabs">
         <button class="tab-btn active" data-tab="listings">All Listings</button>
         <button class="tab-btn" data-tab="add">Add New Listing</button>
+        <button class="tab-btn" data-tab="blog">Blog</button>
       </div>
 
       <!-- ── All Listings Tab ── -->
@@ -761,19 +1011,23 @@
             <input class="form-input" type="text" id="features" placeholder="e.g. Pool, Gym, Concierge, Balcony" />
           </div>
 
+          <!-- Image uploads replace URL fields -->
           <div class="form-group">
-            <label class="form-label" for="mainImage">Main Image URL (Cloudinary)</label>
-            <input class="form-input" type="url" id="mainImage" />
+            <label class="form-label">Main Image</label>
+            <input type="hidden" id="mainImage" />
+            <div id="mainImageUpload"></div>
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="floorPlan">Floor Plan Image URL</label>
-            <input class="form-input" type="url" id="floorPlan" />
+            <label class="form-label">Floor Plan Image</label>
+            <input type="hidden" id="floorPlan" />
+            <div id="floorPlanUpload"></div>
           </div>
 
           <div class="form-group full">
-            <label class="form-label" for="additionalImages">Additional Image URLs (up to 5, one per line)</label>
-            <textarea class="form-textarea" id="additionalImages" rows="5" placeholder="https://res.cloudinary.com/...&#10;https://res.cloudinary.com/..."></textarea>
+            <label class="form-label">Additional Images (up to 5)</label>
+            <input type="hidden" id="additionalImages" />
+            <div id="additionalImagesUpload"></div>
           </div>
 
           <div class="form-group">
@@ -787,14 +1041,140 @@
           </div>
         </form>
       </div>
+
+      <!-- ── Blog Tab ── -->
+      <div class="tab-panel" id="tab-blog">
+        <div class="sub-tabs">
+          <button class="sub-tab-btn active" data-sub="blogList">All Posts</button>
+          <button class="sub-tab-btn" data-sub="blogWrite">Write New Post</button>
+        </div>
+
+        <!-- Blog: All Posts -->
+        <div class="sub-panel active" id="sub-blogList">
+          <div class="table-loading" id="blogTableLoading">Loading posts...</div>
+          <div style="overflow-x:auto;">
+            <table class="listings-table" id="blogTable" style="display:none;">
+              <thead>
+                <tr>
+                  <th>Cover</th>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="blogBody"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="blogEmpty" style="display:none;">No blog posts yet. Write your first post to get started.</div>
+        </div>
+
+        <!-- Blog: Write / Edit Post -->
+        <div class="sub-panel" id="sub-blogWrite">
+          <form id="blogForm" class="form-grid">
+            <input type="hidden" id="blogEditId" />
+
+            <div class="form-group full">
+              <label class="form-label" for="blogTitle">Title</label>
+              <input class="form-input" type="text" id="blogTitle" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="blogSlug">Slug</label>
+              <input class="form-input" type="text" id="blogSlug" placeholder="auto-generated-from-title" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="blogCategory">Category</label>
+              <select class="form-select" id="blogCategory" required>
+                <option value="">Select</option>
+                <option value="Market Analysis">Market Analysis</option>
+                <option value="Investment Guide">Investment Guide</option>
+                <option value="Property Spotlight">Property Spotlight</option>
+                <option value="Golden Visa">Golden Visa</option>
+                <option value="Area Guide">Area Guide</option>
+                <option value="Case Study">Case Study</option>
+              </select>
+            </div>
+
+            <div class="form-group full">
+              <label class="form-label">Cover Image</label>
+              <input type="hidden" id="blogCoverImage" />
+              <div id="blogCoverUpload"></div>
+            </div>
+
+            <div class="form-group full">
+              <label class="form-label" for="blogExcerpt">Excerpt</label>
+              <textarea class="form-textarea" id="blogExcerpt" rows="3" placeholder="Short description for blog cards..."></textarea>
+            </div>
+
+            <div class="form-group full">
+              <label class="form-label">Body (Markdown)</label>
+              <div class="md-toolbar">
+                <button type="button" class="md-btn" data-md="bold" title="Bold"><b>B</b></button>
+                <button type="button" class="md-btn" data-md="italic" title="Italic"><i>I</i></button>
+                <button type="button" class="md-btn" data-md="h2" title="Heading 2">H2</button>
+                <button type="button" class="md-btn" data-md="h3" title="Heading 3">H3</button>
+                <button type="button" class="md-btn" data-md="link" title="Insert Link">Link</button>
+                <button type="button" class="md-btn" data-md="image" title="Insert Image">Img</button>
+                <button type="button" class="md-btn" data-md="quote" title="Blockquote">&ldquo;</button>
+                <button type="button" class="md-btn" data-md="list" title="List Item">&bull;</button>
+              </div>
+              <textarea class="form-textarea md-body" id="blogBody" rows="15"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="blogAuthor">Author</label>
+              <select class="form-select" id="blogAuthor" required>
+                <option value="Khadija Nawaz">Khadija Nawaz</option>
+                <option value="Sabbir Khan">Sabbir Khan</option>
+                <option value="Elena Guseva">Elena Guseva</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="blogReadTime">Read Time</label>
+              <input class="form-input" type="text" id="blogReadTime" placeholder="auto-calculated" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Featured</label>
+              <div class="toggle-wrap">
+                <label class="toggle">
+                  <input type="checkbox" id="blogFeatured" />
+                  <span class="toggle-track"></span>
+                </label>
+                <span class="toggle-label" id="blogFeaturedLabel">No</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Published</label>
+              <div class="toggle-wrap">
+                <label class="toggle">
+                  <input type="checkbox" id="blogPublished" />
+                  <span class="toggle-track"></span>
+                </label>
+                <span class="toggle-label" id="blogPublishedLabel">Draft</span>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-submit" id="blogSubmitBtn">Save Post</button>
+              <button type="button" class="btn-cancel" id="blogCancelBtn" style="display:none;">Cancel Edit</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- ── Delete Confirm Modal ── -->
   <div class="modal-overlay" id="deleteModal">
     <div class="modal-box">
-      <div class="modal-title">Delete Listing</div>
-      <div class="modal-text">Are you sure you want to delete this listing? This action cannot be undone.</div>
+      <div class="modal-title" id="deleteModalTitle">Delete Item</div>
+      <div class="modal-text" id="deleteModalText">Are you sure? This action cannot be undone.</div>
       <div class="modal-actions">
         <button class="btn-cancel" id="cancelDelete">Cancel</button>
         <button class="btn-danger" id="confirmDelete">Delete</button>
@@ -806,12 +1186,15 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // ── Supabase Config (replace with real credentials) ──
+    // ══════════════════════════════════════════════
+    // SUPABASE CONFIG
+    // ══════════════════════════════════════════════
     const SUPABASE_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhbWtuZWtkYnRybXhvcHl3Z3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NjMxOTksImV4cCI6MjA4OTAzOTE5OX0.HCmQ_4cyuImr3S1wQ-V6oW2G2U4a1rzMUlLPqHC-OeA';
     const TABLE = 'secondary_listings';
+    const BLOG_TABLE = 'blog_posts';
+    const STORAGE_BUCKET = 'media';
 
-    // Init Supabase safely — don't let it kill the script
     let supabaseClient = null;
     try {
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -820,10 +1203,11 @@
     }
     const db = supabaseClient;
 
-    // ── Password ──
     const ADMIN_PASSWORD = 'FORE2024';
 
-    // ── DOM Refs ──
+    // ══════════════════════════════════════════════
+    // DOM REFS
+    // ══════════════════════════════════════════════
     const loginScreen = document.getElementById('loginScreen');
     const dashboard = document.getElementById('dashboard');
     const loginPassword = document.getElementById('loginPassword');
@@ -845,10 +1229,12 @@
     const parkingLabel = document.getElementById('parkingLabel');
 
     let deleteTargetId = null;
+    let deleteTargetType = 'listing'; // 'listing' or 'blog'
 
-    // ── Auth ──
+    // ══════════════════════════════════════════════
+    // AUTH
+    // ══════════════════════════════════════════════
     function handleLogin() {
-      console.log('Login attempt, password value:', loginPassword.value);
       if (loginPassword.value === ADMIN_PASSWORD) {
         loginScreen.style.display = 'none';
         dashboard.style.display = 'block';
@@ -862,8 +1248,6 @@
     }
 
     loginBtn.addEventListener('click', handleLogin);
-
-    // Allow Enter key to submit
     loginPassword.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') handleLogin();
     });
@@ -876,29 +1260,49 @@
       loginError.style.display = 'none';
     });
 
-    // Session persistence
     if (sessionStorage.getItem('fore_admin') === '1') {
       loginScreen.style.display = 'none';
       dashboard.style.display = 'block';
       loadListings();
     }
 
-    // ── Tabs ──
+    // ══════════════════════════════════════════════
+    // TABS
+    // ══════════════════════════════════════════════
     tabBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         tabBtns.forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+        // Load blog posts when switching to blog tab
+        if (btn.dataset.tab === 'blog') loadBlogPosts();
       });
     });
 
-    // ── Parking toggle label ──
-    parkingCheckbox.addEventListener('change', () => {
-      parkingLabel.textContent = parkingCheckbox.checked ? 'Yes' : 'No';
+    function switchToTab(name) {
+      tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + name));
+    }
+
+    // Blog sub-tabs
+    document.querySelectorAll('.sub-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('sub-' + btn.dataset.sub).classList.add('active');
+      });
     });
 
-    // ── Toast ──
+    function switchToSubTab(name) {
+      document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.sub === name));
+      document.querySelectorAll('.sub-panel').forEach(p => p.classList.toggle('active', p.id === 'sub-' + name));
+    }
+
+    // ══════════════════════════════════════════════
+    // TOAST
+    // ══════════════════════════════════════════════
     function showToast(msg, isError = false) {
       toast.textContent = msg;
       toast.className = 'toast' + (isError ? ' error' : '');
@@ -906,7 +1310,273 @@
       setTimeout(() => toast.classList.remove('visible'), 3000);
     }
 
-    // ── Load Listings ──
+    function escHtml(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    // ══════════════════════════════════════════════
+    // IMAGE UPLOAD COMPONENT
+    // ══════════════════════════════════════════════
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+    const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+    function sanitizeFilename(name) {
+      return name.replace(/[^a-zA-Z0-9._-]/g, '_').toLowerCase();
+    }
+
+    async function uploadToStorage(file, folder) {
+      const path = `${folder}/${Date.now()}-${sanitizeFilename(file.name)}`;
+      const { data, error } = await db.storage.from(STORAGE_BUCKET).upload(path, file);
+      if (error) throw error;
+      return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${path}`;
+    }
+
+    function validateFile(file) {
+      if (!ACCEPTED_TYPES.includes(file.type)) {
+        showToast('Invalid file type. Use JPG, PNG, or WebP.', true);
+        return false;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        showToast('File too large. Maximum 5MB.', true);
+        return false;
+      }
+      return true;
+    }
+
+    // Single image upload zone
+    function createUploadZone(container, hiddenInput, folder) {
+      const zone = document.createElement('div');
+      zone.className = 'upload-zone';
+      zone.innerHTML = `
+        <svg class="upload-zone-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <div class="upload-zone-text">Drop image here or click to browse</div>
+        <div class="upload-zone-hint">JPG, PNG, WebP — max 5 MB</div>
+      `;
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/jpeg,image/png,image/webp';
+      zone.appendChild(fileInput);
+      container.appendChild(zone);
+
+      zone.addEventListener('click', () => fileInput.click());
+      zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
+      zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('dragover');
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+      });
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files.length) handleFile(fileInput.files[0]);
+      });
+
+      async function handleFile(file) {
+        if (!validateFile(file)) return;
+        const localUrl = URL.createObjectURL(file);
+        zone.innerHTML = `<div class="upload-preview"><img src="${localUrl}" alt="" /><div class="upload-preview-info"><div class="upload-preview-name">${escHtml(file.name)}</div><div class="upload-preview-size"><span class="upload-spinner"></span> Uploading...</div></div></div>`;
+        try {
+          const url = await uploadToStorage(file, folder);
+          hiddenInput.value = url;
+          zone.innerHTML = `<div class="upload-preview"><img src="${url}" alt="" /><div class="upload-preview-info"><div class="upload-preview-name">${escHtml(file.name)}</div><div class="upload-preview-size">Uploaded</div></div><button type="button" class="upload-remove" title="Remove">&times;</button></div>`;
+          zone.querySelector('.upload-remove').addEventListener('click', (e) => {
+            e.stopPropagation();
+            hiddenInput.value = '';
+            resetZone();
+          });
+        } catch (err) {
+          console.error('Upload error:', err);
+          showToast('Upload failed. Try again.', true);
+          resetZone();
+        }
+      }
+
+      function resetZone() {
+        zone.innerHTML = `
+          <svg class="upload-zone-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div class="upload-zone-text">Drop image here or click to browse</div>
+          <div class="upload-zone-hint">JPG, PNG, WebP — max 5 MB</div>
+        `;
+        zone.appendChild(fileInput);
+        fileInput.value = '';
+      }
+
+      // Set an existing URL (for editing)
+      zone._setUrl = function(url) {
+        if (!url) { resetZone(); return; }
+        hiddenInput.value = url;
+        zone.innerHTML = `<div class="upload-preview"><img src="${escHtml(url)}" alt="" /><div class="upload-preview-info"><div class="upload-preview-name">${url.split('/').pop()}</div><div class="upload-preview-size">Uploaded</div></div><button type="button" class="upload-remove" title="Remove">&times;</button></div>`;
+        zone.querySelector('.upload-remove').addEventListener('click', (e) => {
+          e.stopPropagation();
+          hiddenInput.value = '';
+          resetZone();
+        });
+      };
+
+      zone._reset = resetZone;
+      return zone;
+    }
+
+    // Multi-image upload (up to 5)
+    function createMultiUploadZone(container, hiddenInput, folder, max) {
+      max = max || 5;
+      let urls = [];
+      const wrapper = document.createElement('div');
+      container.appendChild(wrapper);
+
+      function render() {
+        hiddenInput.value = urls.join(',');
+        wrapper.innerHTML = '';
+        const grid = document.createElement('div');
+        grid.className = 'multi-upload-grid';
+
+        urls.forEach((url, i) => {
+          const thumb = document.createElement('div');
+          thumb.className = 'multi-upload-thumb';
+          thumb.innerHTML = `<img src="${escHtml(url)}" alt="" /><button type="button" class="upload-remove" title="Remove">&times;</button>`;
+          thumb.querySelector('.upload-remove').addEventListener('click', () => {
+            urls.splice(i, 1);
+            render();
+          });
+          grid.appendChild(thumb);
+        });
+
+        if (urls.length < max) {
+          const addBtn = document.createElement('div');
+          addBtn.className = 'multi-upload-add';
+          addBtn.textContent = '+';
+          addBtn.title = 'Add image';
+          const fileInput = document.createElement('input');
+          fileInput.type = 'file';
+          fileInput.accept = 'image/jpeg,image/png,image/webp';
+          fileInput.style.display = 'none';
+          addBtn.appendChild(fileInput);
+          addBtn.addEventListener('click', () => fileInput.click());
+          fileInput.addEventListener('change', async () => {
+            if (!fileInput.files.length) return;
+            const file = fileInput.files[0];
+            if (!validateFile(file)) return;
+            addBtn.innerHTML = '<span class="upload-spinner"></span>';
+            try {
+              const url = await uploadToStorage(file, folder);
+              urls.push(url);
+              render();
+            } catch (err) {
+              console.error('Upload error:', err);
+              showToast('Upload failed. Try again.', true);
+              render();
+            }
+          });
+          grid.appendChild(addBtn);
+        }
+
+        // Drop zone for empty state
+        if (urls.length === 0) {
+          const dropZone = document.createElement('div');
+          dropZone.className = 'upload-zone';
+          dropZone.style.width = '100%';
+          dropZone.innerHTML = `
+            <svg class="upload-zone-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <div class="upload-zone-text">Drop images here or click to browse</div>
+            <div class="upload-zone-hint">Up to ${max} images — JPG, PNG, WebP — max 5 MB each</div>
+          `;
+          const fileInput2 = document.createElement('input');
+          fileInput2.type = 'file';
+          fileInput2.accept = 'image/jpeg,image/png,image/webp';
+          fileInput2.style.display = 'none';
+          dropZone.appendChild(fileInput2);
+          dropZone.addEventListener('click', () => fileInput2.click());
+          dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+          dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+          dropZone.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (!file || !validateFile(file)) return;
+            dropZone.innerHTML = '<div style="padding:20px;text-align:center;"><span class="upload-spinner"></span></div>';
+            try {
+              const url = await uploadToStorage(file, folder);
+              urls.push(url);
+              render();
+            } catch (err) {
+              showToast('Upload failed.', true);
+              render();
+            }
+          });
+          fileInput2.addEventListener('change', async () => {
+            if (!fileInput2.files.length) return;
+            const file = fileInput2.files[0];
+            if (!validateFile(file)) return;
+            dropZone.innerHTML = '<div style="padding:20px;text-align:center;"><span class="upload-spinner"></span></div>';
+            try {
+              const url = await uploadToStorage(file, folder);
+              urls.push(url);
+              render();
+            } catch (err) {
+              showToast('Upload failed.', true);
+              render();
+            }
+          });
+          wrapper.appendChild(dropZone);
+          return;
+        }
+
+        wrapper.appendChild(grid);
+      }
+
+      render();
+
+      wrapper._setUrls = function(urlArray) {
+        urls = urlArray.filter(Boolean);
+        render();
+      };
+
+      wrapper._reset = function() {
+        urls = [];
+        render();
+      };
+
+      return wrapper;
+    }
+
+    // Initialize upload zones for property form
+    const mainImageUpload = createUploadZone(
+      document.getElementById('mainImageUpload'),
+      document.getElementById('mainImage'),
+      'properties'
+    );
+
+    const floorPlanUpload = createUploadZone(
+      document.getElementById('floorPlanUpload'),
+      document.getElementById('floorPlan'),
+      'properties'
+    );
+
+    const additionalImagesUpload = createMultiUploadZone(
+      document.getElementById('additionalImagesUpload'),
+      document.getElementById('additionalImages'),
+      'properties',
+      5
+    );
+
+    // Initialize upload zone for blog cover
+    const blogCoverUpload = createUploadZone(
+      document.getElementById('blogCoverUpload'),
+      document.getElementById('blogCoverImage'),
+      'blog'
+    );
+
+    // ══════════════════════════════════════════════
+    // PARKING TOGGLE
+    // ══════════════════════════════════════════════
+    parkingCheckbox.addEventListener('change', () => {
+      parkingLabel.textContent = parkingCheckbox.checked ? 'Yes' : 'No';
+    });
+
+    // ══════════════════════════════════════════════
+    // LISTINGS — LOAD
+    // ══════════════════════════════════════════════
     async function loadListings() {
       tableLoading.style.display = 'block';
       listingsTable.style.display = 'none';
@@ -941,7 +1611,7 @@
             <td><span class="status-badge ${statusClass}">${escHtml(statusText)}</span></td>
             <td>
               <button class="action-btn" onclick="editListing('${item.id}')">Edit</button>
-              <button class="action-btn delete" onclick="promptDelete('${item.id}')">Delete</button>
+              <button class="action-btn delete" onclick="promptDelete('${item.id}','listing')">Delete</button>
             </td>
           `;
           listingsBody.appendChild(tr);
@@ -955,21 +1625,13 @@
       }
     }
 
-    function escHtml(str) {
-      const d = document.createElement('div');
-      d.textContent = str;
-      return d.innerHTML;
-    }
-
-    // ── Form Submit (Add / Update) ──
+    // ══════════════════════════════════════════════
+    // LISTINGS — FORM SUBMIT
+    // ══════════════════════════════════════════════
     listingForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       submitBtn.disabled = true;
       submitBtn.textContent = 'Saving...';
-
-      const additionalRaw = document.getElementById('additionalImages').value.trim();
-      const images = additionalRaw ? additionalRaw.split('\n').map(u => u.trim()).filter(Boolean).slice(0, 5).join(',') : '';
-      const features = document.getElementById('features').value.trim();
 
       const payload = {
         name: document.getElementById('title').value.trim(),
@@ -986,9 +1648,9 @@
         parking: parkingCheckbox.checked,
         service_charge: Number(document.getElementById('serviceCharge').value) || 0,
         description: document.getElementById('description').value.trim(),
-        features,
+        features: document.getElementById('features').value.trim(),
         image_main: document.getElementById('mainImage').value.trim(),
-        images,
+        images: document.getElementById('additionalImages').value.trim(),
         floor_plan: document.getElementById('floorPlan').value.trim(),
         dld_permit: document.getElementById('dldPermit').value.trim(),
         agent: document.getElementById('agent').value,
@@ -1007,7 +1669,7 @@
         if (error) throw error;
 
         showToast(editId ? 'Listing updated successfully.' : 'Listing added successfully.');
-        resetForm();
+        resetListingForm();
         switchToTab('listings');
         loadListings();
       } catch (err) {
@@ -1019,7 +1681,9 @@
       }
     });
 
-    // ── Edit ──
+    // ══════════════════════════════════════════════
+    // LISTINGS — EDIT
+    // ══════════════════════════════════════════════
     async function editListing(id) {
       try {
         const { data, error } = await db.from(TABLE).select('*').eq('id', id).single();
@@ -1042,11 +1706,13 @@
         document.getElementById('serviceCharge').value = data.service_charge || '';
         document.getElementById('description').value = data.description || '';
         document.getElementById('features').value = data.features || '';
-        document.getElementById('mainImage').value = data.image_main || '';
-        document.getElementById('floorPlan').value = data.floor_plan || '';
-        document.getElementById('additionalImages').value = (data.images || '').split(',').filter(Boolean).join('\n');
         document.getElementById('dldPermit').value = data.dld_permit || '';
         document.getElementById('agent').value = data.agent || '';
+
+        // Set upload zones
+        mainImageUpload._setUrl(data.image_main || '');
+        floorPlanUpload._setUrl(data.floor_plan || '');
+        additionalImagesUpload._setUrls((data.images || '').split(',').filter(Boolean));
 
         submitBtn.textContent = 'Update Listing';
         cancelEditBtn.style.display = 'inline-block';
@@ -1057,9 +1723,33 @@
       }
     }
 
-    // ── Delete ──
-    function promptDelete(id) {
+    // ══════════════════════════════════════════════
+    // LISTINGS — RESET FORM
+    // ══════════════════════════════════════════════
+    function resetListingForm() {
+      listingForm.reset();
+      editIdInput.value = '';
+      parkingLabel.textContent = 'No';
+      submitBtn.textContent = 'Save Listing';
+      cancelEditBtn.style.display = 'none';
+      mainImageUpload._reset();
+      floorPlanUpload._reset();
+      additionalImagesUpload._reset();
+    }
+
+    cancelEditBtn.addEventListener('click', () => {
+      resetListingForm();
+      switchToTab('listings');
+    });
+
+    // ══════════════════════════════════════════════
+    // DELETE (shared for listings + blog)
+    // ══════════════════════════════════════════════
+    function promptDelete(id, type) {
       deleteTargetId = id;
+      deleteTargetType = type || 'listing';
+      document.getElementById('deleteModalTitle').textContent = type === 'blog' ? 'Delete Post' : 'Delete Listing';
+      document.getElementById('deleteModalText').textContent = 'Are you sure you want to delete this ' + (type === 'blog' ? 'post' : 'listing') + '? This action cannot be undone.';
       deleteModal.classList.add('visible');
     }
 
@@ -1071,12 +1761,14 @@
     document.getElementById('confirmDelete').addEventListener('click', async () => {
       if (!deleteTargetId) return;
       try {
-        const { error } = await db.from(TABLE).delete().eq('id', deleteTargetId);
+        const table = deleteTargetType === 'blog' ? BLOG_TABLE : TABLE;
+        const { error } = await db.from(table).delete().eq('id', deleteTargetId);
         if (error) throw error;
-        showToast('Listing deleted.');
-        loadListings();
+        showToast(deleteTargetType === 'blog' ? 'Post deleted.' : 'Listing deleted.');
+        if (deleteTargetType === 'blog') loadBlogPosts();
+        else loadListings();
       } catch (err) {
-        showToast('Error deleting listing.', true);
+        showToast('Error deleting. Check console.', true);
         console.error(err);
       } finally {
         deleteModal.classList.remove('visible');
@@ -1084,28 +1776,274 @@
       }
     });
 
-    // ── Helpers ──
-    function resetForm() {
-      listingForm.reset();
-      editIdInput.value = '';
-      parkingLabel.textContent = 'No';
-      submitBtn.textContent = 'Save Listing';
-      cancelEditBtn.style.display = 'none';
+    // ══════════════════════════════════════════════
+    // BLOG — LOAD POSTS
+    // ══════════════════════════════════════════════
+    async function loadBlogPosts() {
+      const loading = document.getElementById('blogTableLoading');
+      const table = document.getElementById('blogTable');
+      const empty = document.getElementById('blogEmpty');
+      const body = document.getElementById('blogBody');
+
+      loading.style.display = 'block';
+      table.style.display = 'none';
+      empty.style.display = 'none';
+
+      try {
+        const { data, error } = await db
+          .from(BLOG_TABLE)
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+          loading.style.display = 'none';
+          empty.style.display = 'block';
+          return;
+        }
+
+        body.innerHTML = '';
+        data.forEach(post => {
+          const tr = document.createElement('tr');
+          const statusClass = post.published ? 'status-published' : 'status-draft';
+          const statusText = post.published ? 'Published' : 'Draft';
+          const imgSrc = post.cover_image || 'https://placehold.co/64x44/1C1C1C/555?text=No+img';
+          const date = new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+          tr.innerHTML = `
+            <td><img src="${escHtml(imgSrc)}" alt="" class="listing-thumb" loading="lazy" /></td>
+            <td style="color:var(--white);font-weight:400;">${escHtml(post.title || '')}</td>
+            <td>${escHtml(post.category || '')}</td>
+            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+            <td>${date}</td>
+            <td>
+              <button class="action-btn" onclick="editBlogPost('${post.id}')">Edit</button>
+              <button class="action-btn delete" onclick="promptDelete('${post.id}','blog')">Delete</button>
+            </td>
+          `;
+          body.appendChild(tr);
+        });
+
+        loading.style.display = 'none';
+        table.style.display = 'table';
+      } catch (err) {
+        loading.textContent = 'Failed to load posts. Check Supabase.';
+        console.error(err);
+      }
     }
 
-    cancelEditBtn.addEventListener('click', () => {
-      resetForm();
-      switchToTab('listings');
+    // ══════════════════════════════════════════════
+    // BLOG — SLUG & READ TIME
+    // ══════════════════════════════════════════════
+    function generateSlug(title) {
+      return title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+    }
+
+    function calcReadTime(text) {
+      const words = text.trim().split(/\s+/).filter(Boolean).length;
+      const mins = Math.max(1, Math.ceil(words / 200));
+      return mins + ' min read';
+    }
+
+    let slugManuallyEdited = false;
+    const blogTitleInput = document.getElementById('blogTitle');
+    const blogSlugInput = document.getElementById('blogSlug');
+    const blogBodyInput = document.getElementById('blogBody');
+    const blogReadTimeInput = document.getElementById('blogReadTime');
+
+    blogTitleInput.addEventListener('blur', () => {
+      if (!slugManuallyEdited || !blogSlugInput.value) {
+        blogSlugInput.value = generateSlug(blogTitleInput.value);
+      }
     });
 
-    function switchToTab(name) {
-      tabBtns.forEach(b => {
-        b.classList.toggle('active', b.dataset.tab === name);
+    blogSlugInput.addEventListener('input', () => {
+      slugManuallyEdited = true;
+    });
+
+    blogBodyInput.addEventListener('blur', () => {
+      if (blogBodyInput.value.trim()) {
+        blogReadTimeInput.value = calcReadTime(blogBodyInput.value);
+      }
+    });
+
+    // ══════════════════════════════════════════════
+    // BLOG — MARKDOWN TOOLBAR
+    // ══════════════════════════════════════════════
+    document.querySelectorAll('.md-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const ta = blogBodyInput;
+        const start = ta.selectionStart;
+        const end = ta.selectionEnd;
+        const sel = ta.value.substring(start, end);
+        const before = ta.value.substring(0, start);
+        const after = ta.value.substring(end);
+        let insert = '';
+
+        switch (btn.dataset.md) {
+          case 'bold':
+            insert = `**${sel || 'bold text'}**`;
+            break;
+          case 'italic':
+            insert = `*${sel || 'italic text'}*`;
+            break;
+          case 'h2':
+            insert = `\n## ${sel || 'Heading'}`;
+            break;
+          case 'h3':
+            insert = `\n### ${sel || 'Heading'}`;
+            break;
+          case 'link': {
+            const url = prompt('Enter URL:');
+            if (url) insert = `[${sel || 'link text'}](${url})`;
+            else return;
+            break;
+          }
+          case 'image': {
+            const url = prompt('Enter image URL:');
+            if (url) insert = `![${sel || 'alt text'}](${url})`;
+            else return;
+            break;
+          }
+          case 'quote':
+            insert = `\n> ${sel || 'quote'}`;
+            break;
+          case 'list':
+            insert = `\n- ${sel || 'list item'}`;
+            break;
+        }
+
+        ta.value = before + insert + after;
+        ta.focus();
+        ta.selectionStart = ta.selectionEnd = start + insert.length;
       });
-      document.querySelectorAll('.tab-panel').forEach(p => {
-        p.classList.toggle('active', p.id === 'tab-' + name);
-      });
+    });
+
+    // ══════════════════════════════════════════════
+    // BLOG — TOGGLES
+    // ══════════════════════════════════════════════
+    const blogFeaturedCheckbox = document.getElementById('blogFeatured');
+    const blogFeaturedLabel = document.getElementById('blogFeaturedLabel');
+    const blogPublishedCheckbox = document.getElementById('blogPublished');
+    const blogPublishedLabel = document.getElementById('blogPublishedLabel');
+
+    blogFeaturedCheckbox.addEventListener('change', () => {
+      blogFeaturedLabel.textContent = blogFeaturedCheckbox.checked ? 'Yes' : 'No';
+    });
+
+    blogPublishedCheckbox.addEventListener('change', () => {
+      blogPublishedLabel.textContent = blogPublishedCheckbox.checked ? 'Published' : 'Draft';
+    });
+
+    // ══════════════════════════════════════════════
+    // BLOG — FORM SUBMIT
+    // ══════════════════════════════════════════════
+    const blogForm = document.getElementById('blogForm');
+    const blogSubmitBtn = document.getElementById('blogSubmitBtn');
+    const blogCancelBtn = document.getElementById('blogCancelBtn');
+    const blogEditIdInput = document.getElementById('blogEditId');
+
+    blogForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      blogSubmitBtn.disabled = true;
+      blogSubmitBtn.textContent = 'Saving...';
+
+      const payload = {
+        title: blogTitleInput.value.trim(),
+        slug: blogSlugInput.value.trim() || generateSlug(blogTitleInput.value),
+        category: document.getElementById('blogCategory').value,
+        cover_image: document.getElementById('blogCoverImage').value.trim(),
+        excerpt: document.getElementById('blogExcerpt').value.trim(),
+        body: blogBodyInput.value,
+        author: document.getElementById('blogAuthor').value,
+        read_time: blogReadTimeInput.value.trim() || calcReadTime(blogBodyInput.value),
+        featured: blogFeaturedCheckbox.checked,
+        published: blogPublishedCheckbox.checked,
+        updated_at: new Date().toISOString(),
+      };
+
+      try {
+        const editId = blogEditIdInput.value;
+        let error;
+
+        if (editId) {
+          ({ error } = await db.from(BLOG_TABLE).update(payload).eq('id', editId));
+        } else {
+          ({ error } = await db.from(BLOG_TABLE).insert([payload]));
+        }
+
+        if (error) throw error;
+
+        showToast(editId ? 'Post updated.' : 'Post saved.');
+        resetBlogForm();
+        switchToSubTab('blogList');
+        loadBlogPosts();
+      } catch (err) {
+        showToast('Error saving post. Check console.', true);
+        console.error(err);
+      } finally {
+        blogSubmitBtn.disabled = false;
+        blogSubmitBtn.textContent = 'Save Post';
+      }
+    });
+
+    // ══════════════════════════════════════════════
+    // BLOG — EDIT POST
+    // ══════════════════════════════════════════════
+    async function editBlogPost(id) {
+      try {
+        const { data, error } = await db.from(BLOG_TABLE).select('*').eq('id', id).single();
+        if (error) throw error;
+
+        blogEditIdInput.value = data.id;
+        blogTitleInput.value = data.title || '';
+        blogSlugInput.value = data.slug || '';
+        slugManuallyEdited = true;
+        document.getElementById('blogCategory').value = data.category || '';
+        document.getElementById('blogExcerpt').value = data.excerpt || '';
+        blogBodyInput.value = data.body || '';
+        document.getElementById('blogAuthor').value = data.author || 'Khadija Nawaz';
+        blogReadTimeInput.value = data.read_time || '';
+        blogFeaturedCheckbox.checked = !!data.featured;
+        blogFeaturedLabel.textContent = data.featured ? 'Yes' : 'No';
+        blogPublishedCheckbox.checked = !!data.published;
+        blogPublishedLabel.textContent = data.published ? 'Published' : 'Draft';
+
+        blogCoverUpload._setUrl(data.cover_image || '');
+
+        blogSubmitBtn.textContent = 'Update Post';
+        blogCancelBtn.style.display = 'inline-block';
+        switchToSubTab('blogWrite');
+      } catch (err) {
+        showToast('Error loading post.', true);
+        console.error(err);
+      }
     }
+
+    // ══════════════════════════════════════════════
+    // BLOG — RESET FORM
+    // ══════════════════════════════════════════════
+    function resetBlogForm() {
+      blogForm.reset();
+      blogEditIdInput.value = '';
+      slugManuallyEdited = false;
+      blogFeaturedLabel.textContent = 'No';
+      blogPublishedLabel.textContent = 'Draft';
+      blogSubmitBtn.textContent = 'Save Post';
+      blogCancelBtn.style.display = 'none';
+      blogCoverUpload._reset();
+    }
+
+    blogCancelBtn.addEventListener('click', () => {
+      resetBlogForm();
+      switchToSubTab('blogList');
+    });
   </script>
 </body>
 </html>
