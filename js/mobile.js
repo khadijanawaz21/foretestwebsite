@@ -239,7 +239,10 @@
       dot.dataset.index = i;
       (function (idx) {
         dot.addEventListener('click', function () {
-          cards[idx].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+          var cardLeft = cards[idx].offsetLeft;
+          var cardWidth = cards[idx].offsetWidth;
+          var containerWidth = container.offsetWidth;
+          container.scrollTo({ left: cardLeft - (containerWidth - cardWidth) / 2, behavior: 'smooth' });
         });
       })(i);
       dotsWrap.appendChild(dot);
@@ -294,7 +297,10 @@
 
     function advance() {
       currentIdx = (currentIdx + 1) % cards.length;
-      cards[currentIdx].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      var cardLeft = cards[currentIdx].offsetLeft;
+      var cardWidth = cards[currentIdx].offsetWidth;
+      var containerWidth = grid.offsetWidth;
+      grid.scrollTo({ left: cardLeft - (containerWidth - cardWidth) / 2, behavior: 'smooth' });
     }
 
     function startAuto() {
