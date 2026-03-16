@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Careers — FORE Real Estate Dubai</title>
+  <meta name="description" content="Join the FORE team. We're building the future of Dubai real estate — and we're looking for ambitious people to build it with us." />
+
+  <link rel="icon" href="brand_assets/favicon.ico" />
+  <link rel="apple-touch-icon" href="brand_assets/apple-touch-icon.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" crossorigin />
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="mobile.css" />
+
+  <style>
+    /* ═══════════════════════════════════════════
+       CAREERS PAGE — SPECIFIC STYLES
+    ═══════════════════════════════════════════ */
+
+    /* ── Hero ── */
+    .cr-hero {
+      position: relative;
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      overflow: hidden;
+      padding: 160px 10% 100px;
+    }
+    .cr-hero-glow {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 50% 20%, rgba(201,169,110,0.08) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 80%, rgba(201,169,110,0.04) 0%, transparent 40%);
+    }
+    .cr-hero-grain {
+      position: absolute;
+      inset: 0;
+      opacity: 0.03;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    }
+    .cr-hero-inner {
+      position: relative;
+      z-index: 2;
+      max-width: 720px;
+    }
+    .cr-hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(42px, 6vw, 72px);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      margin-bottom: 24px;
+    }
+    .cr-hero-sub {
+      font-size: 15px;
+      color: var(--white-50);
+      line-height: 1.8;
+      max-width: 520px;
+      margin: 0 auto 40px;
+    }
+    .cr-hero-scroll {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      transition: opacity 0.25s ease;
+    }
+    .cr-hero-scroll:hover { opacity: 0.7; }
+    .cr-hero-scroll:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+    .cr-hero-scroll:active { opacity: 0.5; }
+    .cr-hero-scroll svg {
+      animation: crBounce 2s ease-in-out infinite;
+    }
+    @keyframes crBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(5px); }
+    }
+
+    /* ── Stats Ribbon ── */
+    .cr-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--subtle-border);
+      border-top: 0.5px solid var(--subtle-border);
+      border-bottom: 0.5px solid var(--subtle-border);
+    }
+    .cr-stat {
+      background: var(--bg-dark);
+      padding: 40px 32px;
+      text-align: center;
+    }
+    .cr-stat-num {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 300;
+      color: var(--gold);
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+    .cr-stat-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--white-35);
+    }
+
+    /* ── Why FORE ── */
+    .cr-why {
+      padding: 96px 10%;
+    }
+    .cr-why-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .cr-why-title {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+    .cr-why-sub {
+      font-size: 14px;
+      color: var(--white-50);
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    .cr-why-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1px;
+      background: var(--subtle-border);
+      border: 0.5px solid var(--subtle-border);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .cr-why-card {
+      background: var(--bg-dark);
+      padding: 48px 40px;
+      transition: background 0.3s ease;
+    }
+    .cr-why-card:hover {
+      background: var(--bg-dark3);
+    }
+    .cr-why-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1px solid var(--gold-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .cr-why-card-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--white);
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+    .cr-why-card-text {
+      font-size: 13px;
+      color: var(--white-50);
+      line-height: 1.7;
+    }
+
+    /* ── Culture Strip ── */
+    .cr-culture {
+      padding: 80px 10%;
+      text-align: center;
+    }
+    .cr-culture-quote {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 3vw, 36px);
+      font-weight: 300;
+      font-style: italic;
+      color: var(--white-70);
+      line-height: 1.5;
+      max-width: 700px;
+      margin: 0 auto 20px;
+      letter-spacing: -0.01em;
+    }
+    .cr-culture-quote em {
+      color: var(--gold);
+      font-style: italic;
+    }
+    .cr-culture-attr {
+      font-size: 11px;
+      color: var(--white-35);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    /* ── Open Roles ── */
+    .cr-roles {
+      padding: 96px 10%;
+    }
+    .cr-roles-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .cr-roles-title {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 300;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+    .cr-roles-sub {
+      font-size: 14px;
+      color: var(--white-50);
+      max-width: 460px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+    .cr-roles-list {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .cr-role-card {
+      background: var(--bg-dark);
+      border: 0.5px solid var(--subtle-border);
+      border-radius: 6px;
+      padding: 36px 40px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+      transition: border-color 0.3s ease, transform 0.2s ease;
+    }
+    .cr-role-card:hover {
+      border-color: var(--gold-border);
+      transform: translateY(-2px);
+    }
+    .cr-role-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--white);
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+    .cr-role-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+    .cr-role-tag {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .cr-role-tag svg { flex-shrink: 0; }
+    .cr-role-desc {
+      font-size: 13px;
+      color: var(--white-50);
+      line-height: 1.7;
+    }
+    .cr-role-apply {
+      display: inline-block;
+      background: transparent;
+      color: var(--gold);
+      font-family: var(--font-ui);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      border: 1px solid var(--gold-border);
+      border-radius: 2px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+    }
+    .cr-role-apply:hover {
+      background: var(--gold);
+      color: var(--bg);
+      border-color: var(--gold);
+    }
+    .cr-role-apply:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 4px;
+    }
+    .cr-role-apply:active {
+      transform: scale(0.97);
+    }
+
+    /* ── Open Application ── */
+    .cr-open {
+      padding: 96px 10%;
+      text-align: center;
+    }
+    .cr-open-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      background: var(--bg-dark);
+      border: 0.5px solid var(--subtle-border);
+      border-radius: 8px;
+      padding: 64px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cr-open-inner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 2px;
+      background: var(--gold);
+    }
+    .cr-open-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 300;
+      color: var(--white);
+      margin-bottom: 14px;
+      letter-spacing: -0.01em;
+    }
+    .cr-open-text {
+      font-size: 14px;
+      color: var(--white-50);
+      line-height: 1.7;
+      margin-bottom: 32px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── Values Ticker ── */
+    .cr-ticker {
+      overflow: hidden;
+      padding: 28px 0;
+      border-top: 0.5px solid var(--subtle-border);
+      border-bottom: 0.5px solid var(--subtle-border);
+    }
+    .cr-ticker-track {
+      display: flex;
+      gap: 48px;
+      animation: crTick 25s linear infinite;
+      width: max-content;
+    }
+    .cr-ticker-item {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--white-20);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 48px;
+    }
+    .cr-ticker-item::after {
+      content: '✦';
+      color: var(--gold-dark);
+      font-size: 10px;
+      font-style: normal;
+    }
+    @keyframes crTick {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 768px) {
+      .cr-hero { min-height: 70vh; padding: 140px 8% 80px; }
+      .cr-stats { grid-template-columns: repeat(2, 1fr); }
+      .cr-why-grid { grid-template-columns: 1fr; }
+      .cr-why-card { padding: 36px 28px; }
+      .cr-role-card {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 28px 24px;
+      }
+      .cr-role-apply { width: 100%; text-align: center; }
+      .cr-open-inner { padding: 48px 28px; }
+    }
+    @media (max-width: 480px) {
+      .cr-stats { grid-template-columns: 1fr 1fr; }
+      .cr-stat { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Component: Nav ── -->
+  <div data-component="nav"></div>
+
+  <!-- ═══════════════════════════════════════════ HERO -->
+  <section class="cr-hero">
+    <div class="cr-hero-glow"></div>
+    <div class="cr-hero-grain"></div>
+    <div class="cr-hero-inner fade-in">
+      <div class="section-tag" style="justify-content:center;">Careers at FORE</div>
+      <h1 class="cr-hero-title">
+        Join the <em class="gold">FORE</em> team.
+      </h1>
+      <p class="cr-hero-sub">
+        We're building the future of Dubai real estate — and we're looking for ambitious people to build it with us.
+      </p>
+      <a href="#roles" class="cr-hero-scroll">
+        See open roles
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ STATS RIBBON -->
+  <div class="cr-stats fade-in">
+    <div class="cr-stat">
+      <div class="cr-stat-num">8+</div>
+      <div class="cr-stat-label">Nationalities</div>
+    </div>
+    <div class="cr-stat">
+      <div class="cr-stat-num">26</div>
+      <div class="cr-stat-label">Avg. Age</div>
+    </div>
+    <div class="cr-stat">
+      <div class="cr-stat-num">5★</div>
+      <div class="cr-stat-label">Google Rating</div>
+    </div>
+    <div class="cr-stat">
+      <div class="cr-stat-num">100%</div>
+      <div class="cr-stat-label">Commission Day-1</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ VALUES TICKER -->
+  <div class="cr-ticker">
+    <div class="cr-ticker-track">
+      <span class="cr-ticker-item">Integrity</span>
+      <span class="cr-ticker-item">Education-first</span>
+      <span class="cr-ticker-item">Transparency</span>
+      <span class="cr-ticker-item">Ambition</span>
+      <span class="cr-ticker-item">Client obsession</span>
+      <span class="cr-ticker-item">Global perspective</span>
+      <span class="cr-ticker-item">Integrity</span>
+      <span class="cr-ticker-item">Education-first</span>
+      <span class="cr-ticker-item">Transparency</span>
+      <span class="cr-ticker-item">Ambition</span>
+      <span class="cr-ticker-item">Client obsession</span>
+      <span class="cr-ticker-item">Global perspective</span>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════════════════════════════════ WHY FORE -->
+  <section class="cr-why">
+    <div class="cr-why-header fade-in">
+      <div class="section-tag" style="justify-content:center;">Why FORE</div>
+      <h2 class="cr-why-title">Not just a job. <em class="gold">A launchpad.</em></h2>
+      <p class="cr-why-sub">We hire for hunger, not tenure. If you care about doing meaningful work in one of the world's fastest-growing cities — you belong here.</p>
+    </div>
+
+    <div class="cr-why-grid fade-in" data-stagger="100">
+      <div class="cr-why-card">
+        <div class="cr-why-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="cr-why-card-title">Young & ambitious team</div>
+        <p class="cr-why-card-text">Average age 26. No corporate politics. Just smart people who move fast, support each other, and celebrate wins together.</p>
+      </div>
+      <div class="cr-why-card">
+        <div class="cr-why-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </div>
+        <div class="cr-why-card-title">Education-first culture</div>
+        <p class="cr-why-card-text">We teach before we sell. You'll learn real estate from the ground up — market mechanics, legal frameworks, investment strategy. Knowledge is our edge.</p>
+      </div>
+      <div class="cr-why-card">
+        <div class="cr-why-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <div class="cr-why-card-title">Dubai at your doorstep</div>
+        <p class="cr-why-card-text">Work from a 36th-floor office overlooking Trade Centre. Live in one of the most dynamic, tax-free cities on earth. Your commute might include a beach.</p>
+      </div>
+      <div class="cr-why-card">
+        <div class="cr-why-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div class="cr-why-card-title">Real impact for investors</div>
+        <p class="cr-why-card-text">Our clients are international investors making life-changing decisions. You'll guide them through every step — from first enquiry to keys in hand.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════════════════════════════════ CULTURE QUOTE -->
+  <section class="cr-culture fade-in">
+    <p class="cr-culture-quote">"We don't hire for experience — we hire for <em>hunger.</em> Everything else, we'll teach you."</p>
+    <p class="cr-culture-attr">— Elena Guseva, CEO & Founder</p>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════════════════════════════════ OPEN ROLES -->
+  <section class="cr-roles" id="roles">
+    <div class="cr-roles-header fade-in">
+      <div class="section-tag" style="justify-content:center;">Open Positions</div>
+      <h2 class="cr-roles-title">Find your <em class="gold">role.</em></h2>
+      <p class="cr-roles-sub">We're growing fast. These are the roles we're actively hiring for right now.</p>
+    </div>
+
+    <div class="cr-roles-list fade-in" data-stagger="120">
+      <!-- Role 1 -->
+      <div class="cr-role-card">
+        <div>
+          <div class="cr-role-title">Real Estate Agent</div>
+          <div class="cr-role-meta">
+            <span class="cr-role-tag">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Dubai, UAE
+            </span>
+            <span class="cr-role-tag">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Full-time
+            </span>
+          </div>
+          <p class="cr-role-desc">Source and close property deals for international investors. You'll manage the full sales cycle — from lead qualification through to handover — across off-plan, secondary, and commercial portfolios.</p>
+        </div>
+        <a href="mailto:info@fairopportunityrealestate.com?subject=Application%3A%20Real%20Estate%20Agent" class="cr-role-apply">Apply Now</a>
+      </div>
+
+      <!-- Role 2 -->
+      <div class="cr-role-card">
+        <div>
+          <div class="cr-role-title">Client Relations Manager</div>
+          <div class="cr-role-meta">
+            <span class="cr-role-tag">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Dubai, UAE
+            </span>
+            <span class="cr-role-tag">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Full-time
+            </span>
+          </div>
+          <p class="cr-role-desc">Be the first point of contact for new investor enquiries. You'll qualify leads, schedule viewings, coordinate with agents, and ensure every client feels looked after from day one.</p>
+        </div>
+        <a href="mailto:info@fairopportunityrealestate.com?subject=Application%3A%20Client%20Relations%20Manager" class="cr-role-apply">Apply Now</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════════════════════════════════ OPEN APPLICATION -->
+  <section class="cr-open">
+    <div class="cr-open-inner fade-in">
+      <div class="section-tag" style="justify-content:center;">No Suitable Role?</div>
+      <h2 class="cr-open-title">Send us your CV <em class="gold">anyway.</em></h2>
+      <p class="cr-open-text">
+        We're always looking for exceptional people. If you're passionate about real estate and want to work in Dubai — we want to hear from you.
+      </p>
+      <a href="mailto:info@fairopportunityrealestate.com?subject=Open%20Application" class="btn-primary">Open Application</a>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ── Component: Footer ── -->
+  <div data-component="footer"></div>
+
+  <!-- ── Component: WhatsApp Float ── -->
+  <div data-component="whatsapp"></div>
+
+  <!-- ── Component: Distressed Deals Widget ── -->
+  <div data-component="distressed"></div>
+
+  <script src="js/components.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+</body>
+</html>
