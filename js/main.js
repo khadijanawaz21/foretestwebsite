@@ -219,7 +219,10 @@ document.addEventListener('fore:ready', function () {
 
   // TODO: move to server-side proxy before production
   const API_OFFPLAN   = 'https://api.behomes.tech/v3/get_behomes_objects?lang=en&api_key=EAJF8XND&filter=yes&objects_per_page=50&page=1';
-  const API_SECONDARY = 'https://api.behomes.tech/v3/get_secondary_objects?lang=en&api_key=EAJF8XND&filter=yes&objects_per_page=50&page=1';
+
+  // Secondary listings — Supabase config
+  const SUPA_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
+  const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhbWtuZWtkYnRybXhvcHl3Z3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NjMxOTksImV4cCI6MjA4OTAzOTE5OX0.HCmQ_4cyuImr3S1wQ-V6oW2G2U4a1rzMUlLPqHC-OeA';
 
   // Fallback hardcoded data (shown if API fails or returns empty)
   const FALLBACK_OFFPLAN = [
@@ -252,38 +255,7 @@ document.addEventListener('fore:ready', function () {
       payment_plan: '70/30 Payment Plan',
     },
   ];
-  const FALLBACK_SECONDARY = [
-    {
-      _fallback: true,
-      title: 'Marina Gate Apartment',
-      area: 'Dubai Marina',
-      price: 1850000,
-      image: null,
-      bedrooms: 2,
-      bathrooms: 2,
-      size: 1100,
-    },
-    {
-      _fallback: true,
-      title: 'Downtown Studio',
-      area: 'Downtown Dubai',
-      price: 950000,
-      image: null,
-      bedrooms: 0,
-      bathrooms: 1,
-      size: 490,
-    },
-    {
-      _fallback: true,
-      title: 'JVC Apartment',
-      area: 'Jumeirah Village Circle',
-      price: 720000,
-      image: null,
-      bedrooms: 1,
-      bathrooms: 1,
-      size: 750,
-    },
-  ];
+  const FALLBACK_SECONDARY = [];
 
   // ── State ──
   let cachedOffPlan   = null;
@@ -374,88 +346,33 @@ document.addEventListener('fore:ready', function () {
       </a>`;
   }
 
-  // ── Decode layoutImages URL: format is /none/{base64-encoded-cdn-url} ──
-  function decodeLayoutImage(url) {
-    if (!url) return '';
-    const idx = url.indexOf('/none/');
-    if (idx === -1) return url;
-    try { return atob(url.slice(idx + 6)); } catch (e) { return url; }
-  }
-
-  // ── Flatten secondary API: response[] contains projects whose Layouts[] are the actual units ──
-  function flattenSecondaryListings(projects) {
-    const out = [];
-    for (const project of projects) {
-      const layouts = Array.isArray(project.Layouts) ? project.Layouts : [];
-      for (const layout of layouts) {
-        // Attach parent project fields so the card builder can use them
-        layout._project = {
-          shortName:    project.ShortName,
-          location:     project.Location,
-          organisation: project.Organisation,
-          avatar:       project.Avatar,
-        };
-        out.push(layout);
-      }
-    }
-    return out;
-  }
-
-  function buildSecondaryCard(layout, index) {
+  // ── Secondary card builder — Supabase data ──
+  function buildSecondaryCard(s, index) {
     const delay     = (index * 0.12).toFixed(2) + 's';
-    const proj      = layout._project || {};
-
-    // Name: the individual unit listing name
-    const name      = escHtml(layout.layoutName || proj.shortName || 'Dubai Property');
-
-    // Developer: from parent project
-    const developer = escHtml((proj.organisation && proj.organisation.organizationName) || '');
-
-    // Location: from parent project
-    const district  = (proj.location && proj.location.district) ? escHtml(proj.location.district) : '';
-    const city      = (proj.location && proj.location.city && proj.location.city.name) ? escHtml(proj.location.city.name) : '';
-    const location  = district && city ? `${district}, ${city}` : district || city;
-
-    // Image: decode the base64-wrapped cdn URL from layoutImages, fall back to project avatar
-    const rawImg    = (Array.isArray(layout.layoutImages) && layout.layoutImages[0]) || proj.avatar || '';
-    const imgSrc    = decodeLayoutImage(rawImg);
-
-    // Price: layoutPriceSelling
-    const rawPrice  = layout.layoutPriceSelling;
+    const name      = escHtml(s.name || 'Dubai Property');
+    const loc       = [s.location, s.city].filter(Boolean).join(', ');
+    const imgSrc    = s.image_main ? escHtml(s.image_main) : '';
+    const rawPrice  = s.price;
     const price     = rawPrice ? 'AED ' + Number(rawPrice).toLocaleString() : '—';
-
-    // Type and bedrooms for meta row
-    const type      = escHtml((layout.layoutType && layout.layoutType.name) || '');
-    const beds      = layout.layoutBedRoom && layout.layoutBedRoom.name
-                    ? escHtml(layout.layoutBedRoom.name)
-                    : null;
-    const area      = layout.layoutAreaTotal
-                    ? Number(layout.layoutAreaTotal).toLocaleString() + ' sq ft'
-                    : null;
-
-    const badge     = escHtml(layout.OffplanOrSecondary || 'Secondary');
+    const beds      = s.bedrooms || '';
+    const area      = s.area_sqft ? Number(s.area_sqft).toLocaleString() + ' sq ft' : '';
 
     const imgHtml   = imgSrc
-      ? `<img src="${escHtml(imgSrc)}" alt="${name}" loading="lazy" onerror="this.style.display='none'" />`
+      ? `<img src="${imgSrc}" alt="${name}" loading="lazy" onerror="this.style.display='none'" />`
       : '';
 
-    // meta: left = beds label or type, right = area
-    const metaLeft  = beds || type || '';
-    const metaRight = area || '';
-
     return `
-      <a href="property-detail.html?id=${escHtml(layout._id || '')}" class="prop-card" style="--card-delay:${delay}">
+      <a href="property-detail.html?id=${escHtml(s.id || '')}&type=secondary" class="prop-card" style="--card-delay:${delay}">
         <div class="prop-card-img">
           ${imgHtml}
-          <span class="prop-badge">${badge}</span>
+          <span class="prop-badge">Secondary</span>
         </div>
         <div class="prop-card-body">
           <h3 class="prop-name">${name}</h3>
-          ${developer ? `<p class="prop-developer">${developer}</p>` : ''}
-          ${location  ? `<p class="prop-location">${location}</p>`   : ''}
+          ${loc ? `<p class="prop-location">${escHtml(loc)}</p>` : ''}
           <div class="prop-meta">
-            <span>${metaLeft}</span>
-            ${metaRight ? `<span>${metaRight}</span>` : ''}
+            <span>${escHtml(beds)}</span>
+            ${area ? `<span>${area}</span>` : ''}
           </div>
           <p class="prop-price">${price}</p>
         </div>
@@ -519,29 +436,27 @@ document.addEventListener('fore:ready', function () {
   async function loadProperties() {
     showSkeletons(6);
     try {
-      const [opRes, secRes] = await Promise.all([
-        fetch(API_OFFPLAN),
-        fetch(API_SECONDARY),
-      ]);
+      // Fetch off-plan from Behomes API and secondary from Supabase in parallel
+      const supaSecondary = window.supabase
+        ? window.supabase.createClient(SUPA_URL, SUPA_KEY)
+            .from('secondary_listings').select('*')
+            .then(function(res) { return (res.data || []); })
+            .catch(function() { return []; })
+        : Promise.resolve([]);
 
-      const [opData, secData] = await Promise.all([
-        opRes.json(),
-        secRes.json(),
+      const [opRes, secArr] = await Promise.all([
+        fetch(API_OFFPLAN).then(r => r.json()).catch(() => ({})),
+        supaSecondary,
       ]);
 
       // ── Off-plan: flat project array ──
-      const opArr  = extractArray(opData);
-      console.log('[FORE] Off-Plan API — first result:', opArr[0] ?? opData);
-
-      // ── Secondary: projects contain Layouts[] — flatten to individual units ──
-      const secProjects = extractArray(secData);
-      const secArr      = flattenSecondaryListings(secProjects);
-      console.log('[FORE] Secondary API — first layout:', secArr[0] ?? secData);
+      const opArr  = extractArray(opRes);
+      console.log('[FORE] Off-Plan API — first result:', opArr[0] ?? opRes);
+      console.log('[FORE] Secondary Supabase — ' + secArr.length + ' listings');
 
       cachedOffPlan   = opArr.length  ? opArr  : FALLBACK_OFFPLAN;
       cachedSecondary = secArr.length ? secArr : FALLBACK_SECONDARY;
     } catch (err) {
-      // Silent fallback — no error shown to user
       cachedOffPlan   = FALLBACK_OFFPLAN;
       cachedSecondary = FALLBACK_SECONDARY;
     }

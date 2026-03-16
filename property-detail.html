@@ -12,6 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" crossorigin />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="mobile.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     /* ════════════════════════════════════════
@@ -1123,11 +1124,46 @@
      PROPERTY DETAIL — JS
   ════════════════════════════════════════ */
 
-  var PROP_ID    = new URLSearchParams(window.location.search).get('id');
+  var urlParams  = new URLSearchParams(window.location.search);
+  var PROP_ID    = urlParams.get('id');
+  var PROP_TYPE  = urlParams.get('type');  // 'secondary' or null (off-plan)
   var allImages  = [];
   var curImg     = 0;
   var curProp    = null;
   var allProps   = [];
+
+  /* ── Supabase Config ─────────────────── */
+  var SUPA_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
+  var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhbWtuZWtkYnRybXhvcHl3Z3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NjMxOTksImV4cCI6MjA4OTAzOTE5OX0.HCmQ_4cyuImr3S1wQ-V6oW2G2U4a1rzMUlLPqHC-OeA';
+  var supaClient = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+  /* Convert a Supabase secondary_listings row into Behomes-compatible shape */
+  function supabaseToBehomes(s) {
+    var imgs = [];
+    if (s.image_main) imgs.push(s.image_main);
+    if (s.images) {
+      s.images.split(',').forEach(function(u) { if (u.trim()) imgs.push(u.trim()); });
+    }
+    return {
+      project_id: s.id,
+      ShortName: s.name || 'Property',
+      LongName: s.name || '',
+      Description: s.description || '',
+      OffplanOrSecondary: 'Secondary',
+      Type: { name: s.bedrooms === 'Office' ? 'Office' : 'Apartment' },
+      LayoutPriceMin: s.price || 0,
+      LayoutPriceMax: s.price || 0,
+      LayoutAreaTotalMin: s.area_sqft || 0,
+      LayoutAreaTotalMax: s.area_sqft || 0,
+      Avatar: imgs[0] || '',
+      Images: imgs.slice(1),
+      Location: { district: s.location || '', city: { name: s.city || 'Dubai' } },
+      Currency: { currencySymbol: 'AED' },
+      Features: s.features ? s.features.split(',').map(function(f) { return { name: f.trim() }; }) : [],
+      Organisation: { organizationName: s.agent || '' },
+      _supabaseData: s
+    };
+  }
 
   /* ── Utilities ───────────────────────── */
   function esc(s) {
@@ -1164,8 +1200,38 @@
     loadProperty(PROP_ID);
   }
 
-  /* ── Fetch with pagination ───────────── */
+  /* ── Fetch property by type ──────────── */
   function loadProperty(id) {
+    if (PROP_TYPE === 'secondary') {
+      loadSecondaryFromSupabase(id);
+    } else {
+      loadOffplanFromBehomes(id);
+    }
+  }
+
+  /* ── Secondary: fetch from Supabase ─── */
+  function loadSecondaryFromSupabase(id) {
+    supaClient
+      .from('secondary_listings')
+      .select('*')
+      .then(function(res) {
+        if (res.error) { console.error('Supabase error:', res.error); showError(); return; }
+        var rows = res.data || [];
+        var allMapped = rows.map(supabaseToBehomes);
+        allProps = allMapped;
+        var found = allMapped.find(function(p) { return p.project_id === id; });
+        if (found) {
+          curProp = found;
+          renderPage(found);
+        } else {
+          showError();
+        }
+      })
+      .catch(function() { showError(); });
+  }
+
+  /* ── Off-plan: fetch from Behomes API ── */
+  function loadOffplanFromBehomes(id) {
     var base   = 'https://api.behomes.tech/v3/';
     var qBase  = 'lang=en&api_key=EAJF8XND&filter=yes&objects_per_page=50';
     var page   = 1;
@@ -1174,25 +1240,23 @@
     function tryNext() {
       if (page > maxP) { showError(); return; }
       var q = qBase + '&page=' + page;
-      Promise.all([
-        fetch(base + 'get_behomes_objects?'   + q).then(function(r){ return r.json(); }).catch(function(){ return {response:[]}; }),
-        fetch(base + 'get_secondary_objects?' + q).then(function(r){ return r.json(); }).catch(function(){ return {response:[]}; })
-      ]).then(function(res) {
-        var batch = [];
-        if (res[0] && res[0].response) batch = batch.concat(res[0].response);
-        if (res[1] && res[1].response) batch = batch.concat(res[1].response);
-        allProps = allProps.concat(batch);
-        var found = batch.find(function(p) { return p.project_id === id; });
-        if (found) {
-          curProp = found;
-          renderPage(found);
-        } else if (batch.length === 0) {
-          showError();
-        } else {
-          page++;
-          tryNext();
-        }
-      }).catch(function() { showError(); });
+      fetch(base + 'get_behomes_objects?' + q)
+        .then(function(r){ return r.json(); })
+        .catch(function(){ return {response:[]}; })
+        .then(function(json) {
+          var batch = (json && json.response) || [];
+          allProps = allProps.concat(batch);
+          var found = batch.find(function(p) { return p.project_id === id; });
+          if (found) {
+            curProp = found;
+            renderPage(found);
+          } else if (batch.length === 0) {
+            showError();
+          } else {
+            page++;
+            tryNext();
+          }
+        });
     }
     tryNext();
   }
