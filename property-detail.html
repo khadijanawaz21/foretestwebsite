@@ -1763,6 +1763,15 @@
     var prop    = curProp ? (curProp.ShortName || 'Property') : 'Property';
     var propId  = PROP_ID || '';
 
+    // Send to Google Sheet
+    var data = { Name: name, Phone: phone, Email: email, Property: prop, PropertyID: propId, Message: message };
+    fetch('https://script.google.com/macros/s/AKfycbyPlR3JmYi8pJTm3zBUadHNMtNUvGpNhFMKb-4jH6UlArBsaUh8w6zIPvSz1XdiKxAQ0Q/exec', {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }).catch(function(){});
+
+    // Also send email
     var subject = encodeURIComponent('Viewing Request — ' + prop);
     var body = encodeURIComponent(
       'Name: '     + name    + '\n' +
@@ -1772,14 +1781,13 @@
       'Property ID: ' + propId + '\n\n' +
       'Message:\n' + message
     );
+    window.open('mailto:info@fairopportunityrealestate.com?subject=' + subject + '&body=' + body, '_blank');
 
     var btn = document.getElementById('bookingBtn');
     var orig = btn.textContent;
     btn.textContent = 'Sent \u2713';
     btn.style.background = '#4a7c4e';
     btn.disabled = true;
-
-    window.location.href = 'mailto:info@fairopportunityrealestate.com?subject=' + subject + '&body=' + body;
 
     setTimeout(function() {
       btn.textContent = orig;

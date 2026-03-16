@@ -1097,7 +1097,7 @@
           <div class="gv-form-title">Tell us about your situation</div>
           <div class="gv-form-sub">We will assess your eligibility and outline the exact steps. No commitment required.</div>
 
-          <form action="mailto:info@fairopportunityrealestate.com" method="post" enctype="text/plain">
+          <form id="gvForm" onsubmit="handleGVForm(event)">
             <div class="gv-form-row">
               <div class="gv-field">
                 <label for="gv-first-name">First Name</label>
@@ -1184,12 +1184,63 @@
               <textarea id="gv-message" name="Message" placeholder="Any specific questions, circumstances, or preferences we should know about…"></textarea>
             </div>
 
-            <button type="submit" class="gv-form-submit">
+            <button type="submit" class="gv-form-submit" id="gvBtn">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4z"/></svg>
               Check My Eligibility
             </button>
             <p class="gv-form-note">Your information is sent directly to our team at info@fairopportunityrealestate.com. We respond within one business day.</p>
           </form>
+          <script>
+          function handleGVForm(e) {
+            e.preventDefault();
+            var form = e.target;
+            var btn = document.getElementById('gvBtn');
+            btn.disabled = true;
+            btn.innerHTML = 'Sending…';
+
+            var data = {
+              FirstName: document.getElementById('gv-first-name').value,
+              LastName: document.getElementById('gv-last-name').value,
+              Email: document.getElementById('gv-email').value,
+              Phone: document.getElementById('gv-phone').value,
+              Country: document.getElementById('gv-country').value,
+              Budget: document.getElementById('gv-budget').value,
+              PropertySituation: document.getElementById('gv-property').value,
+              Timeline: document.getElementById('gv-timeline').value,
+              Message: document.getElementById('gv-message').value
+            };
+
+            // Send to Google Sheet
+            fetch('https://script.google.com/macros/s/AKfycbwN771HcwIxe2cTue6eCU11Jeqb2Rd1wEjLifs969TXRNsrYfVnX6z_l7IOfhI-NYnb/exec', {
+              method: 'POST', mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+            }).catch(function(){});
+
+            // Also send email
+            var subject = encodeURIComponent('Golden Visa Enquiry — ' + data.FirstName + ' ' + data.LastName);
+            var body = encodeURIComponent(
+              'Name: ' + data.FirstName + ' ' + data.LastName + '\n' +
+              'Email: ' + data.Email + '\n' +
+              'Phone: ' + data.Phone + '\n' +
+              'Country: ' + data.Country + '\n' +
+              'Budget: ' + data.Budget + '\n' +
+              'Property Situation: ' + data.PropertySituation + '\n' +
+              'Timeline: ' + data.Timeline + '\n\n' +
+              'Message:\n' + data.Message
+            );
+            window.open('mailto:info@fairopportunityrealestate.com?subject=' + subject + '&body=' + body, '_blank');
+
+            btn.innerHTML = 'Sent ✓';
+            btn.style.background = '#4a7c4e';
+            setTimeout(function() {
+              btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4z"/></svg> Check My Eligibility';
+              btn.style.background = '';
+              btn.disabled = false;
+              form.reset();
+            }, 5000);
+          }
+          </script>
         </div>
 
       </div>

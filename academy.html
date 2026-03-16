@@ -1769,7 +1769,7 @@
 
       <div class="reveal reveal-delay-2">
         <div class="acad-form">
-          <form action="mailto:info@fairopportunityrealestate.com" method="POST" enctype="text/plain" id="academyForm">
+          <form id="academyForm" onsubmit="handleAcademyForm(event)">
 
             <div class="form-row">
               <label class="form-label" for="f-name">Full Name</label>
@@ -1803,10 +1803,54 @@
               <textarea class="form-input form-textarea" id="f-msg" name="Message" placeholder="Your timeline, goals, or questions..."></textarea>
             </div>
 
-            <button type="submit" class="form-submit">Send My Enquiry</button>
+            <button type="submit" class="form-submit" id="academyBtn">Send My Enquiry</button>
             <p class="form-note">We reply to every message within 24 hours. No spam, ever.</p>
 
           </form>
+          <script>
+          function handleAcademyForm(e) {
+            e.preventDefault();
+            var form = e.target;
+            var btn = document.getElementById('academyBtn');
+            btn.disabled = true;
+            btn.textContent = 'Sending…';
+
+            var data = {
+              Name: form.Name.value,
+              Email: form.Email.value,
+              Phone: form.Phone.value,
+              Budget: form.Budget.value,
+              Message: form.Message.value
+            };
+
+            // Send to Google Sheet
+            fetch('https://script.google.com/macros/s/AKfycbykCwZeEaIu0wVdRvzuq7QdCq59C6KzqN1A5yE9C_FBlaYO3mRLgPEspv9bLIrCYtWO/exec', {
+              method: 'POST', mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+            }).catch(function(){});
+
+            // Also send email
+            var subject = encodeURIComponent('Academy Enquiry — ' + data.Name);
+            var body = encodeURIComponent(
+              'Name: ' + data.Name + '\n' +
+              'Email: ' + data.Email + '\n' +
+              'Phone: ' + data.Phone + '\n' +
+              'Budget: ' + data.Budget + '\n\n' +
+              'Message:\n' + data.Message
+            );
+            window.open('mailto:info@fairopportunityrealestate.com?subject=' + subject + '&body=' + body, '_blank');
+
+            btn.textContent = 'Sent ✓';
+            btn.style.background = '#4a7c4e';
+            setTimeout(function() {
+              btn.textContent = 'Send My Enquiry';
+              btn.style.background = '';
+              btn.disabled = false;
+              form.reset();
+            }, 5000);
+          }
+          </script>
         </div>
       </div>
 
