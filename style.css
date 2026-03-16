@@ -665,85 +665,209 @@ section {
 }
 
 /* ─── GOLDEN VISA ─── */
+/* ─── GOLDEN VISA — card slide reveal ─── */
 .golden-visa {
   background: var(--bg);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
   padding: 0;
+  position: relative;
+  height: 600px;
   overflow: hidden;
-}
-.gv-visual {
-  background: var(--bg-dark2);
-  min-height: 560px;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.gv-visual-bg {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse at 30% 60%, rgba(201,169,110,0.12) 0%, transparent 65%),
-    linear-gradient(135deg, #0d0d0d, #111111);
-}
-.gv-emblem {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-}
-.gv-emblem-ring {
-  width: 200px;
-  height: 200px;
-  border: 0.5px solid var(--gold-border);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 24px;
-  position: relative;
-}
-.gv-emblem-ring::before {
-  content: '';
-  position: absolute;
-  inset: 10px;
-  border: 0.5px solid rgba(201,169,110,0.12);
-  border-radius: 50%;
-}
-.gv-emblem-text {
-  font-family: var(--font-display);
-  font-size: 15px;
-  font-weight: 300;
-  letter-spacing: 4px;
-  color: var(--gold);
-  text-transform: uppercase;
-}
-.gv-emblem-inner {
-  text-align: center;
-}
-.gv-emblem-years {
-  font-family: var(--font-display);
-  font-size: 52px;
-  font-weight: 300;
-  color: var(--gold);
-  line-height: 1;
-}
-.gv-emblem-years-label {
-  font-size: 8px;
-  font-weight: 500;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--white-35);
-  margin-top: 4px;
 }
 
-.gv-content {
-  padding: 80px 64px;
+/* ── Card wrapper (credit card proportions, centered by default) ── */
+.gv-card-wrap {
+  position: absolute;
+  width: 420px;
+  height: 265px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow:
+    0 4px 8px rgba(0,0,0,0.32),
+    0 16px 40px rgba(0,0,0,0.52),
+    0 40px 80px rgba(0,0,0,0.28),
+    0 0 0 0.5px rgba(201,169,110,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+  transition:
+    left 0.9s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 2;
+}
+.golden-visa:hover .gv-card-wrap {
+  left: 6%;
+  transform: translate(0, -50%);
+}
+
+/* Card background layers */
+.gv-card-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    #D4B07A 0%,
+    #C9A96E 15%,
+    #9A7A48 38%,
+    #7A5F36 52%,
+    #9A7A48 66%,
+    #C9A96E 82%,
+    #E2C99A 100%
+  );
+}
+.gv-card-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    rgba(255,255,255,0.22) 0%,
+    rgba(255,255,255,0.05) 28%,
+    transparent 50%,
+    rgba(255,255,255,0.03) 72%,
+    transparent 100%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+.gv-card-texture {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.1;
+  z-index: 1;
+  pointer-events: none;
+}
+.gv-card-sheen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(255,255,255,0.22) 42%,
+    rgba(255,255,255,0.07) 56%,
+    transparent 78%
+  );
+  transform: translateX(-200%);
+  animation: gvSheen 2.4s cubic-bezier(0.4, 0, 0.2, 1) 0.7s 1 forwards;
+  z-index: 3;
+  pointer-events: none;
+}
+@keyframes gvSheen {
+  0%   { transform: translateX(-200%); }
+  100% { transform: translateX(500%); }
+}
+.gv-card-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 35%,
+    rgba(255,255,255,0.07) 0%,
+    transparent 65%
+  );
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Card inner layout */
+.gv-card-inner {
+  position: relative;
+  z-index: 4;
+  width: 100%;
+  height: 100%;
+  padding: 20px 26px 18px;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+.gv-card-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.gv-card-country {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+}
+.gv-uae-flag {
+  display: flex;
+  gap: 2px;
+}
+.gv-uae-flag span {
+  display: block;
+  width: 3px;
+  height: 16px;
+  border-radius: 1.5px;
+}
+.gv-card-eagle-wrap {
+  display: flex;
   justify-content: center;
+  align-items: center;
+}
+.gv-card-eagle-wrap svg {
+  width: 82px;
+  height: auto;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.35));
+}
+.gv-card-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.gv-card-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 7px;
+  color: rgba(255,255,255,0.96);
+  text-shadow: 0 1px 8px rgba(0,0,0,0.28);
+  line-height: 1;
+}
+.gv-card-sub {
+  font-size: 7.5px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.52);
+}
+.gv-hint {
+  position: absolute;
+  bottom: 14px;
+  right: 20px;
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.38);
+  z-index: 5;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.golden-visa:hover .gv-hint {
+  opacity: 0;
+}
+
+/* ── Right content panel ── */
+.gv-content-panel {
+  position: absolute;
+  left: calc(6% + 420px + 64px);
+  right: 6%;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.5s ease 0.45s;
+  pointer-events: none;
+}
+.golden-visa:hover .gv-content-panel {
+  opacity: 1;
+  pointer-events: auto;
 }
 .gv-title {
   font-family: var(--font-display);
@@ -1784,9 +1908,14 @@ footer {
   .why-fore-header { grid-template-columns: 1fr; gap: 24px; }
   .pillars { grid-template-columns: 1fr; }
   .property-grid { grid-template-columns: repeat(2, 1fr); }
-  .golden-visa { grid-template-columns: 1fr; }
-  .gv-visual { min-height: 320px; }
-  .gv-content { padding: 56px 10%; }
+  .golden-visa { height: auto; min-height: 540px; }
+  .gv-card-wrap { width: 340px; height: 214px; }
+  .gv-card-title { font-size: 20px; letter-spacing: 5px; }
+  .golden-visa:hover .gv-card-wrap { left: 4%; transform: translate(0,-50%); }
+  .gv-content-panel { left: calc(4% + 340px + 32px); right: 4%; }
+  .gv-title { font-size: 28px; }
+  .gv-benefits { gap: 10px; margin-bottom: 28px; }
+  .gv-body { margin-bottom: 24px; }
   .academy-modules { grid-template-columns: repeat(2, 1fr); }
   /* Team flip grid: 2-2-1 on tablet */
   .team-flip-grid { grid-template-columns: repeat(4, 1fr); }
