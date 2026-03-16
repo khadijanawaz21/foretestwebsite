@@ -391,6 +391,11 @@
       color: var(--white-70);
       border: 0.5px solid rgba(255,255,255,0.12);
     }
+    .pc-badge.commercial {
+      background: rgba(156,39,176,0.12);
+      color: #CE93D8;
+      border: 0.5px solid rgba(156,39,176,0.25);
+    }
 
     /* Delivery year chip */
     .pc-year {
@@ -774,6 +779,7 @@
         <button class="fb-toggle-btn active" data-market="all">All</button>
         <button class="fb-toggle-btn" data-market="offplan">Off-Plan</button>
         <button class="fb-toggle-btn" data-market="secondary">Secondary</button>
+        <button class="fb-toggle-btn" data-market="commercial">Commercial</button>
       </div>
 
       <div class="fb-sep"></div>
@@ -915,7 +921,9 @@
     }
 
     function getMarketType(p) {
+      if (p._source === 'commercial') return 'commercial';
       var v = (p.OffplanOrSecondary || '').toLowerCase();
+      if (v === 'commercial') return 'commercial';
       if (v.indexOf('secondary') !== -1) return 'secondary';
       if (v.indexOf('offplan') !== -1 || v.indexOf('off-plan') !== -1 || v.indexOf('off plan') !== -1) return 'offplan';
       return p._source || 'offplan';
@@ -974,18 +982,42 @@
         .select('*')
         .then(function (res) {
           if (res.error) { console.error('Supabase error:', res.error); return []; }
-          return (res.data || []).map(function (s) {
+          return (res.data || []).filter(function (s) {
+            return s.published !== false;
+          }).map(function (s) {
+            var lt = s.listing_type || 'ready_secondary';
+            var marketType = lt === 'commercial' ? 'commercial' : 'secondary';
+            var badgeText = lt === 'secondary_offplan' ? 'Off-Plan Resale'
+                         : lt === 'commercial' ? 'Commercial'
+                         : 'Secondary';
             return {
-              _source: 'secondary',
+              _source: marketType,
+              _listingType: lt,
+              _supabaseRaw: s,
               project_id: s.id,
               ShortName: s.name,
               LayoutPriceMin: s.price,
               Bedrooms: s.bedrooms,
               Avatar: s.image_main || '',
               Location: { district: s.location || '', city: { name: s.city || 'Dubai' } },
-              OffplanOrSecondary: 'secondary',
+              OffplanOrSecondary: marketType,
+              Type: { name: s.property_type || s.commercial_type || '' },
+              Organisation: { organizationName: lt === 'secondary_offplan' ? (s.developer || '') : '' },
               _supabaseStatus: s.status,
-              _supabaseLinkType: 'secondary'
+              _supabaseLinkType: 'secondary',
+              _supabaseBadge: badgeText,
+              _buildingName: s.building_name || '',
+              _furnished: s.furnished || '',
+              _handoverDate: s.handover_date || '',
+              _paymentPlan: s.payment_plan || '',
+              _originalPrice: s.original_price,
+              _completionPct: s.completion_percentage,
+              _commercialType: s.commercial_type || '',
+              _fitted: s.fitted || '',
+              _parkingSpaces: s.parking_spaces || 0,
+              _rentalYield: s.rental_yield || '',
+              _areaSqft: s.area_sqft || 0,
+              _featured: s.featured
             };
           });
         })
@@ -1090,6 +1122,13 @@
         result.sort(function (a, b) { return (a.LayoutPriceMin || 0) - (b.LayoutPriceMin || 0); });
       } else if (activeSort === 'price-desc') {
         result.sort(function (a, b) { return (b.LayoutPriceMin || 0) - (a.LayoutPriceMin || 0); });
+      } else {
+        /* Default: featured first, then newest */
+        result.sort(function (a, b) {
+          if (a._featured && !b._featured) return -1;
+          if (!a._featured && b._featured) return 1;
+          return 0;
+        });
       }
 
       filteredProperties = result;
@@ -1110,8 +1149,9 @@
       a.style.setProperty('--card-delay', (idx % 12) * 0.042 + 's');
 
       var market    = getMarketType(p);
-      var badgeText = market === 'secondary' ? 'Secondary' : 'Off-Plan';
-      var badgeCls  = market === 'secondary' ? 'secondary' : 'offplan';
+      var lt        = p._listingType || '';
+      var badgeText = p._supabaseBadge || (market === 'secondary' ? 'Secondary' : market === 'commercial' ? 'Commercial' : 'Off-Plan');
+      var badgeCls  = market === 'secondary' ? 'secondary' : market === 'commercial' ? 'commercial' : 'offplan';
       var price     = formatPrice(p.LayoutPriceMin);
       var year      = formatYear(p.DeliveryDate);
       var location  = getLocation(p);
@@ -1122,6 +1162,57 @@
       var imgHtml = imgSrc
         ? '<img src="' + esc(imgSrc) + '" alt="' + esc(p.ShortName || '') + '" loading="lazy" onerror="this.parentNode.querySelector(\'.pc-no-img\').style.display=\'flex\';this.style.display=\'none\'"/>'
         : '';
+
+      /* Build type-specific meta line */
+      var metaHtml = '';
+      if (lt === 'ready_secondary') {
+        var beds = p.Bedrooms ? (p.Bedrooms + 'BR ') : '';
+        var propLabel = beds + (type || '');
+        if (propLabel) metaHtml += '<div class="pc-type">' + esc(propLabel) + '</div>';
+        var statusRaw = p._supabaseStatus || '';
+        if (statusRaw) {
+          var sCls = statusRaw.toLowerCase() === 'rented' ? 'color:rgba(255,152,0,0.9)' : 'color:rgba(76,175,80,0.9)';
+          metaHtml += '<div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;' + sCls + ';margin-top:2px;">' + esc(statusRaw) + '</div>';
+        }
+        if (p._rentalYield) metaHtml += '<div style="font-size:10px;color:rgba(201,169,110,0.8);margin-top:2px;">Yield: ' + esc(p._rentalYield) + '</div>';
+      } else if (lt === 'secondary_offplan') {
+        var beds2 = p.Bedrooms ? (p.Bedrooms + 'BR ') : '';
+        if (beds2 || type) metaHtml += '<div class="pc-type">' + esc(beds2 + (type || '')) + '</div>';
+        if (p._handoverDate) metaHtml += '<div style="font-size:10px;color:var(--white-50);margin-top:2px;">Handover: ' + esc(p._handoverDate) + '</div>';
+        if (p._paymentPlan) metaHtml += '<div style="font-size:10px;color:var(--white-50);margin-top:1px;">Plan: ' + esc(p._paymentPlan) + '</div>';
+      } else if (lt === 'commercial') {
+        if (p._commercialType) metaHtml += '<div class="pc-type">' + esc(p._commercialType) + '</div>';
+        if (p._areaSqft) metaHtml += '<div style="font-size:10px;color:var(--white-50);margin-top:2px;">' + Number(p._areaSqft).toLocaleString() + ' sq ft</div>';
+        if (p._fitted) metaHtml += '<div style="font-size:10px;color:var(--white-50);margin-top:1px;">' + esc(p._fitted) + '</div>';
+        var statusRaw2 = p._supabaseStatus || '';
+        if (statusRaw2) {
+          var sCls2 = statusRaw2.toLowerCase() === 'rented' ? 'color:rgba(255,152,0,0.9)' : 'color:rgba(76,175,80,0.9)';
+          metaHtml += '<div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;' + sCls2 + ';margin-top:2px;">' + esc(statusRaw2) + '</div>';
+        }
+      } else {
+        /* Off-plan from API — keep original display */
+        if (type) metaHtml += '<div class="pc-type">' + esc(type) + '</div>';
+      }
+
+      /* Price display — off-plan resale with original price comparison */
+      var priceHtml = '';
+      if (price) {
+        if (lt === 'secondary_offplan' && p._originalPrice && p._originalPrice > 0) {
+          var origFmt = formatPrice(p._originalPrice);
+          priceHtml = '<div class="pc-price">' + price + '</div>' +
+            (origFmt ? '<div style="font-size:10px;color:var(--white-35);margin-top:1px;">Originally ' + origFmt + '</div>' : '');
+        } else {
+          priceHtml = '<div class="pc-price">' + price + '</div>';
+        }
+      } else {
+        priceHtml = '<div class="pc-price no-price">Price on Request</div>';
+      }
+
+      /* Completion bar for off-plan resale */
+      var completionHtml = '';
+      if (lt === 'secondary_offplan' && p._completionPct != null && p._completionPct > 0) {
+        completionHtml = '<div style="margin-top:6px;"><div style="display:flex;justify-content:space-between;font-size:9px;color:var(--white-35);margin-bottom:3px;"><span>Completion</span><span>' + p._completionPct + '%</span></div><div style="height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;"><div style="width:' + p._completionPct + '%;height:100%;background:linear-gradient(90deg,rgba(201,169,110,0.6),rgba(201,169,110,0.9));border-radius:2px;"></div></div></div>';
+      }
 
       a.innerHTML =
         '<div class="pc-img">' +
@@ -1139,17 +1230,15 @@
           (year ? '<span class="pc-year">Delivery ' + year + '</span>' : '') +
         '</div>' +
         '<div class="pc-body">' +
-          (type ? '<div class="pc-type">' + esc(type) + '</div>' : '') +
+          metaHtml +
           '<div class="pc-name">' + esc(p.ShortName || 'Unnamed Property') + '</div>' +
           (developer ? '<div class="pc-developer">by ' + esc(developer) + '</div>' : '') +
           (location  ? '<div class="pc-location">' + esc(location) + '</div>' : '') +
+          completionHtml +
           '<div class="pc-footer">' +
             '<div>' +
               '<div class="pc-price-label">Starting from</div>' +
-              (price
-                ? '<div class="pc-price">' + price + '</div>'
-                : '<div class="pc-price no-price">Price on Request</div>'
-              ) +
+              priceHtml +
             '</div>' +
             '<div class="pc-arrow">' +
               '<svg width="12" height="12" viewBox="0 0 12 12" fill="none">' +

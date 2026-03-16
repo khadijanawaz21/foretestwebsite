@@ -834,6 +834,196 @@
     .btn-danger:hover { opacity: 0.85; }
     .btn-danger:focus-visible { outline: 2px solid var(--error); outline-offset: 2px; }
 
+    /* ── Listing Type Selector ── */
+    .listing-type-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      grid-column: 1 / -1;
+      margin-bottom: 8px;
+    }
+
+    .lt-card {
+      background: var(--bg);
+      border: 1px solid var(--subtle-border);
+      border-radius: 3px;
+      padding: 20px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.3s ease, background 0.3s ease;
+    }
+
+    .lt-card:hover {
+      border-color: var(--gold-border);
+      background: rgba(201,169,110,0.03);
+    }
+
+    .lt-card.active {
+      border-color: var(--gold);
+      background: rgba(201,169,110,0.08);
+    }
+
+    .lt-card:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+    .lt-card-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+      opacity: 0.5;
+    }
+
+    .lt-card.active .lt-card-icon { opacity: 1; }
+
+    .lt-card-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--white-50);
+    }
+
+    .lt-card.active .lt-card-label { color: var(--gold); }
+
+    .lt-card-desc {
+      font-size: 10px;
+      color: var(--white-35);
+      margin-top: 4px;
+    }
+
+    /* Type-specific field sections */
+    .fields-section {
+      display: none;
+      grid-column: 1 / -1;
+    }
+
+    .fields-section.visible {
+      display: contents;
+    }
+
+    .section-divider {
+      grid-column: 1 / -1;
+      border-top: 0.5px solid var(--gold-border);
+      margin: 8px 0;
+      padding-top: 16px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .section-subtitle {
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--white-35);
+      font-weight: 500;
+    }
+
+    /* Admin-only label */
+    .admin-only-label {
+      display: inline-block;
+      font-size: 7px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--warning);
+      background: rgba(255,152,0,0.12);
+      padding: 2px 6px;
+      border-radius: 2px;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+
+    /* Yield display */
+    .yield-display {
+      background: var(--bg);
+      border: 0.5px solid var(--subtle-border);
+      border-radius: 2px;
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--gold);
+      letter-spacing: 0.5px;
+    }
+
+    .yield-display.empty { color: var(--white-35); font-size: 12px; font-weight: 300; }
+
+    /* ── Filter Tabs (above table) ── */
+    .filter-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 16px;
+    }
+
+    .filter-tab-btn {
+      background: none;
+      border: 0.5px solid var(--subtle-border);
+      border-right: none;
+      color: var(--white-35);
+      font-family: var(--font-ui);
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .filter-tab-btn:first-child { border-radius: 2px 0 0 2px; }
+    .filter-tab-btn:last-child { border-right: 0.5px solid var(--subtle-border); border-radius: 0 2px 2px 0; }
+    .filter-tab-btn:hover { color: var(--white-50); background: var(--bg-dark3); }
+
+    .filter-tab-btn.active {
+      background: rgba(201,169,110,0.1);
+      border-color: var(--gold-border);
+      color: var(--gold);
+    }
+
+    .filter-tab-btn.active + .filter-tab-btn { border-left-color: var(--gold-border); }
+
+    .filter-tab-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+
+    /* Type badge for table */
+    .type-badge {
+      display: inline-block;
+      font-size: 7px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 2px;
+    }
+
+    .type-badge.ready { background: rgba(76,175,80,0.12); color: #66BB6A; }
+    .type-badge.offplan-resale { background: rgba(33,150,243,0.12); color: #42A5F5; }
+    .type-badge.commercial { background: rgba(156,39,176,0.12); color: #AB47BC; }
+
+    /* Published dot */
+    .pub-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .pub-dot.published { background: var(--success); }
+    .pub-dot.draft { background: var(--white-35); }
+
+    /* Parking spaces conditional */
+    .parking-spaces-wrap {
+      display: none;
+    }
+
+    .parking-spaces-wrap.visible {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
     /* ── Responsive ── */
     @media (max-width: 768px) {
       .dash-body { padding: 24px 16px; }
@@ -842,6 +1032,8 @@
       .dash-header { padding: 0 16px; }
       .dash-header-label { display: none; }
       .tabs { overflow-x: auto; }
+      .listing-type-selector { grid-template-columns: 1fr; }
+      .filter-tabs { flex-wrap: wrap; }
     }
   </style>
 </head>
@@ -879,6 +1071,12 @@
 
       <!-- ── All Listings Tab ── -->
       <div class="tab-panel active" id="tab-listings">
+        <div class="filter-tabs" id="listingFilterTabs">
+          <button class="filter-tab-btn active" data-filter="all">All</button>
+          <button class="filter-tab-btn" data-filter="secondary_offplan">Off-Plan Resale</button>
+          <button class="filter-tab-btn" data-filter="ready_secondary">Ready</button>
+          <button class="filter-tab-btn" data-filter="commercial">Commercial</button>
+        </div>
         <div class="table-loading" id="tableLoading">Loading listings...</div>
         <div style="overflow-x:auto;">
           <table class="listings-table" id="listingsTable" style="display:none;">
@@ -886,9 +1084,12 @@
               <tr>
                 <th>Photo</th>
                 <th>Name</th>
+                <th>Type</th>
+                <th>Property</th>
                 <th>Price</th>
-                <th>Beds</th>
+                <th>Location</th>
                 <th>Status</th>
+                <th>Pub</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -903,6 +1104,27 @@
         <form id="listingForm" class="form-grid">
           <input type="hidden" id="editId" />
 
+          <!-- ═══ LISTING TYPE SELECTOR ═══ -->
+          <div class="listing-type-selector">
+            <div class="lt-card active" data-lt="ready_secondary" tabindex="0">
+              <div class="lt-card-icon">🏠</div>
+              <div class="lt-card-label">Ready Secondary</div>
+              <div class="lt-card-desc">Completed residential resale</div>
+            </div>
+            <div class="lt-card" data-lt="secondary_offplan" tabindex="0">
+              <div class="lt-card-icon">🏗️</div>
+              <div class="lt-card-label">Secondary Off-Plan</div>
+              <div class="lt-card-desc">Off-plan resale</div>
+            </div>
+            <div class="lt-card" data-lt="commercial" tabindex="0">
+              <div class="lt-card-icon">🏢</div>
+              <div class="lt-card-label">Commercial</div>
+              <div class="lt-card-desc">Offices, retail, warehouses</div>
+            </div>
+          </div>
+          <input type="hidden" id="listingType" value="ready_secondary" />
+
+          <!-- ═══ SHARED FIELDS ═══ -->
           <div class="form-group full">
             <label class="form-label" for="title">Listing Name / Title</label>
             <input class="form-input" type="text" id="title" required />
@@ -914,21 +1136,18 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="bedrooms">Bedrooms</label>
-            <select class="form-select" id="bedrooms" required>
-              <option value="">Select</option>
-              <option value="Studio">Studio</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5+">5+</option>
-            </select>
+            <label class="form-label" for="location">Location / Community</label>
+            <input class="form-input" type="text" id="location" required placeholder="e.g. Dubai Marina, Business Bay" />
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="bathrooms">Bathrooms</label>
-            <input class="form-input" type="number" id="bathrooms" min="0" required />
+            <label class="form-label" for="buildingName">Building Name</label>
+            <input class="form-input" type="text" id="buildingName" placeholder="e.g. Marina Gate 1, Burj Vista" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="city">City</label>
+            <input class="form-input" type="text" id="city" value="Dubai" />
           </div>
 
           <div class="form-group">
@@ -942,53 +1161,271 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label" for="location">Location / Community</label>
-            <input class="form-input" type="text" id="location" required />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="city">City</label>
-            <input class="form-input" type="text" id="city" value="Dubai" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="status">Status</label>
-            <select class="form-select" id="status" required>
-              <option value="">Select</option>
-              <option value="Vacant">Vacant</option>
-              <option value="Rented">Rented</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="furnished">Furnished</label>
-            <select class="form-select" id="furnished" required>
-              <option value="">Select</option>
-              <option value="Furnished">Furnished</option>
-              <option value="Unfurnished">Unfurnished</option>
-              <option value="Shell">Shell</option>
-            </select>
-          </div>
-
-          <div class="form-group">
             <label class="form-label" for="view">View</label>
-            <input class="form-input" type="text" id="view" placeholder="e.g. Sea View, Golf View" />
+            <input class="form-input" type="text" id="view" placeholder="e.g. Sea View, Burj Khalifa View" />
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Parking</label>
-            <div class="toggle-wrap">
-              <label class="toggle">
-                <input type="checkbox" id="parking" />
-                <span class="toggle-track"></span>
-              </label>
-              <span class="toggle-label" id="parkingLabel">No</span>
+          <!-- ═══ READY SECONDARY FIELDS ═══ -->
+          <div class="fields-section visible" id="fieldsReadySecondary">
+            <div class="section-divider">
+              <div class="section-title">Ready Secondary Details</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="propertyType">Property Type</label>
+              <select class="form-select" id="propertyType">
+                <option value="">Select</option>
+                <option value="Apartment">Apartment</option>
+                <option value="Villa">Villa</option>
+                <option value="Townhouse">Townhouse</option>
+                <option value="Penthouse">Penthouse</option>
+                <option value="Duplex">Duplex</option>
+                <option value="Studio">Studio</option>
+                <option value="Loft">Loft</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="bedrooms">Bedrooms</label>
+              <select class="form-select" id="bedrooms">
+                <option value="">Select</option>
+                <option value="Studio">Studio</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5+">5+</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="bathrooms">Bathrooms</label>
+              <input class="form-input" type="number" id="bathrooms" min="0" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="status">Status</label>
+              <select class="form-select" id="status">
+                <option value="">Select</option>
+                <option value="Vacant">Vacant</option>
+                <option value="Rented">Rented</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="furnished">Furnished</label>
+              <select class="form-select" id="furnished">
+                <option value="">Select</option>
+                <option value="Furnished">Furnished</option>
+                <option value="Unfurnished">Unfurnished</option>
+                <option value="Semi-Furnished">Semi-Furnished</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Parking</label>
+              <div class="toggle-wrap">
+                <label class="toggle">
+                  <input type="checkbox" id="parking" />
+                  <span class="toggle-track"></span>
+                </label>
+                <span class="toggle-label" id="parkingLabel">No</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="serviceCharge">Service Charge / Year (AED)</label>
+              <input class="form-input" type="number" id="serviceCharge" min="0" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ownership">Ownership</label>
+              <select class="form-select" id="ownership">
+                <option value="Freehold">Freehold</option>
+                <option value="Leasehold">Leasehold</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="annualRentGroupReady" style="display:none;">
+              <label class="form-label" for="annualRent">Annual Rent (AED)</label>
+              <input class="form-input" type="number" id="annualRent" min="0" />
+            </div>
+
+            <div class="form-group" id="rentalYieldGroupReady" style="display:none;">
+              <label class="form-label">Rental Yield</label>
+              <div class="yield-display empty" id="rentalYieldDisplay">Enter price + annual rent</div>
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label" for="serviceCharge">Service Charge / Year (AED)</label>
-            <input class="form-input" type="number" id="serviceCharge" min="0" />
+          <!-- ═══ SECONDARY OFF-PLAN FIELDS ═══ -->
+          <div class="fields-section" id="fieldsSecondaryOffplan">
+            <div class="section-divider">
+              <div class="section-title">Off-Plan Resale Details</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="opPropertyType">Property Type</label>
+              <select class="form-select" id="opPropertyType">
+                <option value="">Select</option>
+                <option value="Apartment">Apartment</option>
+                <option value="Villa">Villa</option>
+                <option value="Townhouse">Townhouse</option>
+                <option value="Penthouse">Penthouse</option>
+                <option value="Duplex">Duplex</option>
+                <option value="Studio">Studio</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="opBedrooms">Bedrooms</label>
+              <select class="form-select" id="opBedrooms">
+                <option value="">Select</option>
+                <option value="Studio">Studio</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5+">5+</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="opBathrooms">Bathrooms</label>
+              <input class="form-input" type="number" id="opBathrooms" min="0" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="developer">Developer</label>
+              <input class="form-input" type="text" id="developer" placeholder="e.g. Emaar, Danube, Damac" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="projectName">Project Name</label>
+              <input class="form-input" type="text" id="projectName" placeholder="e.g. Riviera Reve, Peninsula Four" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="handoverDate">Handover Date</label>
+              <input class="form-input" type="text" id="handoverDate" placeholder="e.g. Q4 2026, Q2 2027" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="paymentPlan">Payment Plan</label>
+              <input class="form-input" type="text" id="paymentPlan" placeholder="e.g. 60/40, 70/30, 1% Monthly" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="completionPct">Completion %</label>
+              <input class="form-input" type="number" id="completionPct" min="0" max="100" placeholder="0–100" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="originalPrice">Original Purchase Price (AED)</label>
+              <input class="form-input" type="number" id="originalPrice" min="0" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="opFurnished">Furnished</label>
+              <select class="form-select" id="opFurnished">
+                <option value="">Select</option>
+                <option value="Furnished">Furnished</option>
+                <option value="Unfurnished">Unfurnished</option>
+                <option value="Semi-Furnished">Semi-Furnished</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Parking</label>
+              <div class="toggle-wrap">
+                <label class="toggle">
+                  <input type="checkbox" id="opParking" />
+                  <span class="toggle-track"></span>
+                </label>
+                <span class="toggle-label" id="opParkingLabel">No</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="opOwnership">Ownership</label>
+              <select class="form-select" id="opOwnership">
+                <option value="Freehold">Freehold</option>
+                <option value="Leasehold">Leasehold</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- ═══ COMMERCIAL FIELDS ═══ -->
+          <div class="fields-section" id="fieldsCommercial">
+            <div class="section-divider">
+              <div class="section-title">Commercial Details</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="commercialType">Commercial Type</label>
+              <select class="form-select" id="commercialType">
+                <option value="">Select</option>
+                <option value="Office">Office</option>
+                <option value="Retail">Retail</option>
+                <option value="Warehouse">Warehouse</option>
+                <option value="Full Floor">Full Floor</option>
+                <option value="Shop">Shop</option>
+                <option value="Showroom">Showroom</option>
+                <option value="Land">Land</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="fittedStatus">Fitted Status</label>
+              <select class="form-select" id="fittedStatus">
+                <option value="">Select</option>
+                <option value="Fitted">Fitted</option>
+                <option value="Shell & Core">Shell &amp; Core</option>
+                <option value="Furnished">Furnished</option>
+                <option value="Semi-Fitted">Semi-Fitted</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="parkingSpaces">Parking Spaces</label>
+              <input class="form-input" type="number" id="parkingSpaces" min="0" value="0" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="comStatus">Status</label>
+              <select class="form-select" id="comStatus">
+                <option value="">Select</option>
+                <option value="Vacant">Vacant</option>
+                <option value="Rented">Rented</option>
+              </select>
+            </div>
+
+            <div class="form-group" id="comAnnualRentGroup" style="display:none;">
+              <label class="form-label" for="comAnnualRent">Annual Rent (AED)</label>
+              <input class="form-input" type="number" id="comAnnualRent" min="0" />
+            </div>
+
+            <div class="form-group" id="comYieldGroup" style="display:none;">
+              <label class="form-label">Rental Yield</label>
+              <div class="yield-display empty" id="comYieldDisplay">Enter price + annual rent</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="comServiceCharge">Service Charge / Year (AED)</label>
+              <input class="form-input" type="number" id="comServiceCharge" min="0" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="comOwnership">Ownership</label>
+              <select class="form-select" id="comOwnership">
+                <option value="Freehold">Freehold</option>
+                <option value="Leasehold">Leasehold</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- ═══ SHARED BOTTOM FIELDS ═══ -->
+          <div class="section-divider">
+            <div class="section-title">Description &amp; Media</div>
           </div>
 
           <div class="form-group">
@@ -1001,17 +1438,42 @@
             </select>
           </div>
 
+          <div class="form-group">
+            <div style="display:flex;gap:24px;">
+              <div>
+                <label class="form-label">Featured</label>
+                <div class="toggle-wrap">
+                  <label class="toggle">
+                    <input type="checkbox" id="featured" />
+                    <span class="toggle-track"></span>
+                  </label>
+                  <span class="toggle-label" id="featuredLabel">No</span>
+                </div>
+              </div>
+              <div>
+                <label class="form-label">Published</label>
+                <div class="toggle-wrap">
+                  <label class="toggle">
+                    <input type="checkbox" id="published" checked />
+                    <span class="toggle-track"></span>
+                  </label>
+                  <span class="toggle-label" id="publishedLabel">Published</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="form-group full">
             <label class="form-label" for="description">Description</label>
             <textarea class="form-textarea" id="description" rows="4"></textarea>
           </div>
 
           <div class="form-group full">
-            <label class="form-label" for="features">Features (comma separated)</label>
-            <input class="form-input" type="text" id="features" placeholder="e.g. Pool, Gym, Concierge, Balcony" />
+            <label class="form-label" for="features">Features / Amenities (comma separated)</label>
+            <input class="form-input" type="text" id="features" placeholder="e.g. Pool, Gym, Concierge, Balcony, Maid's Room" />
           </div>
 
-          <!-- Image uploads replace URL fields -->
+          <!-- Image uploads -->
           <div class="form-group">
             <label class="form-label">Main Image</label>
             <input type="hidden" id="mainImage" />
@@ -1025,14 +1487,30 @@
           </div>
 
           <div class="form-group full">
-            <label class="form-label">Additional Images (up to 5)</label>
+            <label class="form-label">Additional Images (up to 10)</label>
             <input type="hidden" id="additionalImages" />
             <div id="additionalImagesUpload"></div>
+          </div>
+
+          <!-- Admin-only fields -->
+          <div class="section-divider">
+            <div class="section-title">Admin Only <span class="admin-only-label">Internal</span></div>
+            <div class="section-subtitle">These fields are never shown on the public website</div>
           </div>
 
           <div class="form-group">
             <label class="form-label" for="dldPermit">DLD Permit Number</label>
             <input class="form-input" type="text" id="dldPermit" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="reraPermit">RERA Permit Number</label>
+            <input class="form-input" type="text" id="reraPermit" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="referenceNumber">Reference Number</label>
+            <input class="form-input" type="text" id="referenceNumber" />
           </div>
 
           <div class="form-actions">
@@ -1205,6 +1683,11 @@
 
     const ADMIN_PASSWORD = 'FORE2024';
 
+    // Current listing type filter for table
+    let activeListingFilter = 'all';
+    // All listings cached for filtering
+    let allListingsData = [];
+
     // ══════════════════════════════════════════════
     // DOM REFS
     // ══════════════════════════════════════════════
@@ -1227,6 +1710,7 @@
     const toast = document.getElementById('toast');
     const parkingCheckbox = document.getElementById('parking');
     const parkingLabel = document.getElementById('parkingLabel');
+    const listingTypeInput = document.getElementById('listingType');
 
     let deleteTargetId = null;
     let deleteTargetType = 'listing'; // 'listing' or 'blog'
@@ -1275,7 +1759,6 @@
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-        // Load blog posts when switching to blog tab
         if (btn.dataset.tab === 'blog') loadBlogPosts();
       });
     });
@@ -1299,6 +1782,114 @@
       document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.sub === name));
       document.querySelectorAll('.sub-panel').forEach(p => p.classList.toggle('active', p.id === 'sub-' + name));
     }
+
+    // ══════════════════════════════════════════════
+    // LISTING TYPE SELECTOR
+    // ══════════════════════════════════════════════
+    const ltCards = document.querySelectorAll('.lt-card');
+    const fieldSections = {
+      ready_secondary: document.getElementById('fieldsReadySecondary'),
+      secondary_offplan: document.getElementById('fieldsSecondaryOffplan'),
+      commercial: document.getElementById('fieldsCommercial'),
+    };
+
+    function setListingType(type) {
+      listingTypeInput.value = type;
+      ltCards.forEach(c => c.classList.toggle('active', c.dataset.lt === type));
+      Object.entries(fieldSections).forEach(([key, el]) => {
+        el.classList.toggle('visible', key === type);
+      });
+    }
+
+    ltCards.forEach(card => {
+      card.addEventListener('click', () => setListingType(card.dataset.lt));
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setListingType(card.dataset.lt); }
+      });
+    });
+
+    // ══════════════════════════════════════════════
+    // DYNAMIC FORM — Conditional fields
+    // ══════════════════════════════════════════════
+    // Ready Secondary: show annual rent + yield when status = Rented
+    const statusSelect = document.getElementById('status');
+    statusSelect.addEventListener('change', () => {
+      const isRented = statusSelect.value === 'Rented';
+      document.getElementById('annualRentGroupReady').style.display = isRented ? 'flex' : 'none';
+      document.getElementById('rentalYieldGroupReady').style.display = isRented ? 'flex' : 'none';
+      updateYield('ready');
+    });
+
+    // Commercial: show annual rent + yield when status = Rented
+    const comStatusSelect = document.getElementById('comStatus');
+    comStatusSelect.addEventListener('change', () => {
+      const isRented = comStatusSelect.value === 'Rented';
+      document.getElementById('comAnnualRentGroup').style.display = isRented ? 'flex' : 'none';
+      document.getElementById('comYieldGroup').style.display = isRented ? 'flex' : 'none';
+      updateYield('commercial');
+    });
+
+    // Auto-calculate rental yield
+    function updateYield(context) {
+      const price = Number(document.getElementById('price').value) || 0;
+      if (context === 'ready') {
+        const rent = Number(document.getElementById('annualRent').value) || 0;
+        const el = document.getElementById('rentalYieldDisplay');
+        if (price > 0 && rent > 0) {
+          el.textContent = ((rent / price) * 100).toFixed(1) + '%';
+          el.classList.remove('empty');
+        } else {
+          el.textContent = 'Enter price + annual rent';
+          el.classList.add('empty');
+        }
+      } else {
+        const rent = Number(document.getElementById('comAnnualRent').value) || 0;
+        const el = document.getElementById('comYieldDisplay');
+        if (price > 0 && rent > 0) {
+          el.textContent = ((rent / price) * 100).toFixed(1) + '%';
+          el.classList.remove('empty');
+        } else {
+          el.textContent = 'Enter price + annual rent';
+          el.classList.add('empty');
+        }
+      }
+    }
+
+    document.getElementById('price').addEventListener('input', () => { updateYield('ready'); updateYield('commercial'); });
+    document.getElementById('annualRent').addEventListener('input', () => updateYield('ready'));
+    document.getElementById('comAnnualRent').addEventListener('input', () => updateYield('commercial'));
+
+    // Featured / Published toggles
+    const featuredCheckbox = document.getElementById('featured');
+    const featuredLabel = document.getElementById('featuredLabel');
+    const publishedCheckbox = document.getElementById('published');
+    const publishedLabel = document.getElementById('publishedLabel');
+
+    featuredCheckbox.addEventListener('change', () => {
+      featuredLabel.textContent = featuredCheckbox.checked ? 'Yes' : 'No';
+    });
+    publishedCheckbox.addEventListener('change', () => {
+      publishedLabel.textContent = publishedCheckbox.checked ? 'Published' : 'Draft';
+    });
+
+    // Off-plan parking toggle
+    const opParkingCheckbox = document.getElementById('opParking');
+    const opParkingLabel = document.getElementById('opParkingLabel');
+    opParkingCheckbox.addEventListener('change', () => {
+      opParkingLabel.textContent = opParkingCheckbox.checked ? 'Yes' : 'No';
+    });
+
+    // ══════════════════════════════════════════════
+    // LISTING FILTER TABS (above table)
+    // ══════════════════════════════════════════════
+    document.querySelectorAll('.filter-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeListingFilter = btn.dataset.filter;
+        renderListingsTable();
+      });
+    });
 
     // ══════════════════════════════════════════════
     // TOAST
@@ -1557,7 +2148,7 @@
       document.getElementById('additionalImagesUpload'),
       document.getElementById('additionalImages'),
       'properties',
-      5
+      10
     );
 
     // Initialize upload zone for blog cover
@@ -1590,39 +2181,69 @@
 
         if (error) throw error;
 
-        if (!data || data.length === 0) {
-          tableLoading.style.display = 'none';
-          emptyState.style.display = 'block';
-          return;
-        }
-
-        listingsBody.innerHTML = '';
-        data.forEach(item => {
-          const tr = document.createElement('tr');
-          const statusClass = (item.status || '').toLowerCase() === 'rented' ? 'status-rented' : 'status-vacant';
-          const statusText = item.status || 'N/A';
-          const imgSrc = item.image_main || 'https://placehold.co/64x44/1C1C1C/555?text=No+img';
-
-          tr.innerHTML = `
-            <td><img src="${escHtml(imgSrc)}" alt="" class="listing-thumb" loading="lazy" /></td>
-            <td style="color:var(--white);font-weight:400;">${escHtml(item.name || '')}</td>
-            <td>AED ${Number(item.price || 0).toLocaleString()}</td>
-            <td>${escHtml(String(item.bedrooms || ''))}</td>
-            <td><span class="status-badge ${statusClass}">${escHtml(statusText)}</span></td>
-            <td>
-              <button class="action-btn" onclick="editListing('${item.id}')">Edit</button>
-              <button class="action-btn delete" onclick="promptDelete('${item.id}','listing')">Delete</button>
-            </td>
-          `;
-          listingsBody.appendChild(tr);
-        });
-
-        tableLoading.style.display = 'none';
-        listingsTable.style.display = 'table';
+        allListingsData = data || [];
+        renderListingsTable();
       } catch (err) {
         tableLoading.textContent = 'Failed to load listings. Check Supabase credentials.';
         console.error(err);
       }
+    }
+
+    function renderListingsTable() {
+      let data = allListingsData;
+
+      // Apply filter
+      if (activeListingFilter !== 'all') {
+        data = data.filter(item => (item.listing_type || 'ready_secondary') === activeListingFilter);
+      }
+
+      if (!data || data.length === 0) {
+        tableLoading.style.display = 'none';
+        listingsTable.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      listingsBody.innerHTML = '';
+      data.forEach(item => {
+        const tr = document.createElement('tr');
+        const lt = item.listing_type || 'ready_secondary';
+        const statusClass = (item.status || '').toLowerCase() === 'rented' ? 'status-rented' : 'status-vacant';
+        const statusText = item.status || 'N/A';
+        const imgSrc = item.image_main || 'https://placehold.co/64x44/1C1C1C/555?text=No+img';
+
+        // Type badge
+        let typeBadgeClass = 'ready';
+        let typeBadgeText = 'READY';
+        if (lt === 'secondary_offplan') { typeBadgeClass = 'offplan-resale'; typeBadgeText = 'OFF-PLAN RESALE'; }
+        else if (lt === 'commercial') { typeBadgeClass = 'commercial'; typeBadgeText = 'COMMERCIAL'; }
+
+        // Property type display
+        const propType = item.property_type || item.commercial_type || '';
+
+        // Published dot
+        const pubClass = item.published !== false ? 'published' : 'draft';
+
+        tr.innerHTML = `
+          <td><img src="${escHtml(imgSrc)}" alt="" class="listing-thumb" loading="lazy" /></td>
+          <td style="color:var(--white);font-weight:400;">${escHtml(item.name || '')}</td>
+          <td><span class="type-badge ${typeBadgeClass}">${typeBadgeText}</span></td>
+          <td>${escHtml(propType)}</td>
+          <td>AED ${Number(item.price || 0).toLocaleString()}</td>
+          <td>${escHtml(item.location || '')}</td>
+          <td><span class="status-badge ${statusClass}">${escHtml(statusText)}</span></td>
+          <td><span class="pub-dot ${pubClass}" title="${pubClass === 'published' ? 'Published' : 'Draft'}"></span></td>
+          <td>
+            <button class="action-btn" onclick="editListing('${item.id}')">Edit</button>
+            <button class="action-btn delete" onclick="promptDelete('${item.id}','listing')">Delete</button>
+          </td>
+        `;
+        listingsBody.appendChild(tr);
+      });
+
+      tableLoading.style.display = 'none';
+      emptyState.style.display = 'none';
+      listingsTable.style.display = 'table';
     }
 
     // ══════════════════════════════════════════════
@@ -1633,28 +2254,73 @@
       submitBtn.disabled = true;
       submitBtn.textContent = 'Saving...';
 
+      const lt = listingTypeInput.value;
+
+      // Build payload based on listing type
       const payload = {
+        listing_type: lt,
         name: document.getElementById('title').value.trim(),
         price: Number(document.getElementById('price').value) || 0,
-        bedrooms: document.getElementById('bedrooms').value,
-        bathrooms: Number(document.getElementById('bathrooms').value) || 0,
         area_sqft: Number(document.getElementById('area').value) || 0,
         floor: document.getElementById('floor').value.trim(),
         location: document.getElementById('location').value.trim(),
+        building_name: document.getElementById('buildingName').value.trim(),
         city: document.getElementById('city').value.trim(),
-        status: document.getElementById('status').value,
-        furnished: document.getElementById('furnished').value,
         view: document.getElementById('view').value.trim(),
-        parking: parkingCheckbox.checked,
-        service_charge: Number(document.getElementById('serviceCharge').value) || 0,
         description: document.getElementById('description').value.trim(),
         features: document.getElementById('features').value.trim(),
         image_main: document.getElementById('mainImage').value.trim(),
         images: document.getElementById('additionalImages').value.trim(),
         floor_plan: document.getElementById('floorPlan').value.trim(),
         dld_permit: document.getElementById('dldPermit').value.trim(),
+        rera_permit: document.getElementById('reraPermit').value.trim(),
+        reference_number: document.getElementById('referenceNumber').value.trim(),
         agent: document.getElementById('agent').value,
+        featured: featuredCheckbox.checked,
+        published: publishedCheckbox.checked,
       };
+
+      // Type-specific fields
+      if (lt === 'ready_secondary') {
+        payload.property_type = document.getElementById('propertyType').value;
+        payload.bedrooms = document.getElementById('bedrooms').value;
+        payload.bathrooms = Number(document.getElementById('bathrooms').value) || 0;
+        payload.status = document.getElementById('status').value;
+        payload.furnished = document.getElementById('furnished').value;
+        payload.parking = parkingCheckbox.checked;
+        payload.service_charge = Number(document.getElementById('serviceCharge').value) || 0;
+        payload.ownership = document.getElementById('ownership').value;
+        payload.annual_rent = Number(document.getElementById('annualRent').value) || 0;
+        // Compute yield
+        if (payload.price > 0 && payload.annual_rent > 0) {
+          payload.rental_yield = ((payload.annual_rent / payload.price) * 100).toFixed(1) + '%';
+        }
+      } else if (lt === 'secondary_offplan') {
+        payload.property_type = document.getElementById('opPropertyType').value;
+        payload.bedrooms = document.getElementById('opBedrooms').value;
+        payload.bathrooms = Number(document.getElementById('opBathrooms').value) || 0;
+        payload.developer = document.getElementById('developer').value.trim();
+        payload.project_name = document.getElementById('projectName').value.trim();
+        payload.handover_date = document.getElementById('handoverDate').value.trim();
+        payload.payment_plan = document.getElementById('paymentPlan').value.trim();
+        payload.completion_percentage = Number(document.getElementById('completionPct').value) || null;
+        payload.original_price = Number(document.getElementById('originalPrice').value) || null;
+        payload.furnished = document.getElementById('opFurnished').value;
+        payload.parking = opParkingCheckbox.checked;
+        payload.ownership = document.getElementById('opOwnership').value;
+      } else if (lt === 'commercial') {
+        payload.commercial_type = document.getElementById('commercialType').value;
+        payload.property_type = document.getElementById('commercialType').value;
+        payload.fitted = document.getElementById('fittedStatus').value;
+        payload.parking_spaces = Number(document.getElementById('parkingSpaces').value) || 0;
+        payload.status = document.getElementById('comStatus').value;
+        payload.annual_rent = Number(document.getElementById('comAnnualRent').value) || 0;
+        payload.service_charge = Number(document.getElementById('comServiceCharge').value) || 0;
+        payload.ownership = document.getElementById('comOwnership').value;
+        if (payload.price > 0 && payload.annual_rent > 0) {
+          payload.rental_yield = ((payload.annual_rent / payload.price) * 100).toFixed(1) + '%';
+        }
+      }
 
       try {
         const editId = editIdInput.value;
@@ -1689,25 +2355,75 @@
         const { data, error } = await db.from(TABLE).select('*').eq('id', id).single();
         if (error) throw error;
 
+        const lt = data.listing_type || 'ready_secondary';
+        setListingType(lt);
+
         editIdInput.value = data.id;
         document.getElementById('title').value = data.name || '';
         document.getElementById('price').value = data.price || '';
-        document.getElementById('bedrooms').value = data.bedrooms || '';
-        document.getElementById('bathrooms').value = data.bathrooms || '';
         document.getElementById('area').value = data.area_sqft || '';
         document.getElementById('floor').value = data.floor || '';
         document.getElementById('location').value = data.location || '';
-        document.getElementById('city').value = data.city || '';
-        document.getElementById('status').value = data.status || '';
-        document.getElementById('furnished').value = data.furnished || '';
+        document.getElementById('buildingName').value = data.building_name || '';
+        document.getElementById('city').value = data.city || 'Dubai';
         document.getElementById('view').value = data.view || '';
-        parkingCheckbox.checked = !!data.parking;
-        parkingLabel.textContent = data.parking ? 'Yes' : 'No';
-        document.getElementById('serviceCharge').value = data.service_charge || '';
         document.getElementById('description').value = data.description || '';
         document.getElementById('features').value = data.features || '';
         document.getElementById('dldPermit').value = data.dld_permit || '';
+        document.getElementById('reraPermit').value = data.rera_permit || '';
+        document.getElementById('referenceNumber').value = data.reference_number || '';
         document.getElementById('agent').value = data.agent || '';
+
+        // Toggles
+        featuredCheckbox.checked = !!data.featured;
+        featuredLabel.textContent = data.featured ? 'Yes' : 'No';
+        publishedCheckbox.checked = data.published !== false;
+        publishedLabel.textContent = data.published !== false ? 'Published' : 'Draft';
+
+        // Type-specific fields
+        if (lt === 'ready_secondary') {
+          document.getElementById('propertyType').value = data.property_type || '';
+          document.getElementById('bedrooms').value = data.bedrooms || '';
+          document.getElementById('bathrooms').value = data.bathrooms || '';
+          document.getElementById('status').value = data.status || '';
+          document.getElementById('furnished').value = data.furnished || '';
+          parkingCheckbox.checked = !!data.parking;
+          parkingLabel.textContent = data.parking ? 'Yes' : 'No';
+          document.getElementById('serviceCharge').value = data.service_charge || '';
+          document.getElementById('ownership').value = data.ownership || 'Freehold';
+          document.getElementById('annualRent').value = data.annual_rent || '';
+          // Show rent fields if rented
+          const isRented = data.status === 'Rented';
+          document.getElementById('annualRentGroupReady').style.display = isRented ? 'flex' : 'none';
+          document.getElementById('rentalYieldGroupReady').style.display = isRented ? 'flex' : 'none';
+          updateYield('ready');
+        } else if (lt === 'secondary_offplan') {
+          document.getElementById('opPropertyType').value = data.property_type || '';
+          document.getElementById('opBedrooms').value = data.bedrooms || '';
+          document.getElementById('opBathrooms').value = data.bathrooms || '';
+          document.getElementById('developer').value = data.developer || '';
+          document.getElementById('projectName').value = data.project_name || '';
+          document.getElementById('handoverDate').value = data.handover_date || '';
+          document.getElementById('paymentPlan').value = data.payment_plan || '';
+          document.getElementById('completionPct').value = data.completion_percentage || '';
+          document.getElementById('originalPrice').value = data.original_price || '';
+          document.getElementById('opFurnished').value = data.furnished || '';
+          opParkingCheckbox.checked = !!data.parking;
+          opParkingLabel.textContent = data.parking ? 'Yes' : 'No';
+          document.getElementById('opOwnership').value = data.ownership || 'Freehold';
+        } else if (lt === 'commercial') {
+          document.getElementById('commercialType').value = data.commercial_type || '';
+          document.getElementById('fittedStatus').value = data.fitted || '';
+          document.getElementById('parkingSpaces').value = data.parking_spaces || 0;
+          document.getElementById('comStatus').value = data.status || '';
+          document.getElementById('comAnnualRent').value = data.annual_rent || '';
+          document.getElementById('comServiceCharge').value = data.service_charge || '';
+          document.getElementById('comOwnership').value = data.ownership || 'Freehold';
+          const isRented = data.status === 'Rented';
+          document.getElementById('comAnnualRentGroup').style.display = isRented ? 'flex' : 'none';
+          document.getElementById('comYieldGroup').style.display = isRented ? 'flex' : 'none';
+          updateYield('commercial');
+        }
 
         // Set upload zones
         mainImageUpload._setUrl(data.image_main || '');
@@ -1729,7 +2445,20 @@
     function resetListingForm() {
       listingForm.reset();
       editIdInput.value = '';
+      setListingType('ready_secondary');
       parkingLabel.textContent = 'No';
+      opParkingLabel.textContent = 'No';
+      featuredLabel.textContent = 'No';
+      publishedLabel.textContent = 'Published';
+      publishedCheckbox.checked = true;
+      document.getElementById('annualRentGroupReady').style.display = 'none';
+      document.getElementById('rentalYieldGroupReady').style.display = 'none';
+      document.getElementById('comAnnualRentGroup').style.display = 'none';
+      document.getElementById('comYieldGroup').style.display = 'none';
+      document.getElementById('rentalYieldDisplay').textContent = 'Enter price + annual rent';
+      document.getElementById('rentalYieldDisplay').classList.add('empty');
+      document.getElementById('comYieldDisplay').textContent = 'Enter price + annual rent';
+      document.getElementById('comYieldDisplay').classList.add('empty');
       submitBtn.textContent = 'Save Listing';
       cancelEditBtn.style.display = 'none';
       mainImageUpload._reset();

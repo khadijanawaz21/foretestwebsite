@@ -971,6 +971,20 @@
           </div>
         </div>
 
+        <!-- Property Specs (type-specific detail grid) -->
+        <div class="pd-section" id="secSpecs" style="display:none">
+          <h2 class="pd-section-title">Property Details</h2>
+          <div class="pd-specs-grid" id="pdSpecs" style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;"></div>
+        </div>
+
+        <!-- Floor Plan -->
+        <div class="pd-section" id="secFloorPlan" style="display:none">
+          <h2 class="pd-section-title">Floor Plan</h2>
+          <div style="background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.06);border-radius:3px;padding:16px;">
+            <img id="pdFloorPlan" src="" alt="Floor Plan" loading="lazy" style="width:100%;max-height:500px;object-fit:contain;" />
+          </div>
+        </div>
+
         <!-- Description -->
         <div class="pd-section" id="secDesc">
           <h2 class="pd-section-title">About This Property</h2>
@@ -1144,13 +1158,17 @@
     if (s.images) {
       s.images.split(',').forEach(function(u) { if (u.trim()) imgs.push(u.trim()); });
     }
+    var lt = s.listing_type || 'ready_secondary';
+    var marketLabel = lt === 'secondary_offplan' ? 'Off-Plan Resale'
+                    : lt === 'commercial' ? 'Commercial'
+                    : 'Secondary Market';
     return {
       project_id: s.id,
       ShortName: s.name || 'Property',
       LongName: s.name || '',
       Description: s.description || '',
-      OffplanOrSecondary: 'Secondary',
-      Type: { name: s.bedrooms === 'Office' ? 'Office' : 'Apartment' },
+      OffplanOrSecondary: marketLabel,
+      Type: { name: s.property_type || s.commercial_type || '' },
       LayoutPriceMin: s.price || 0,
       LayoutPriceMax: s.price || 0,
       LayoutAreaTotalMin: s.area_sqft || 0,
@@ -1160,8 +1178,10 @@
       Location: { district: s.location || '', city: { name: s.city || 'Dubai' } },
       Currency: { currencySymbol: 'AED' },
       Features: s.features ? s.features.split(',').map(function(f) { return { name: f.trim() }; }) : [],
-      Organisation: { organizationName: s.agent || '' },
-      _supabaseData: s
+      Organisation: { organizationName: lt === 'secondary_offplan' ? (s.developer || s.agent || '') : (s.agent || '') },
+      _supabaseData: s,
+      _listingType: lt,
+      _isSupabase: true
     };
   }
 
@@ -1216,7 +1236,7 @@
       .select('*')
       .then(function(res) {
         if (res.error) { console.error('Supabase error:', res.error); showError(); return; }
-        var rows = res.data || [];
+        var rows = (res.data || []).filter(function(s) { return s.published !== false; });
         var allMapped = rows.map(supabaseToBehomes);
         allProps = allMapped;
         var found = allMapped.find(function(p) { return p.project_id === id; });
@@ -1289,9 +1309,13 @@
 
     /* Market badge */
     var badge = document.getElementById('pdMarketBadge');
-    var isSecondary = (p.OffplanOrSecondary || '').toLowerCase().indexOf('secondary') !== -1;
-    badge.textContent = isSecondary ? 'Secondary Market' : 'Off-Plan';
-    badge.className   = 'pd-market-badge ' + (isSecondary ? 'secondary' : 'offplan');
+    var mktLower = (p.OffplanOrSecondary || '').toLowerCase();
+    var badgeText = p.OffplanOrSecondary || 'Off-Plan';
+    var badgeCls = 'offplan';
+    if (mktLower.indexOf('secondary') !== -1) badgeCls = 'secondary';
+    if (mktLower.indexOf('commercial') !== -1) badgeCls = 'secondary';
+    badge.textContent = badgeText;
+    badge.className   = 'pd-market-badge ' + badgeCls;
 
     /* Title */
     document.getElementById('pdTitle').textContent = name;
@@ -1334,6 +1358,88 @@
     /* Sidebar price */
     document.getElementById('sbPrice').textContent    = priceVal || 'Price on Request';
     document.getElementById('sbPriceSub').textContent = priceUSD ? '\u2248\u00a0' + priceUSD : '';
+
+    /* Type-specific property specs grid */
+    if (p._isSupabase && p._supabaseData) {
+      var sd = p._supabaseData;
+      var lt = p._listingType || 'ready_secondary';
+      var specs = [];
+
+      function addSpec(label, value) {
+        if (value && value !== '0' && value !== '—') {
+          specs.push('<div style="background:var(--bg-dark2);padding:14px 18px;"><div style="font-size:8px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:4px;">' + label + '</div><div style="font-size:13px;color:rgba(255,255,255,0.85);">' + esc(String(value)) + '</div></div>');
+        }
+      }
+
+      if (lt === 'ready_secondary') {
+        addSpec('Property Type', sd.property_type);
+        addSpec('Bedrooms', sd.bedrooms);
+        addSpec('Bathrooms', sd.bathrooms);
+        addSpec('Area', sd.area_sqft ? Number(sd.area_sqft).toLocaleString() + ' sq ft' : '');
+        addSpec('Building', sd.building_name);
+        addSpec('Floor', sd.floor);
+        addSpec('View', sd.view);
+        addSpec('Status', sd.status);
+        addSpec('Furnished', sd.furnished);
+        addSpec('Parking', sd.parking ? 'Yes' : 'No');
+        addSpec('Service Charge', sd.service_charge ? 'AED ' + Number(sd.service_charge).toLocaleString() + '/year' : '');
+        addSpec('Ownership', sd.ownership);
+        addSpec('Rental Yield', sd.rental_yield);
+      } else if (lt === 'secondary_offplan') {
+        addSpec('Property Type', sd.property_type);
+        addSpec('Bedrooms', sd.bedrooms);
+        addSpec('Bathrooms', sd.bathrooms);
+        addSpec('Area', sd.area_sqft ? Number(sd.area_sqft).toLocaleString() + ' sq ft' : '');
+        addSpec('Developer', sd.developer);
+        addSpec('Project', sd.project_name);
+        addSpec('Handover', sd.handover_date);
+        addSpec('Payment Plan', sd.payment_plan);
+        if (sd.completion_percentage) addSpec('Completion', sd.completion_percentage + '%');
+        if (sd.original_price) addSpec('Original Price', 'AED ' + Number(sd.original_price).toLocaleString());
+        addSpec('Building', sd.building_name);
+        addSpec('View', sd.view);
+        addSpec('Furnished', sd.furnished);
+        addSpec('Parking', sd.parking ? 'Yes' : 'No');
+        addSpec('Ownership', sd.ownership);
+      } else if (lt === 'commercial') {
+        addSpec('Commercial Type', sd.commercial_type);
+        addSpec('Area', sd.area_sqft ? Number(sd.area_sqft).toLocaleString() + ' sq ft' : '');
+        addSpec('Building', sd.building_name);
+        addSpec('Floor', sd.floor);
+        addSpec('View', sd.view);
+        addSpec('Fitted Status', sd.fitted);
+        addSpec('Parking Spaces', sd.parking_spaces);
+        addSpec('Status', sd.status);
+        addSpec('Service Charge', sd.service_charge ? 'AED ' + Number(sd.service_charge).toLocaleString() + '/year' : '');
+        addSpec('Ownership', sd.ownership);
+        addSpec('Rental Yield', sd.rental_yield);
+      }
+
+      if (specs.length > 0) {
+        document.getElementById('secSpecs').style.display = 'block';
+        document.getElementById('pdSpecs').innerHTML = specs.join('');
+      }
+
+      /* Floor plan */
+      if (sd.floor_plan) {
+        document.getElementById('secFloorPlan').style.display = 'block';
+        document.getElementById('pdFloorPlan').src = sd.floor_plan;
+      }
+
+      /* Update stats for secondary types */
+      if (lt === 'ready_secondary') {
+        document.getElementById('statType').textContent = (sd.bedrooms ? sd.bedrooms + 'BR ' : '') + (sd.property_type || '—');
+        document.getElementById('statHandover').textContent = sd.status || '—';
+        document.querySelector('[id="statHandover"]').previousElementSibling.textContent = 'Status';
+      } else if (lt === 'secondary_offplan') {
+        document.getElementById('statType').textContent = (sd.bedrooms ? sd.bedrooms + 'BR ' : '') + (sd.property_type || '—');
+        document.getElementById('statHandover').textContent = sd.handover_date || '—';
+      } else if (lt === 'commercial') {
+        document.getElementById('statType').textContent = sd.commercial_type || '—';
+        document.getElementById('statHandover').textContent = sd.status || '—';
+        document.querySelector('[id="statHandover"]').previousElementSibling.textContent = 'Status';
+      }
+    }
 
     /* Description */
     if (p.Description) {
@@ -1613,14 +1719,18 @@
       var loc   = [dist2, city2].filter(Boolean).join(', ');
       var year  = fmtYear(p.DeliveryDate);
       var type  = (p.Type && p.Type.name) || '';
-      var isOff = (p.OffplanOrSecondary || '').toLowerCase().indexOf('secondary') === -1;
+      var mktStr = (p.OffplanOrSecondary || '').toLowerCase();
+      var isOff = mktStr.indexOf('secondary') === -1 && mktStr.indexOf('commercial') === -1;
+      var alsoBadgeCls = isOff ? 'offplan' : 'secondary';
+      var alsoBadgeText = isOff ? 'Off-Plan' : (mktStr.indexOf('commercial') !== -1 ? 'Commercial' : 'Secondary');
 
-      return '<a href="property-detail.html?id=' + esc(p.project_id) + '" class="pd-also-card">' +
+      var alsoHref = p._isSupabase ? 'property-detail.html?id=' + esc(p.project_id) + '&type=secondary' : 'property-detail.html?id=' + esc(p.project_id);
+      return '<a href="' + alsoHref + '" class="pd-also-card">' +
         '<div class="ac-img">' +
           (img ? '<img src="' + esc(img) + '" alt="' + esc(p.ShortName || '') + '" loading="lazy" />' : '') +
           '<div class="ac-overlay"></div>' +
           '<div class="ac-color"></div>' +
-          '<span class="ac-badge ' + (isOff ? 'offplan' : 'secondary') + '">' + (isOff ? 'Off-Plan' : 'Secondary') + '</span>' +
+          '<span class="ac-badge ' + alsoBadgeCls + '">' + alsoBadgeText + '</span>' +
           (year ? '<span class="ac-year">Delivery ' + year + '</span>' : '') +
         '</div>' +
         '<div class="ac-body">' +
