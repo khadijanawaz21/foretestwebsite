@@ -24,6 +24,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" crossorigin />
 
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="mobile.css" />
 </head>
 <body>
 
@@ -39,12 +40,12 @@
         </video>
       </div>
       <div class="hero-slide">
-        <video muted loop playsinline preload="metadata" poster="https://placehold.co/1920x1080/0a0a0a/0a0a0a">
+        <video autoplay muted loop playsinline preload="metadata" poster="https://placehold.co/1920x1080/0a0a0a/0a0a0a">
           <source src="assets/videos/hero-2.mp4" type="video/mp4" />
         </video>
       </div>
       <div class="hero-slide">
-        <video muted loop playsinline preload="metadata" poster="https://placehold.co/1920x1080/0a0a0a/0a0a0a">
+        <video autoplay muted loop playsinline preload="metadata" poster="https://placehold.co/1920x1080/0a0a0a/0a0a0a">
           <source src="assets/videos/hero-3.mp4" type="video/mp4" />
         </video>
       </div>
@@ -78,7 +79,7 @@
   </section>
 
   <!-- ═══════════════════════════════════════════ STATS -->
-  <div class="stats-bar" id="statsBar">
+  <div class="stats-bar" id="statsBar" data-stagger="150">
     <div class="stat-item">
       <svg class="stat-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
       <div class="stat-number" data-target="0" data-suffix="%" data-prefix="">0%</div>
@@ -118,7 +119,7 @@
       </p>
     </div>
 
-    <div class="pillars fade-in">
+    <div class="pillars fade-in" data-stagger="200">
       <div class="pillar">
         <div class="pillar-number">01</div>
         <h3 class="pillar-title">Education First</h3>
@@ -240,7 +241,7 @@
       <p class="gv-body">
         The UAE Golden Visa isn't just a residence permit — it's a 10-year renewable visa that gives you and your family the freedom to live, work, and build in the UAE. Property investment is one of the most direct paths to qualifying.
       </p>
-      <ul class="gv-benefits">
+      <ul class="gv-benefits" data-stagger="100">
         <li>10-year renewable residency for you, your spouse, and dependents</li>
         <li>No requirement to stay in the UAE — travel freely on your terms</li>
         <li>Open UAE bank accounts and access the full financial ecosystem</li>
@@ -322,7 +323,7 @@
       </p>
     </div>
 
-    <div class="academy-modules fade-in" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));max-width:900px;margin:0 auto;">
+    <div class="academy-modules fade-in" data-stagger="120" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));max-width:900px;margin:0 auto;">
       <div class="academy-module">
         <div class="module-day">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M3 3h18v18H3z"/><path d="M7 7h10M7 12h6"/></svg>
@@ -393,7 +394,7 @@
       </div>
     </div>
 
-    <div class="team-flip-grid fade-in">
+    <div class="team-flip-grid fade-in" data-stagger="120">
 
       <!-- Elena Guseva -->
       <div class="team-flip-card" tabindex="0" aria-label="Elena Guseva — Executive Director">
@@ -602,7 +603,7 @@
       </h2>
     </div>
 
-    <div class="testimonial-grid fade-in">
+    <div class="testimonial-grid fade-in" data-stagger="150">
       <div class="testimonial-card">
         <div class="testimonial-stars">
           <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
@@ -746,7 +747,7 @@
       </div>
 
       <div id="contact-form-wrapper">
-      <form class="contact-form fade-in" onsubmit="handleForm(event)">
+      <form class="contact-form fade-in" data-stagger="80" onsubmit="handleForm(event)">
         <div class="form-row">
           <div class="form-field">
             <label class="form-label">First Name</label>
@@ -801,6 +802,7 @@
 
   <script src="js/components.js" defer></script>
   <script src="js/main.js" defer></script>
+  <script src="js/mobile.js" defer></script>
   <script>
     async function handleForm(e) {
       e.preventDefault();
