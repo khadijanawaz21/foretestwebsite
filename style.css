@@ -961,7 +961,7 @@ section {
 
 .academy-modules {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 1px;
   background: var(--subtle-border);
   border: 0.5px solid var(--subtle-border);
@@ -1949,7 +1949,6 @@ footer {
   .gv-title { font-size: 28px; }
   .gv-benefits { gap: 10px; margin-bottom: 28px; }
   .gv-body { margin-bottom: 24px; }
-  .academy-modules { grid-template-columns: repeat(2, 1fr); }
   /* Team flip grid: 2-2-1 on tablet */
   .team-flip-grid { grid-template-columns: repeat(4, 1fr); }
   .team-flip-card { grid-column: span 2; }
