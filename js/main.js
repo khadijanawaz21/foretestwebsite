@@ -18,27 +18,61 @@ function handleForm(e) {
 document.addEventListener('fore:ready', function () {
 
   // ── HERO SLIDER ──
+  const HERO_SLIDES = [
+    {
+      headline: 'Dubai real estate.<br><em class="gold">Anyone</em> can invest.',
+      cta1: { text: 'Browse Properties', href: 'properties.html' },
+      cta2: { text: 'See How It Works',  href: 'index.html#why-fore' }
+    },
+    {
+      headline: 'Your first property.<br><em class="gold">Starts here.</em>',
+      cta1: { text: 'Start Free Course',  href: 'academy.html' },
+      cta2: { text: 'Talk to an Advisor', href: 'index.html#contact' }
+    },
+    {
+      headline: 'Live tax-free.<br><em class="gold">Build generational wealth.</em>',
+      cta1: { text: 'Get Your Golden Visa',     href: 'golden-visa.html' },
+      cta2: { text: 'View Investment Options',  href: 'properties.html' }
+    }
+  ];
+
   const slides = document.querySelectorAll('.hero-slide');
   const indicators = document.querySelectorAll('.hero-indicator');
+  const heroTitle   = document.getElementById('heroTitle');
+  const heroActions = document.getElementById('heroActions');
   let currentSlide = 0;
   let slideInterval;
 
+  function updateHeroContent(index) {
+    const s = HERO_SLIDES[index];
+    heroTitle.innerHTML = s.headline;
+    const btns = heroActions.querySelectorAll('a');
+    btns[0].textContent = s.cta1.text; btns[0].href = s.cta1.href;
+    btns[1].textContent = s.cta2.text; btns[1].href = s.cta2.href;
+  }
+
   function goToSlide(n) {
-    const prevVid = slides[currentSlide].querySelector('video');
     slides[currentSlide].classList.remove('active');
     indicators[currentSlide].classList.remove('active');
     currentSlide = (n + slides.length) % slides.length;
     slides[currentSlide].classList.add('active');
     indicators[currentSlide].classList.add('active');
-    // Play video for newly active slide
     const nextVid = slides[currentSlide].querySelector('video');
     if (nextVid) { nextVid.currentTime = 0; nextVid.play().catch(() => {}); }
+    // Fade headline + CTAs out together, swap content, fade back in together
+    heroTitle.style.opacity = '0';
+    heroActions.style.opacity = '0';
+    setTimeout(() => {
+      updateHeroContent(currentSlide);
+      heroTitle.style.opacity = '1';
+      heroActions.style.opacity = '1';
+    }, 600);
   }
 
   function nextSlide() { goToSlide(currentSlide + 1); }
 
   function startSlider() {
-    slideInterval = setInterval(nextSlide, 5500);
+    slideInterval = setInterval(nextSlide, 6000);
   }
 
   indicators.forEach(ind => {
@@ -66,10 +100,10 @@ document.addEventListener('fore:ready', function () {
 
   startSlider();
 
-  // ── HERO TEXT REVEAL (on load) ──
-  window.addEventListener('load', () => {
+  // ── HERO TEXT REVEAL — trigger immediately, don't wait for window.load ──
+  requestAnimationFrame(() => {
     document.querySelectorAll('.hero-line-inner').forEach((el, i) => {
-      el.style.animationDelay = (i * 0.18) + 's';
+      el.style.animationDelay = (i * 0.1) + 's';
       el.classList.add('revealed');
     });
   });
