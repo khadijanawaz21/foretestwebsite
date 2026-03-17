@@ -111,7 +111,7 @@ nav {
   z-index: 1000;
 }
 
-.nav-logo img {
+.nav-logo {
   height: 22px;
   width: auto;
   display: block;

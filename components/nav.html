@@ -1,12 +1,19 @@
 <!-- ═══════════════════════════════════════════ NAV -->
 <nav id="nav">
-  <a href="index.html" class="nav-logo">
-    <img src="brand_assets/acronymlogo.png" alt="FORE" />
-    <span class="nav-logo-slogan">FAIR OPPORTUNITY. REAL ESTATE.</span>
+  <a href="index.html" class="nav-brand">
+    <img src="brand_assets/acronymlogo.png" alt="FORE" class="nav-logo" />
+    <div class="nav-divider"></div>
+    <div class="nav-slogan">
+      <span>FAIR OPPORTUNITY.</span>
+      <span>REAL ESTATE.</span>
+    </div>
   </a>
   <style>
-    .nav-logo-slogan{display:block;font-size:8px;letter-spacing:2.5px;text-transform:uppercase;opacity:0.45;color:var(--gold);margin-top:2px;white-space:nowrap;}
-    @media(max-width:768px){.nav-logo-slogan{display:none;}}
+    .nav-brand{display:flex;align-items:center;gap:12px;text-decoration:none;}
+    .nav-divider{width:1px;align-self:stretch;background:rgba(201,169,110,0.4);}
+    .nav-slogan{display:flex;flex-direction:column;justify-content:center;gap:2px;}
+    .nav-slogan span{display:block;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(201,169,110,0.6);font-family:'Montserrat',sans-serif;font-weight:500;white-space:nowrap;}
+    @media(max-width:768px){.nav-divider,.nav-slogan{display:none;}}
   </style>
   <ul class="nav-links">
     <li><a href="properties.html">Properties</a></li>
