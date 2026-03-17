@@ -316,11 +316,17 @@
 
 <script>
 (function() {
+  var SUPA_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
+  var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhbWtuZWtkYnRybXhvcHl3Z3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NjMxOTksImV4cCI6MjA4OTAzOTE5OX0.HCmQ_4cyuImr3S1wQ-V6oW2G2U4a1rzMUlLPqHC-OeA';
+
   var tab = document.getElementById('ddTab');
   var panel = document.getElementById('ddPanel');
   var overlay = document.getElementById('ddOverlay');
   var closeBtn = document.getElementById('ddClose');
   var body = document.getElementById('ddBody');
+
+  // Hide tab by default until we know there are deals
+  tab.style.display = 'none';
 
   function openPanel() {
     tab.classList.add('dd-hidden');
@@ -344,6 +350,12 @@
     if (e.key === 'Escape' && panel.classList.contains('dd-open')) closePanel();
   });
 
+  function escText(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
   function formatPrice(n) {
     if (n >= 1000000) return 'AED ' + (n / 1000000).toFixed(n % 1000000 === 0 ? 0 : 1) + 'M';
     return 'AED ' + n.toLocaleString();
@@ -361,34 +373,67 @@
 
   function renderDeals(deals) {
     body.innerHTML = deals.map(function(d) {
-      var pct = Math.round(((d.original_price - d.price) / d.original_price) * 100);
+      var pct = d.discount_percent || (d.original_price && d.cash_price
+        ? Math.round(((d.original_price - d.cash_price) / d.original_price) * 100)
+        : 0);
+      var badgeHtml = pct > 0
+        ? '<div class="dd-card-badge">-' + pct + '%</div>'
+        : '';
+      var originalHtml = d.original_price
+        ? '<span class="dd-card-original">' + formatPrice(d.original_price) + '</span>'
+        : '';
+      var imgHtml = d.image_main
+        ? '<img src="' + escText(d.image_main) + '" alt="" style="width:100%;height:140px;object-fit:cover;border-radius:4px;margin-bottom:14px;display:block;" />'
+        : '';
       return (
         '<div class="dd-card">' +
+          imgHtml +
           '<div class="dd-card-top">' +
-            '<div class="dd-card-name">' + d.name + '</div>' +
-            '<div class="dd-card-badge">-' + pct + '%</div>' +
+            '<div class="dd-card-name">' + escText(d.name) + '</div>' +
+            badgeHtml +
           '</div>' +
           '<div class="dd-card-location">' +
             '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
-            d.location +
+            escText(d.location || '') +
           '</div>' +
           '<div class="dd-card-prices">' +
-            '<span class="dd-card-original">' + formatPrice(d.original_price) + '</span>' +
-            '<span class="dd-card-price">' + formatPrice(d.price) + '</span>' +
+            originalHtml +
+            '<span class="dd-card-price">' + formatPrice(d.cash_price) + '</span>' +
           '</div>' +
-          '<div class="dd-card-reason">' + (d.reason || 'Quick Sale') + '</div>' +
-          '<a href="property-detail.html?id=' + d.id + '" class="dd-card-btn">View Deal</a>' +
+          '<div class="dd-card-reason">' + escText(d.reason || 'Quick Sale') + '</div>' +
+          '<a href="mailto:info@fairopportunityrealestate.com?subject=Enquiry: ' + encodeURIComponent(d.name) + '" class="dd-card-btn">Enquire Now</a>' +
         '</div>'
       );
     }).join('');
   }
 
-  fetch('data/distressed.json')
-    .then(function(r) { return r.json(); })
-    .then(function(deals) {
-      if (!deals || !deals.length) return renderEmpty();
-      renderDeals(deals);
-    })
-    .catch(function() { renderEmpty(); });
+  // Fetch from Supabase
+  function initSupabase() {
+    if (!window.supabase) return null;
+    try { return window.supabase.createClient(SUPA_URL, SUPA_KEY); }
+    catch(e) { return null; }
+  }
+
+  var client = initSupabase();
+  if (client) {
+    client
+      .from('distressed_deals')
+      .select('*')
+      .eq('active', true)
+      .order('created_at', { ascending: false })
+      .then(function(res) {
+        if (res.error) { console.error('DD fetch error:', res.error); renderEmpty(); return; }
+        var deals = res.data || [];
+        if (!deals.length) {
+          renderEmpty();
+          return;
+        }
+        tab.style.display = '';
+        renderDeals(deals);
+      })
+      .catch(function() { renderEmpty(); });
+  } else {
+    renderEmpty();
+  }
 })();
 </script>
