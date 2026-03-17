@@ -61,11 +61,80 @@
       <p class="hero-sub">
         FORE makes Dubai property accessible to international investors at any budget — with the education, guidance, and opportunity to build a real portfolio.
       </p>
+      <!-- Search Bar (desktop) -->
+      <form class="hero-search" id="heroSearch" autocomplete="off" onsubmit="return heroSearchGo(event)">
+        <div class="hs-field">
+          <label class="hs-label">Type</label>
+          <select class="hs-select" id="hsType">
+            <option value="">All</option>
+            <option value="Apartment">Apartment</option>
+            <option value="Villa">Villa</option>
+            <option value="Townhouse">Townhouse</option>
+          </select>
+        </div>
+        <div class="hs-divider"></div>
+        <div class="hs-field">
+          <label class="hs-label">Bedrooms</label>
+          <select class="hs-select" id="hsBeds">
+            <option value="">Any</option>
+            <option value="Studio">Studio</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5+</option>
+          </select>
+        </div>
+        <div class="hs-divider"></div>
+        <div class="hs-field">
+          <label class="hs-label">Price</label>
+          <select class="hs-select" id="hsPrice">
+            <option value="">Any</option>
+            <option value="0-1000000">Under AED 1M</option>
+            <option value="1000000-2000000">AED 1M – 2M</option>
+            <option value="2000000-5000000">AED 2M – 5M</option>
+            <option value="5000000-">AED 5M+</option>
+          </select>
+        </div>
+        <div class="hs-divider"></div>
+        <div class="hs-field hs-field-loc">
+          <label class="hs-label">Location</label>
+          <input type="text" class="hs-input" id="hsLocation" placeholder="Search area or project…" />
+        </div>
+        <button type="submit" class="hs-btn">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Search Properties
+        </button>
+      </form>
+
+      <!-- Search Bar (mobile) -->
+      <a href="properties.html" class="hero-search-mobile" id="heroSearchMobile">
+        Search Properties
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M9 3l4 4-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+
       <div class="hero-actions hero-dynamic" id="heroActions">
         <a href="properties.html" class="btn-primary">Browse Properties</a>
         <a href="index.html#why-fore" class="btn-ghost">See How It Works</a>
       </div>
     </div>
+
+    <script>
+      function heroSearchGo(e) {
+        e.preventDefault();
+        var params = [];
+        var type = document.getElementById('hsType').value;
+        var beds = document.getElementById('hsBeds').value;
+        var price = document.getElementById('hsPrice').value;
+        var loc = document.getElementById('hsLocation').value.trim();
+        if (type) params.push('type=' + encodeURIComponent(type));
+        if (beds) params.push('beds=' + encodeURIComponent(beds));
+        if (price) params.push('price=' + encodeURIComponent(price));
+        if (loc) params.push('location=' + encodeURIComponent(loc));
+        window.location.href = 'properties.html' + (params.length ? '?' + params.join('&') : '');
+        return false;
+      }
+    </script>
 
     <div class="hero-indicators" id="heroIndicators">
       <div class="hero-indicator active" data-index="0"></div>

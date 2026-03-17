@@ -1317,6 +1317,49 @@
       loadMoreText.textContent = 'Loading…';
     }
 
+    /* ── Apply URL params from hero search ── */
+    function applyURLParams() {
+      var params = new URLSearchParams(window.location.search);
+      var pType = params.get('type');
+      var pBeds = params.get('beds');
+      var pPrice = params.get('price');
+      var pLoc = params.get('location');
+
+      if (pType) {
+        /* Match against type dropdown options */
+        var opts = typeFilter.options;
+        for (var i = 0; i < opts.length; i++) {
+          if (opts[i].value === pType) { typeFilter.value = pType; activeType = pType; break; }
+        }
+      }
+
+      if (pBeds) {
+        var bedVal = pBeds === 'Studio' ? '1' : pBeds;
+        var bedBtn = document.querySelector('[data-beds="' + bedVal + '"]');
+        if (bedBtn) {
+          document.querySelectorAll('.fb-bed-btn').forEach(function (b) { b.classList.remove('active'); });
+          bedBtn.classList.add('active');
+          activeBeds = bedVal;
+        }
+      }
+
+      if (pPrice) {
+        /* Price range filter — set sort by price and use search as proxy */
+        var parts = pPrice.split('-');
+        var lo = parseInt(parts[0], 10) || 0;
+        var hi = parseInt(parts[1], 10) || Infinity;
+        allProperties = allProperties.filter(function (p) {
+          var pr = p.LayoutPriceMin || 0;
+          return pr >= lo && pr <= hi;
+        });
+      }
+
+      if (pLoc) {
+        searchInput.value = pLoc;
+        searchQuery = pLoc;
+      }
+    }
+
     /* ── Events ────────────────────────── */
 
     /* Market toggle */
@@ -1463,6 +1506,7 @@
         }
         allProperties = props;
         rebuildDropdowns();
+        applyURLParams();
 
         heroCount.textContent = props.length + '+ opportunities listed';
         heroCount.classList.add('visible');
