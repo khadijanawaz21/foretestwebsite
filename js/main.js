@@ -27,6 +27,12 @@ document.addEventListener('fore:ready', function () {
     });
   });
 
+  // ── HERO VIDEO FADE-IN (hide YouTube UI flash) ──
+  setTimeout(() => {
+    const vfade = document.querySelector('.hero-video-fadein');
+    if (vfade) vfade.classList.add('visible');
+  }, 2000);
+
   // ── HERO PARALLAX ──
   window.addEventListener('scroll', () => {
     const scrolled = window.scrollY;

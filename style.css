@@ -212,6 +212,13 @@ nav {
   z-index: 0;
   overflow: hidden;
 }
+.hero-video-fadein {
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.hero-video-fadein.visible {
+  opacity: 1;
+}
 .hero-video-bg iframe {
   position: absolute;
   top: 50%;
@@ -221,6 +228,7 @@ nav {
   height: 100vh;
   min-height: 56.25vw;
   transform: translate(-50%, -50%);
+  pointer-events: none;
   pointer-events: none;
   border: none;
 }
