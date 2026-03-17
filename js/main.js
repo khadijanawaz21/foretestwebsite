@@ -17,88 +17,7 @@ function handleForm(e) {
 // ── All other init runs after components are injected ──
 document.addEventListener('fore:ready', function () {
 
-  // ── HERO SLIDER ──
-  const HERO_SLIDES = [
-    {
-      headline: 'Dubai real estate.<br><em class="gold">Anyone</em> can invest.',
-      cta1: { text: 'Browse Properties', href: 'properties.html' },
-      cta2: { text: 'See How It Works',  href: 'index.html#why-fore' }
-    },
-    {
-      headline: 'Your first property.<br><em class="gold">Starts here.</em>',
-      cta1: { text: 'Start Free Course',  href: 'academy.html' },
-      cta2: { text: 'Talk to an Advisor', href: 'index.html#contact' }
-    },
-    {
-      headline: 'Live tax-free.<br><em class="gold">Build generational wealth.</em>',
-      cta1: { text: 'Get Your Golden Visa',     href: 'golden-visa.html' },
-      cta2: { text: 'View Investment Options',  href: 'properties.html' }
-    }
-  ];
-
-  const slides = document.querySelectorAll('.hero-slide');
-  const indicators = document.querySelectorAll('.hero-indicator');
-  const heroTitle   = document.getElementById('heroTitle');
-  const heroActions = document.getElementById('heroActions');
-  let currentSlide = 0;
-  let slideInterval;
-
-  function updateHeroContent(index) {
-    const s = HERO_SLIDES[index];
-    heroTitle.innerHTML = s.headline;
-    const btns = heroActions.querySelectorAll('a');
-    btns[0].textContent = s.cta1.text; btns[0].href = s.cta1.href;
-    btns[1].textContent = s.cta2.text; btns[1].href = s.cta2.href;
-  }
-
-  function goToSlide(n) {
-    slides[currentSlide].classList.remove('active');
-    indicators[currentSlide].classList.remove('active');
-    currentSlide = (n + slides.length) % slides.length;
-    slides[currentSlide].classList.add('active');
-    indicators[currentSlide].classList.add('active');
-    const nextVid = slides[currentSlide].querySelector('video');
-    if (nextVid) { nextVid.currentTime = 0; nextVid.play().catch(() => {}); }
-    // Fade headline + CTAs out together, swap content, fade back in together
-    heroTitle.style.opacity = '0';
-    heroActions.style.opacity = '0';
-    setTimeout(() => {
-      updateHeroContent(currentSlide);
-      heroTitle.style.opacity = '1';
-      heroActions.style.opacity = '1';
-    }, 600);
-  }
-
-  function nextSlide() { goToSlide(currentSlide + 1); }
-
-  function startSlider() {
-    slideInterval = setInterval(nextSlide, 6000);
-  }
-
-  indicators.forEach(ind => {
-    ind.addEventListener('click', () => {
-      clearInterval(slideInterval);
-      goToSlide(parseInt(ind.dataset.index));
-      startSlider();
-    });
-  });
-
-  // Swipe support on hero
-  let touchStartX = 0;
-  const heroEl = document.getElementById('hero');
-  if (heroEl) {
-    heroEl.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-    heroEl.addEventListener('touchend', e => {
-      const diff = touchStartX - e.changedTouches[0].clientX;
-      if (Math.abs(diff) > 50) {
-        clearInterval(slideInterval);
-        goToSlide(diff > 0 ? currentSlide + 1 : currentSlide - 1);
-        startSlider();
-      }
-    }, { passive: true });
-  }
-
-  startSlider();
+  // ── HERO (static — no slideshow) ──
 
   // ── HERO TEXT REVEAL — trigger immediately, don't wait for window.load ──
   requestAnimationFrame(() => {
@@ -111,9 +30,9 @@ document.addEventListener('fore:ready', function () {
   // ── HERO PARALLAX ──
   window.addEventListener('scroll', () => {
     const scrolled = window.scrollY;
-    const heroSlides = document.getElementById('heroSlides');
-    if (heroSlides && scrolled < window.innerHeight) {
-      heroSlides.style.transform = `translateY(${scrolled * 0.4}px)`;
+    const heroBg = document.querySelector('.hero-video-bg');
+    if (heroBg && scrolled < window.innerHeight) {
+      heroBg.style.transform = `translateY(${scrolled * 0.3}px)`;
     }
   }, { passive: true });
 
