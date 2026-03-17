@@ -208,7 +208,7 @@ nav {
 /* Vimeo background video */
 .hero-video-bg {
   position: absolute;
-  inset: -5%;
+  inset: -10%;
   z-index: 0;
   overflow: hidden;
 }
