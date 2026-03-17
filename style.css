@@ -217,17 +217,7 @@ nav {
 }
 .hero-slide.active { opacity: 1; }
 .hero-slide::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    to right,
-    rgba(0,0,0,0.45) 0%,
-    rgba(0,0,0,0.25) 50%,
-    rgba(0,0,0,0.10) 100%
-  ),
-  linear-gradient(to top, rgba(0,0,0,0.40) 0%, transparent 50%);
+  display: none;
 }
 
 /* Fallback gradient shown while video loads */
