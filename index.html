@@ -34,10 +34,11 @@
 
   <!-- ═══════════════════════════════════════════ HERO -->
   <section class="hero" id="hero">
-    <!-- YouTube background -->
-    <div class="hero-video-bg hero-video-fadein">
-      <iframe src="https://www.youtube.com/embed/ZV70-WYRNnU?autoplay=1&mute=1&loop=1&playlist=ZV70-WYRNnU&start=10&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1&enablejsapi=1"
-        frameborder="0" allow="autoplay" style="pointer-events:none;"></iframe>
+    <!-- Local video background -->
+    <div class="hero-video-bg">
+      <video autoplay muted loop playsinline>
+        <source src="assets/videos/hero-video.mp4" type="video/mp4">
+      </video>
     </div>
     <div class="hero-overlay"></div>
 
@@ -63,84 +64,56 @@
         </div>
       </div>
 
-      <!-- Bottom: search bar -->
+      <!-- Bottom: toggles + search bar -->
       <div class="hero-bottom">
+        <!-- Type toggles -->
+        <div class="hs-toggles" id="hsToggles">
+          <button type="button" class="hs-toggle active" data-type="">All</button>
+          <button type="button" class="hs-toggle" data-type="offplan">Off-Plan</button>
+          <button type="button" class="hs-toggle" data-type="secondary">Secondary</button>
+        </div>
+
+        <!-- Single search bar -->
         <form class="hero-search" id="heroSearch" autocomplete="off" onsubmit="return heroSearchGo(event)">
-          <div class="hs-field">
-            <label class="hs-label">Type</label>
-            <select class="hs-select" id="hsType">
-              <option value="">All</option>
-              <option value="Apartment">Apartment</option>
-              <option value="Villa">Villa</option>
-              <option value="Townhouse">Townhouse</option>
-            </select>
-          </div>
-          <div class="hs-divider"></div>
-          <div class="hs-field">
-            <label class="hs-label">Bedrooms</label>
-            <select class="hs-select" id="hsBeds">
-              <option value="">Any</option>
-              <option value="Studio">Studio</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5+</option>
-            </select>
-          </div>
-          <div class="hs-divider"></div>
-          <div class="hs-field">
-            <label class="hs-label">Price</label>
-            <select class="hs-select" id="hsPrice">
-              <option value="">Any</option>
-              <option value="0-1000000">Under AED 1M</option>
-              <option value="1000000-2000000">AED 1M – 2M</option>
-              <option value="2000000-5000000">AED 2M – 5M</option>
-              <option value="5000000-">AED 5M+</option>
-            </select>
-          </div>
-          <div class="hs-divider"></div>
-          <div class="hs-field hs-field-loc">
-            <label class="hs-label">Location</label>
-            <input type="text" class="hs-input" id="hsLocation" placeholder="Search area or project…" />
+          <div class="hs-field hs-field-loc" style="position:relative;">
+            <input type="text" class="hs-input" id="hsLocation" placeholder="Search by area or project name..." />
           </div>
           <button type="submit" class="hs-btn">
             <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
             Search
           </button>
         </form>
-
-        <!-- Search Bar (mobile) -->
-        <a href="properties.html" class="hero-search-mobile" id="heroSearchMobile">
-          Search Properties
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 7h12M9 3l4 4-4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
       </div>
     </div>
 
     <script>
+      /* ── Toggle pills ── */
+      var activeType = '';
+      document.getElementById('hsToggles').addEventListener('click', function(e) {
+        var btn = e.target.closest('.hs-toggle');
+        if (!btn) return;
+        document.querySelectorAll('.hs-toggle').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        activeType = btn.dataset.type;
+      });
+
+      /* ── Search submit ── */
       function heroSearchGo(e) {
         e.preventDefault();
         var params = [];
-        var type = document.getElementById('hsType').value;
-        var beds = document.getElementById('hsBeds').value;
-        var price = document.getElementById('hsPrice').value;
-        var loc = document.getElementById('hsLocation').value.trim();
-        if (type) params.push('type=' + encodeURIComponent(type));
-        if (beds) params.push('beds=' + encodeURIComponent(beds));
-        if (price) params.push('price=' + encodeURIComponent(price));
-        if (loc) params.push('location=' + encodeURIComponent(loc));
+        var q = document.getElementById('hsLocation').value.trim();
+        if (q) params.push('q=' + encodeURIComponent(q));
+        if (activeType) params.push('type=' + encodeURIComponent(activeType));
         window.location.href = 'properties.html' + (params.length ? '?' + params.join('&') : '');
         return false;
       }
 
-      /* ── Autocomplete: prefetch properties ── */
+      /* ── Autocomplete: prefetch from Behomes API ── */
       (function() {
         var suggestions = [];
         var dropdown = document.createElement('div');
         dropdown.className = 'hs-autocomplete';
         var locField = document.getElementById('hsLocation');
-        locField.parentElement.style.position = 'relative';
         locField.parentElement.appendChild(dropdown);
 
         fetch('https://api.behomes.tech/v3/get_behomes_objects?lang=en&api_key=EAJF8XND&filter=yes&objects_per_page=50')
@@ -179,7 +152,9 @@
           if (!item) return;
           locField.value = item.dataset.val;
           dropdown.style.display = 'none';
-          window.location.href = 'properties.html?location=' + encodeURIComponent(item.dataset.val);
+          var params = ['q=' + encodeURIComponent(item.dataset.val)];
+          if (activeType) params.push('type=' + encodeURIComponent(activeType));
+          window.location.href = 'properties.html?' + params.join('&');
         });
 
         document.addEventListener('click', function(e) {
