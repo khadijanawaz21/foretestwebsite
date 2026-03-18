@@ -435,7 +435,7 @@ nav {
   background: transparent;
   border: 1px solid rgba(201,169,110,0.3);
   border-bottom: none;
-  border-radius: 12px 12px 0 0;
+  border-radius: 4px 4px 0 0;
   padding: 10px 24px;
   cursor: pointer;
   position: relative;
@@ -465,7 +465,7 @@ nav {
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
   border: 1px solid rgba(201,169,110,0.3);
-  border-radius: 60px;
+  border-radius: 4px;
   padding: 6px 6px 6px 24px;
   margin: 0;
   width: 100%;
@@ -502,7 +502,7 @@ nav {
   gap: 8px;
   background: var(--gold);
   border: 1px solid var(--gold);
-  border-radius: 50px;
+  border-radius: 4px;
   color: #0A0A0A;
   font-family: var(--font-ui);
   font-size: 11px;
