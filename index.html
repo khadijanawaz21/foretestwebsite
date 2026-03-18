@@ -66,29 +66,30 @@
 
       <!-- Bottom: toggles + search bar -->
       <div class="hero-bottom">
-        <!-- Type toggles -->
-        <div class="hs-toggles" id="hsToggles">
-          <button type="button" class="hs-toggle active" data-type="">All</button>
-          <button type="button" class="hs-toggle" data-type="offplan">Off-Plan</button>
-          <button type="button" class="hs-toggle" data-type="secondary">Secondary</button>
-        </div>
-
-        <!-- Single search bar -->
-        <form class="hero-search" id="heroSearch" autocomplete="off" onsubmit="return heroSearchGo(event)">
-          <div class="hs-field hs-field-loc" style="position:relative;">
-            <input type="text" class="hs-input" id="hsLocation" placeholder="Search by area or project name..." />
+        <div class="hero-search-wrapper">
+          <!-- Type toggles (tabs) -->
+          <div class="hs-toggles" id="hsToggles">
+            <button type="button" class="hs-toggle active" data-type="secondary">Buy</button>
+            <button type="button" class="hs-toggle" data-type="rent">Rent</button>
+            <button type="button" class="hs-toggle" data-type="offplan">Off-Plan</button>
           </div>
-          <button type="submit" class="hs-btn">
-            <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-            Search
-          </button>
-        </form>
+          <!-- Single search bar -->
+          <form class="hero-search" id="heroSearch" autocomplete="off" onsubmit="return heroSearchGo(event)">
+            <div class="hs-field hs-field-loc" style="position:relative;">
+              <input type="text" class="hs-input" id="hsLocation" placeholder="Search by area or project name..." />
+            </div>
+            <button type="submit" class="hs-btn">
+              <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="currentColor" stroke-width="1.4"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+              Search
+            </button>
+          </form>
+        </div>
       </div>
     </div>
 
     <script>
       /* ── Toggle pills ── */
-      var activeType = '';
+      var activeType = 'secondary';
       document.getElementById('hsToggles').addEventListener('click', function(e) {
         var btn = e.target.closest('.hs-toggle');
         if (!btn) return;
