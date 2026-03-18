@@ -1268,6 +1268,12 @@ section {
   border-left: 2px solid transparent;
   transition: background 0.3s, border-color 0.35s ease;
 }
+.academy-module-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
 .academy-module:hover { background: var(--bg-dark3); border-left-color: var(--gold); }
 .module-day {
   font-size: 8px;
