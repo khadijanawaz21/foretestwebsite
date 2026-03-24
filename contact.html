@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="google-site-verification" content="IRVV0Zu1oJqf6kIZfefGa_KiP-2qhx0yCLaLgXNuL04" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us | FORE — Fair Opportunity Real Estate</title>
+  <meta name="description" content="Get in touch with FORE. Book a free 30-minute consultation to discuss your Dubai property investment goals." />
+
+  <link rel="icon" href="brand_assets/favicon.ico" />
+  <link rel="apple-touch-icon" href="brand_assets/apple-touch-icon.png" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Contact Us | FORE — Fair Opportunity Real Estate" />
+  <meta property="og:description" content="Book a free 30-minute consultation. Tell us your budget and goals — we'll show you the exact properties available right now." />
+  <meta property="og:image" content="brand_assets/og-image.jpg" />
+  <meta property="og:url" content="https://fairopportunityrealestate.com/contact.html" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" crossorigin />
+
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="mobile.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- ── Component: Nav ── -->
+  <div data-component="nav"></div>
+
+  <!-- ═══════════════════════════════════════════ CONTACT -->
+  <section class="contact" id="contact" style="padding-top: 140px;">
+    <div class="contact-grid">
+      <div class="fade-in">
+        <div class="section-tag">Get In Touch</div>
+        <h2 class="contact-title">
+          Get your<br>
+          <em class="gold">free consultation.</em>
+        </h2>
+        <p class="contact-sub">
+          Book a free 30-minute call. Tell us your budget and goals. We'll show you the exact properties available right now that match.
+        </p>
+        <div class="contact-items">
+          <div>
+            <div class="contact-item-label">Email</div>
+            <div class="contact-item-value"><a href="mailto:info@fairopportunityrealestate.com" style="color:inherit;text-decoration:none;">info@fairopportunityrealestate.com</a></div>
+          </div>
+          <div>
+            <div class="contact-item-label">WhatsApp</div>
+            <div class="contact-item-value"><a href="https://wa.me/971506508799" style="color:inherit;text-decoration:none;">+971 50 650 8799</a></div>
+          </div>
+          <div>
+            <div class="contact-item-label">Office</div>
+            <div class="contact-item-value">Office 3602, 36th Floor, Burj Al Salam Tower, Trade Center, Dubai, UAE</div>
+            <div class="contact-item-value" style="color:var(--white-35);font-size:11px;margin-top:4px;">Serving investors globally</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="contact-form-wrapper">
+      <form class="contact-form fade-in" data-stagger="80" onsubmit="handleForm(event)">
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-label">First Name</label>
+            <input class="form-input" type="text" name="firstName" placeholder="James" required />
+          </div>
+          <div class="form-field">
+            <label class="form-label">Last Name</label>
+            <input class="form-input" type="text" name="lastName" placeholder="Wilson" required />
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Email</label>
+          <input class="form-input" type="email" name="email" placeholder="james@example.com" required />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Country of Residence</label>
+          <input class="form-input" type="text" name="country" placeholder="United Kingdom" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Investment Budget</label>
+          <select class="form-select" name="budget">
+            <option value="" disabled selected>Select a range</option>
+            <option>Under AED 750,000</option>
+            <option>AED 750K – 1.5M</option>
+            <option>AED 1.5M – 3M</option>
+            <option>AED 3M – 5M</option>
+            <option>Above AED 5M</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="form-label">What are you most interested in?</label>
+          <select class="form-select" name="interest">
+            <option value="" disabled selected>Select your primary interest</option>
+            <option>Off-plan investment</option>
+            <option>Ready / secondary property</option>
+            <option>Golden Visa qualification</option>
+            <option>Rental income strategy</option>
+            <option>General consultation</option>
+          </select>
+        </div>
+        <button type="submit" id="contact-submit-btn" class="btn-primary" style="align-self:flex-start;">Get My Free Consultation</button>
+      </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Component: Footer ── -->
+  <div data-component="footer"></div>
+
+  <!-- ── Component: WhatsApp Float ── -->
+  <div data-component="whatsapp"></div>
+
+  <!-- ── Component: Distressed Deals Widget ── -->
+  <div data-component="distressed"></div>
+
+  <script src="js/components.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script>
+    async function handleForm(e) {
+      e.preventDefault();
+      var form = e.target;
+      var btn = document.getElementById('contact-submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+
+      var data = {
+        FirstName: form.firstName.value,
+        LastName:  form.lastName.value,
+        Email:     form.email.value,
+        Country:   form.country.value,
+        Budget:    form.budget.value,
+        Interest:  form.interest.value
+      };
+
+      // Send to Google Sheet
+      try {
+        await fetch('https://script.google.com/macros/s/AKfycbx2wnOWYcJEM3ty2j3ctIHLFMlJyMVm3hMjiI9cXeFzKZfxnfUzQMYB5QkUa2k6wd4wLg/exec', {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+      } catch (_) {}
+
+      // Also send email
+      var subject = encodeURIComponent('New Contact Lead — ' + data.FirstName + ' ' + data.LastName);
+      var body = encodeURIComponent(
+        'Name: ' + data.FirstName + ' ' + data.LastName + '\n' +
+        'Email: ' + data.Email + '\n' +
+        'Country: ' + data.Country + '\n' +
+        'Budget: ' + data.Budget + '\n' +
+        'Interest: ' + data.Interest
+      );
+      window.open('mailto:info@fairopportunityrealestate.com?subject=' + subject + '&body=' + body, '_blank');
+
+      document.getElementById('contact-form-wrapper').innerHTML =
+        '<p style="font-family:\'Cormorant Garamond\',serif;font-size:1.5rem;font-style:italic;color:#C9A84C;text-align:center;line-height:1.6;">Thank you — we\'ll be in touch within 24 hours.</p>';
+    }
+  </script>
+</body>
+</html>
