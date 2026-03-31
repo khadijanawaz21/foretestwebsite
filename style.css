@@ -1336,6 +1336,21 @@ section {
 }
 
 /* ─── TEAM FLIP GRID ─── */
+.team-division-label {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 24px;
+  margin-top: 48px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(201,169,110,0.15);
+}
+.team-division-label:first-of-type {
+  margin-top: 0;
+}
 .team-flip-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
