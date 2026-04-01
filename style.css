@@ -1369,14 +1369,6 @@ section {
 .team-flip-card.flipped {
   z-index: 2;
 }
-/* Center the last 2 cards in the second row (3+2 layout) */
-.team-flip-card:nth-child(4) {
-  grid-column: 2 / span 2;
-}
-.team-flip-card:nth-child(5) {
-  grid-column: 4 / span 2;
-}
-
 /* ── Flip mechanism ── */
 .team-flip-inner {
   position: relative;
@@ -2300,11 +2292,9 @@ footer {
   .gv-title { font-size: 28px; }
   .gv-benefits { gap: 10px; margin-bottom: 28px; }
   .gv-body { margin-bottom: 24px; }
-  /* Team flip grid: 2-2-1 on tablet */
+  /* Team flip grid: 2 columns on tablet */
   .team-flip-grid { grid-template-columns: repeat(4, 1fr); }
   .team-flip-card { grid-column: span 2; }
-  .team-flip-card:nth-child(4) { grid-column: span 2; }
-  .team-flip-card:nth-child(5) { grid-column: 2 / span 2; }
   .blog-grid { grid-template-columns: 1fr; }
   .blog-featured { grid-row: auto; }
   .testimonial-grid { grid-template-columns: 1fr; }
@@ -2327,9 +2317,7 @@ footer {
   .academy-modules { grid-template-columns: 1fr; }
   /* Team flip grid: 1 column on mobile */
   .team-flip-grid { grid-template-columns: 1fr; }
-  .team-flip-card,
-  .team-flip-card:nth-child(4),
-  .team-flip-card:nth-child(5) { grid-column: span 1; }
+  .team-flip-card { grid-column: span 1; }
   .team-flip-card { height: 380px; }
   .blog-grid { grid-template-columns: 1fr; }
   .dev-ticker-row2 { display: none; }
