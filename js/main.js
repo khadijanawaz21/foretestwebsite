@@ -185,6 +185,16 @@ document.addEventListener('fore:ready', function () {
   let cachedOffPlan   = null;
   let cachedSecondary = null;
   let activeTab       = 'offplan';
+  let activeHpDev     = '';
+
+  const WHITELISTED_DEVS = ['emaar', 'damac', 'nakheel', 'sobha', 'binghatti', 'samana', 'danube'];
+  function getDevKey(p) {
+    const org = ((p.Organisation || {}).organizationName || '').toLowerCase();
+    for (let i = 0; i < WHITELISTED_DEVS.length; i++) {
+      if (org.includes(WHITELISTED_DEVS[i])) return WHITELISTED_DEVS[i];
+    }
+    return '';
+  }
 
   const propertyGrid = document.getElementById('propertyGrid');
   const propTabs     = document.querySelectorAll('.prop-tab');
@@ -326,7 +336,11 @@ document.addEventListener('fore:ready', function () {
   // ── Render ──
 
   function renderCards(listings, type) {
-    const items = listings.slice(0, 6);
+    let filtered = listings;
+    if (activeHpDev && type === 'offplan') {
+      filtered = listings.filter(p => getDevKey(p) === activeHpDev);
+    }
+    const items = filtered.slice(0, 6);
     if (!items.length) {
       propertyGrid.innerHTML = '<p style="color:var(--white-35);font-size:12px;text-align:center;padding:40px 0;">No listings available right now.</p>';
       return;
@@ -425,6 +439,18 @@ document.addEventListener('fore:ready', function () {
       } else {
         // Data not yet ready (shouldn't happen but guard anyway)
         showSkeletons(6);
+      }
+    });
+  });
+
+  // ── Homepage developer filter ──
+  document.querySelectorAll('.hp-dev-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.hp-dev-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeHpDev = btn.dataset.dev === 'all' ? '' : btn.dataset.dev;
+      if (activeTab === 'offplan' && cachedOffPlan) {
+        renderCards(cachedOffPlan, 'offplan');
       }
     });
   });
