@@ -35,7 +35,7 @@ function toFrontend(row) {
   };
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   try {
     const response = await fetch(
       `${SUPABASE_URL}/rest/v1/offplan_listings?order=created_date.desc&limit=1000`,
