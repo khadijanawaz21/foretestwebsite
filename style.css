@@ -876,8 +876,10 @@ section {
 .hp-dev-btn img {
   height: 18px;
   width: auto;
-  filter: brightness(0) invert(1);
   object-fit: contain;
+}
+.hp-dev-btn img.logo-dark {
+  filter: brightness(0) invert(1);
 }
 .hp-dev-btn[data-dev="all"] {
   font-family: var(--font-ui);
