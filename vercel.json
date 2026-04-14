@@ -1,4 +1,6 @@
 {
+  "buildCommand": "",
+  "outputDirectory": "",
   "functions": {
     "api/sync-listings.js": {
       "maxDuration": 60
