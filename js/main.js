@@ -146,6 +146,7 @@ document.addEventListener('fore:ready', function () {
   const BEHOMES_BASE  = 'https://api.behomes.tech/v3/get_behomes_objects?lang=en&api_key=EAJF8XND&filter=yes';
   const BEHOMES_PER_PAGE = 200;
   const HANDOVER_CUTOFF = new Date('2026-01-01').getTime();
+  const WHITELISTED_DEVS = ['emaar', 'damac', 'nakheel', 'sobha', 'binghatti', 'samana', 'danube'];
 
   // Secondary listings — Supabase config
   const SUPA_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
@@ -393,8 +394,13 @@ document.addEventListener('fore:ready', function () {
         jsons.forEach(j => { opArr = opArr.concat(extractArray(j)); });
       }
 
-      // Filter out handed-over projects and sort newest first
-      opArr = opArr.filter(p => !p.DeliveryDate || p.DeliveryDate >= HANDOVER_CUTOFF);
+      // Filter to whitelisted developers, remove handed-over, sort newest first
+      opArr = opArr.filter(p => {
+        const org = ((p.Organisation || {}).organizationName || '').toLowerCase();
+        const isWhitelisted = WHITELISTED_DEVS.some(d => org.includes(d));
+        const afterCutoff = !p.DeliveryDate || p.DeliveryDate >= HANDOVER_CUTOFF;
+        return isWhitelisted && afterCutoff;
+      });
       opArr.sort((a, b) => (b.CreatedDate || 0) - (a.CreatedDate || 0));
 
       console.log('[FORE] Off-Plan API — ' + opArr.length + ' total listings (newest first)');

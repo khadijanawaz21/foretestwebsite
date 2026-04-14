@@ -132,8 +132,13 @@
 
         /* Fetch all pages so autocomplete covers every listing */
         var acBase = 'https://api.behomes.tech/v3/get_behomes_objects?lang=en&api_key=EAJF8XND&filter=yes&objects_per_page=200';
+        var acDevs = ['emaar', 'damac', 'nakheel', 'sobha', 'binghatti', 'samana', 'danube'];
         function acIngest(items) {
           var seen = {};
+          items = items.filter(function(p) {
+            var org = ((p.Organisation || {}).organizationName || '').toLowerCase();
+            return acDevs.some(function(d) { return org.indexOf(d) !== -1; });
+          });
           items.forEach(function(p) {
             var name = p.ShortName || '';
             var district = (p.Location && p.Location.district) || '';
