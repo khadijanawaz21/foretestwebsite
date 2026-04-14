@@ -1115,18 +1115,9 @@
     }
 
     /* ── API Fetch ─────────────────────── */
-    var BEHOMES_BASE = 'https://api.behomes.tech/v3/';
-    var BEHOMES_PER_PAGE = 200;
-    var HANDOVER_CUTOFF = new Date('2026-01-01').getTime();
+    var LISTINGS_API = '/api/listings';
     var WHITELISTED_DEVS = ['emaar', 'damac', 'nakheel', 'sobha', 'binghatti', 'samana', 'danube'];
 
-    function isWhitelistedDev(p) {
-      var org = ((p.Organisation || {}).organizationName || '').toLowerCase();
-      for (var i = 0; i < WHITELISTED_DEVS.length; i++) {
-        if (org.indexOf(WHITELISTED_DEVS[i]) !== -1) return true;
-      }
-      return false;
-    }
     function getDevKey(p) {
       var org = ((p.Organisation || {}).organizationName || '').toLowerCase();
       for (var i = 0; i < WHITELISTED_DEVS.length; i++) {
@@ -1135,40 +1126,20 @@
       return '';
     }
 
-    function fetchBehomesPage(page) {
-      var params = 'lang=en&api_key=EAJF8XND&filter=yes&objects_per_page=' + BEHOMES_PER_PAGE + '&page=' + page;
-      return fetch(BEHOMES_BASE + 'get_behomes_objects?' + params)
-        .then(function (r) { return r.ok ? r.json().catch(function () { return {}; }) : {}; });
-    }
-
     function fetchAllListings() {
-      /* Fetch page 1 to discover total pages, plus Supabase secondary in parallel */
-      return Promise.all([fetchBehomesPage(1), fetchSupabaseSecondary()])
-        .then(function (first) {
-          var json1 = first[0];
-          var secondary = first[1];
-          var offplan = extractItems(json1, 'offplan');
-          var maxPages = (json1.filter_params && json1.filter_params.max_pages) || 1;
-
-          function filterOffplan(arr) {
-            return arr.filter(function (p) {
-              return isWhitelistedDev(p) && (!p.DeliveryDate || p.DeliveryDate >= HANDOVER_CUTOFF);
+      return Promise.all([
+        fetch(LISTINGS_API)
+          .then(function (r) { return r.ok ? r.json() : { listings: [] }; })
+          .then(function (data) {
+            return (data.listings || []).map(function (p) {
+              return Object.assign({}, p, { _source: 'offplan' });
             });
-          }
-
-          if (maxPages <= 1) return filterOffplan(offplan).concat(secondary);
-
-          /* Fetch remaining pages in parallel */
-          var remaining = [];
-          for (var p = 2; p <= maxPages; p++) remaining.push(fetchBehomesPage(p));
-
-          return Promise.all(remaining).then(function (jsons) {
-            jsons.forEach(function (j) {
-              offplan = offplan.concat(extractItems(j, 'offplan'));
-            });
-            return filterOffplan(offplan).concat(secondary);
-          });
-        });
+          })
+          .catch(function () { return []; }),
+        fetchSupabaseSecondary()
+      ]).then(function (results) {
+        return results[0].concat(results[1]);
+      });
     }
 
     /* ── Dropdowns ─────────────────────── */
