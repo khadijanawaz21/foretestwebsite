@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/sync-listings.js": {
+      "maxDuration": 60
+    }
+  },
   "crons": [
     {
       "path": "/api/sync-listings",

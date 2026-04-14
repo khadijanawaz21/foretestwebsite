@@ -1,5 +1,3 @@
-import { createClient } from '@supabase/supabase-js';
-
 const BEHOMES_BASE = 'https://api.behomes.tech/v3/get_behomes_objects';
 const API_KEY = 'EAJF8XND';
 const PER_PAGE = 200;
@@ -7,7 +5,6 @@ const HANDOVER_CUTOFF = new Date('2026-01-01').getTime();
 const WHITELISTED_DEVS = ['emaar', 'damac', 'nakheel', 'sobha', 'binghatti', 'samana', 'danube'];
 
 const SUPABASE_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
-const supabase = createClient(SUPABASE_URL, process.env.SERVICE_KEY);
 
 function isWhitelisted(p) {
   const org = ((p.Organisation || {}).organizationName || '').toLowerCase();
@@ -68,12 +65,51 @@ async function fetchAllFromBehomes() {
   );
 }
 
+async function supabaseUpsert(rows, serviceKey) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/offplan_listings`, {
+    method: 'POST',
+    headers: {
+      'apikey': serviceKey,
+      'Authorization': `Bearer ${serviceKey}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'resolution=merge-duplicates',
+    },
+    body: JSON.stringify(rows),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Upsert failed (${res.status}): ${err}`);
+  }
+}
+
+async function supabaseDeleteStale(activeIds, serviceKey) {
+  // Delete rows whose project_id is NOT in the active set
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/offplan_listings?project_id=not.in.(${activeIds.map(encodeURIComponent).join(',')})`,
+    {
+      method: 'DELETE',
+      headers: {
+        'apikey': serviceKey,
+        'Authorization': `Bearer ${serviceKey}`,
+      },
+    }
+  );
+  if (!res.ok) {
+    const err = await res.text();
+    console.error('[SYNC] Cleanup error:', err);
+  }
+}
+
 export default async function handler(req, res) {
-  // Protect with a secret or cron header
   const authHeader = req.headers.authorization;
   const cronHeader = req.headers['x-vercel-cron'];
   if (!cronHeader && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const serviceKey = process.env.SERVICE_KEY;
+  if (!serviceKey) {
+    return res.status(500).json({ error: 'SERVICE_KEY not configured' });
   }
 
   try {
@@ -87,24 +123,14 @@ export default async function handler(req, res) {
     let upserted = 0;
     for (let i = 0; i < rows.length; i += 50) {
       const batch = rows.slice(i, i + 50);
-      const { error } = await supabase
-        .from('offplan_listings')
-        .upsert(batch, { onConflict: 'project_id' });
-      if (error) {
-        console.error('[SYNC] Upsert error:', error.message);
-        return res.status(500).json({ error: 'Upsert failed', detail: error.message });
-      }
+      await supabaseUpsert(batch, serviceKey);
       upserted += batch.length;
     }
 
-    // Remove listings that are no longer in the API response
+    // Remove stale listings
     const activeIds = rows.map(r => r.project_id);
     if (activeIds.length > 0) {
-      const { error: delError } = await supabase
-        .from('offplan_listings')
-        .delete()
-        .not('project_id', 'in', `(${activeIds.join(',')})`);
-      if (delError) console.error('[SYNC] Cleanup error:', delError.message);
+      await supabaseDeleteStale(activeIds, serviceKey);
     }
 
     console.log(`[SYNC] Done. Upserted ${upserted} listings.`);
