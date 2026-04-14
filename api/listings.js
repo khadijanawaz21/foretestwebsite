@@ -1,96 +1,62 @@
-const BEHOMES_BASE = 'https://api.behomes.tech/v3/get_behomes_objects';
-const API_KEY = 'EAJF8XND';
-const PER_PAGE = 200;
-const HANDOVER_CUTOFF = new Date('2026-01-01').getTime();
-const WHITELISTED_DEVS = ['emaar', 'damac', 'nakheel', 'sobha', 'binghatti', 'samana', 'danube'];
-const CACHE_TTL = 60 * 60 * 1000; // 1 hour
+const SUPABASE_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhbWtuZWtkYnRybXhvcHl3Z3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NjMxOTksImV4cCI6MjA4OTAzOTE5OX0.HCmQ_4cyuImr3S1wQ-V6oW2G2U4a1rzMUlLPqHC-OeA';
 
-let cache = { data: null, ts: 0 };
-
-function isWhitelisted(p) {
-  const org = ((p.Organisation || {}).organizationName || '').toLowerCase();
-  return WHITELISTED_DEVS.some(d => org.includes(d));
-}
-
-// Strip heavy fields the frontend doesn't need
-function slim(p) {
+// Map Supabase rows back to the shape the frontend expects
+function toFrontend(row) {
   return {
-    project_id: p.project_id,
-    ShortName: p.ShortName,
-    OffplanOrSecondary: p.OffplanOrSecondary,
-    LayoutPriceMin: p.LayoutPriceMin,
-    LayoutPriceMax: p.LayoutPriceMax,
-    LayoutAreaTotalMin: p.LayoutAreaTotalMin,
-    LayoutAreaTotalMax: p.LayoutAreaTotalMax,
-    DeliveryDate: p.DeliveryDate,
-    CreatedDate: p.CreatedDate,
-    Avatar: p.Avatar,
-    Type: p.Type ? { name: p.Type.name } : null,
-    Location: p.Location ? {
-      address: p.Location.address,
-      district: p.Location.district,
-      city: p.Location.city ? { name: p.Location.city.name } : null,
-      lat: p.Location.lat,
-      lng: p.Location.lng,
-    } : null,
-    Organisation: p.Organisation ? {
-      organizationName: p.Organisation.organizationName,
-      organizationLogo: p.Organisation.organizationLogo,
-    } : null,
-    Currency: p.Currency ? {
-      currencySymbol: p.Currency.currencySymbol,
-      currencyValueUSD: p.Currency.currencyValueUSD,
-    } : null,
-    Bedrooms: p.Bedrooms || p.BedroomsMin || null,
-    Recomended: p.Recomended,
+    project_id: row.project_id,
+    ShortName: row.short_name,
+    OffplanOrSecondary: row.offplan_or_secondary,
+    LayoutPriceMin: row.price_min,
+    LayoutPriceMax: row.price_max,
+    LayoutAreaTotalMin: row.area_min,
+    LayoutAreaTotalMax: row.area_max,
+    DeliveryDate: row.delivery_date,
+    CreatedDate: row.created_date,
+    Avatar: row.avatar,
+    Type: row.type_name ? { name: row.type_name } : null,
+    Location: {
+      address: row.location_address,
+      district: row.location_district,
+      city: row.location_city ? { name: row.location_city } : null,
+      lat: row.location_lat,
+      lng: row.location_lng,
+    },
+    Organisation: {
+      organizationName: row.org_name,
+      organizationLogo: row.org_logo,
+    },
+    Currency: {
+      currencySymbol: row.currency_symbol,
+      currencyValueUSD: row.currency_usd,
+    },
+    Bedrooms: row.bedrooms,
+    Recomended: row.recommended,
   };
-}
-
-async function fetchAllListings() {
-  const url = `${BEHOMES_BASE}?lang=en&api_key=${API_KEY}&filter=yes&objects_per_page=${PER_PAGE}&page=1`;
-  const res1 = await fetch(url);
-  const json1 = await res1.json();
-  let items = json1.response || [];
-  const maxPages = (json1.filter_params && json1.filter_params.max_pages) || 1;
-
-  if (maxPages > 1) {
-    const fetches = [];
-    for (let p = 2; p <= maxPages; p++) {
-      fetches.push(
-        fetch(`${BEHOMES_BASE}?lang=en&api_key=${API_KEY}&filter=yes&objects_per_page=${PER_PAGE}&page=${p}`)
-          .then(r => r.json())
-          .then(j => j.response || [])
-          .catch(() => [])
-      );
-    }
-    const pages = await Promise.all(fetches);
-    pages.forEach(batch => { items = items.concat(batch); });
-  }
-
-  // Filter: whitelisted devs + handover after cutoff
-  items = items.filter(p => isWhitelisted(p) && (!p.DeliveryDate || p.DeliveryDate >= HANDOVER_CUTOFF));
-
-  // Sort newest first
-  items.sort((a, b) => (b.CreatedDate || 0) - (a.CreatedDate || 0));
-
-  // Slim down each item
-  return items.map(slim);
 }
 
 export default async function handler(req, res) {
   try {
-    const now = Date.now();
-    if (cache.data && (now - cache.ts) < CACHE_TTL) {
-      res.setHeader('X-Cache', 'HIT');
-    } else {
-      cache.data = await fetchAllListings();
-      cache.ts = now;
-      res.setHeader('X-Cache', 'MISS');
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/offplan_listings?order=created_date.desc&limit=1000`,
+      {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Supabase returned ${response.status}`);
     }
 
-    res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=600');
+    const rows = await response.json();
+    const listings = rows.map(toFrontend);
+
+    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=60');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.status(200).json({ count: cache.data.length, listings: cache.data });
+    res.status(200).json({ count: listings.length, listings });
   } catch (err) {
     console.error('Listings API error:', err);
     res.status(500).json({ error: 'Failed to fetch listings' });

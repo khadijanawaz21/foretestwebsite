@@ -142,7 +142,7 @@ document.addEventListener('fore:ready', function () {
   // ── PROPERTY LISTINGS API ──
   // ════════════════════════════════════════════
 
-  const LISTINGS_API = '/api/listings';
+  // Off-plan listings are now in Supabase (synced from BeHomes every 6h)
 
   // Secondary listings — Supabase config
   const SUPA_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
@@ -367,14 +367,30 @@ document.addEventListener('fore:ready', function () {
             .catch(function() { return []; })
         : Promise.resolve([]);
 
-      const [apiRes, secArr] = await Promise.all([
-        fetch(LISTINGS_API).then(r => r.json()).catch(() => ({ listings: [] })),
-        supaSecondary,
-      ]);
+      const offplanFromSupa = fetch(SUPA_URL + '/rest/v1/offplan_listings?order=created_date.desc&limit=1000', {
+        headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+      })
+        .then(r => r.ok ? r.json() : [])
+        .then(rows => rows.map(row => ({
+          project_id: row.project_id,
+          ShortName: row.short_name,
+          OffplanOrSecondary: row.offplan_or_secondary,
+          LayoutPriceMin: row.price_min,
+          DeliveryDate: row.delivery_date,
+          CreatedDate: row.created_date,
+          Avatar: row.avatar,
+          Type: row.type_name ? { name: row.type_name } : null,
+          Location: {
+            district: row.location_district,
+            city: row.location_city ? { name: row.location_city } : null,
+          },
+          Organisation: { organizationName: row.org_name },
+        })))
+        .catch(() => []);
 
-      const opArr = apiRes.listings || [];
+      const [opArr, secArr] = await Promise.all([offplanFromSupa, supaSecondary]);
 
-      console.log('[FORE] Off-Plan API — ' + opArr.length + ' listings (via /api/listings)');
+      console.log('[FORE] Off-Plan — ' + opArr.length + ' listings (from Supabase)');
       console.log('[FORE] Secondary Supabase — ' + secArr.length + ' listings');
 
       cachedOffPlan   = opArr.length  ? opArr  : FALLBACK_OFFPLAN;

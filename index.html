@@ -130,14 +130,18 @@
         var locField = document.getElementById('hsLocation');
         locField.parentElement.appendChild(dropdown);
 
-        fetch('/api/listings')
+        var acSupaUrl = 'https://famknekdbtrmxopywgsj.supabase.co';
+        var acSupaKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhbWtuZWtkYnRybXhvcHl3Z3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NjMxOTksImV4cCI6MjA4OTAzOTE5OX0.HCmQ_4cyuImr3S1wQ-V6oW2G2U4a1rzMUlLPqHC-OeA';
+        fetch(acSupaUrl + '/rest/v1/offplan_listings?select=short_name,location_district,location_city&limit=1000', {
+          headers: { 'apikey': acSupaKey, 'Authorization': 'Bearer ' + acSupaKey }
+        })
           .then(function(r) { return r.json(); })
-          .then(function(data) {
+          .then(function(rows) {
             var seen = {};
-            (data.listings || []).forEach(function(p) {
-              var name = p.ShortName || '';
-              var district = (p.Location && p.Location.district) || '';
-              var city = (p.Location && p.Location.city && p.Location.city.name) || '';
+            rows.forEach(function(p) {
+              var name = p.short_name || '';
+              var district = p.location_district || '';
+              var city = p.location_city || '';
               if (name && !seen[name]) { seen[name] = 1; suggestions.push({ text: name, type: 'project' }); }
               if (district && !seen[district]) { seen[district] = 1; suggestions.push({ text: district, type: 'area' }); }
               if (city && !seen['city:' + city]) { seen['city:' + city] = 1; suggestions.push({ text: city, type: 'city' }); }

@@ -1115,7 +1115,6 @@
     }
 
     /* ── API Fetch ─────────────────────── */
-    var LISTINGS_API = '/api/listings';
     var WHITELISTED_DEVS = ['emaar', 'damac', 'nakheel', 'sobha', 'binghatti', 'samana', 'danube'];
 
     function getDevKey(p) {
@@ -1126,20 +1125,48 @@
       return '';
     }
 
+    function fetchOffplanFromSupabase() {
+      return fetch(SUPA_URL + '/rest/v1/offplan_listings?order=created_date.desc&limit=1000', {
+        headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+      })
+        .then(function (r) { return r.ok ? r.json() : []; })
+        .then(function (rows) {
+          return rows.map(function (row) {
+            return {
+              _source: 'offplan',
+              project_id: row.project_id,
+              ShortName: row.short_name,
+              OffplanOrSecondary: row.offplan_or_secondary,
+              LayoutPriceMin: row.price_min,
+              LayoutPriceMax: row.price_max,
+              LayoutAreaTotalMin: row.area_min,
+              LayoutAreaTotalMax: row.area_max,
+              DeliveryDate: row.delivery_date,
+              CreatedDate: row.created_date,
+              Avatar: row.avatar,
+              Type: row.type_name ? { name: row.type_name } : null,
+              Location: {
+                address: row.location_address,
+                district: row.location_district,
+                city: row.location_city ? { name: row.location_city } : null,
+                lat: row.location_lat,
+                lng: row.location_lng
+              },
+              Organisation: { organizationName: row.org_name, organizationLogo: row.org_logo },
+              Currency: { currencySymbol: row.currency_symbol, currencyValueUSD: row.currency_usd },
+              Bedrooms: row.bedrooms,
+              Recomended: row.recommended
+            };
+          });
+        })
+        .catch(function () { return []; });
+    }
+
     function fetchAllListings() {
-      return Promise.all([
-        fetch(LISTINGS_API)
-          .then(function (r) { return r.ok ? r.json() : { listings: [] }; })
-          .then(function (data) {
-            return (data.listings || []).map(function (p) {
-              return Object.assign({}, p, { _source: 'offplan' });
-            });
-          })
-          .catch(function () { return []; }),
-        fetchSupabaseSecondary()
-      ]).then(function (results) {
-        return results[0].concat(results[1]);
-      });
+      return Promise.all([fetchOffplanFromSupabase(), fetchSupabaseSecondary()])
+        .then(function (results) {
+          return results[0].concat(results[1]);
+        });
     }
 
     /* ── Dropdowns ─────────────────────── */
