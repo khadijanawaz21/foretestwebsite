@@ -1,6 +1,6 @@
 const BEHOMES_BASE = 'https://api.behomes.tech/v3/get_behomes_objects';
 const API_KEY = 'EAJF8XND';
-const PER_PAGE = 200;
+const PER_PAGE = 100; // 200 causes timeouts on some pages
 const HANDOVER_CUTOFF = new Date('2026-01-01').getTime();
 const WHITELISTED_DEVS = ['emaar', 'damac', 'nakheel', 'sobha', 'binghatti', 'samana', 'danube'];
 
@@ -47,17 +47,21 @@ async function fetchAllFromBehomes() {
   const maxPages = (json1.filter_params && json1.filter_params.max_pages) || 1;
 
   if (maxPages > 1) {
-    const fetches = [];
+    // Fetch remaining pages sequentially to avoid overloading the API
     for (let p = 2; p <= maxPages; p++) {
-      fetches.push(
-        fetch(`${BEHOMES_BASE}?lang=en&api_key=${API_KEY}&filter=yes&objects_per_page=${PER_PAGE}&page=${p}`)
-          .then(r => r.json())
-          .then(j => j.response || [])
-          .catch(() => [])
-      );
+      try {
+        const r = await fetch(`${BEHOMES_BASE}?lang=en&api_key=${API_KEY}&filter=yes&objects_per_page=${PER_PAGE}&page=${p}`);
+        const text = await r.text();
+        try {
+          const j = JSON.parse(text);
+          items = items.concat(j.response || []);
+        } catch (e) {
+          console.error(`[SYNC] Page ${p} returned invalid JSON, skipping`);
+        }
+      } catch (e) {
+        console.error(`[SYNC] Page ${p} fetch failed, skipping`);
+      }
     }
-    const pages = await Promise.all(fetches);
-    pages.forEach(batch => { items = items.concat(batch); });
   }
 
   return items.filter(p =>
