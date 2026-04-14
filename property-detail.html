@@ -1333,35 +1333,45 @@
       .catch(function() { showError(); });
   }
 
-  /* ── Off-plan: fetch from Behomes API ── */
+  /* ── Off-plan: fetch from Behomes API (all pages) ── */
   function loadOffplanFromBehomes(id) {
     var base   = 'https://api.behomes.tech/v3/';
-    var qBase  = 'lang=en&api_key=EAJF8XND&filter=yes&objects_per_page=50';
-    var page   = 1;
-    var maxP   = 8;
+    var qBase  = 'lang=en&api_key=EAJF8XND&filter=yes&objects_per_page=200';
 
-    function tryNext() {
-      if (page > maxP) { showError(); return; }
-      var q = qBase + '&page=' + page;
-      fetch(base + 'get_behomes_objects?' + q)
-        .then(function(r){ return r.json(); })
-        .catch(function(){ return {response:[]}; })
-        .then(function(json) {
-          var batch = (json && json.response) || [];
-          allProps = allProps.concat(batch);
-          var found = batch.find(function(p) { return p.project_id === id; });
-          if (found) {
-            curProp = found;
-            renderPage(found);
-          } else if (batch.length === 0) {
-            showError();
-          } else {
-            page++;
-            tryNext();
+    fetch(base + 'get_behomes_objects?' + qBase + '&page=1')
+      .then(function(r) { return r.json(); })
+      .catch(function() { return { response: [] }; })
+      .then(function(json) {
+        var batch = (json && json.response) || [];
+        allProps = allProps.concat(batch);
+        var found = batch.find(function(p) { return p.project_id === id; });
+        if (found) { curProp = found; renderPage(found); return; }
+
+        var maxPages = (json.filter_params && json.filter_params.max_pages) || 1;
+        if (maxPages <= 1) { showError(); return; }
+
+        /* Fetch remaining pages in parallel */
+        var remaining = [];
+        for (var p = 2; p <= maxPages; p++) {
+          remaining.push(
+            fetch(base + 'get_behomes_objects?' + qBase + '&page=' + p)
+              .then(function(r) { return r.json(); })
+              .catch(function() { return { response: [] }; })
+          );
+        }
+        return Promise.all(remaining).then(function(jsons) {
+          for (var i = 0; i < jsons.length; i++) {
+            var b = (jsons[i] && jsons[i].response) || [];
+            allProps = allProps.concat(b);
+            if (!found) {
+              found = b.find(function(p) { return p.project_id === id; });
+              if (found) { curProp = found; renderPage(found); }
+            }
           }
+          if (!found) showError();
         });
-    }
-    tryNext();
+      })
+      .catch(function() { showError(); });
   }
 
   /* ── Visibility ──────────────────────── */

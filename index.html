@@ -130,19 +130,29 @@
         var locField = document.getElementById('hsLocation');
         locField.parentElement.appendChild(dropdown);
 
-        fetch('https://api.behomes.tech/v3/get_behomes_objects?lang=en&api_key=EAJF8XND&filter=yes&objects_per_page=50')
+        /* Fetch all pages so autocomplete covers every listing */
+        var acBase = 'https://api.behomes.tech/v3/get_behomes_objects?lang=en&api_key=EAJF8XND&filter=yes&objects_per_page=200';
+        function acIngest(items) {
+          var seen = {};
+          items.forEach(function(p) {
+            var name = p.ShortName || '';
+            var district = (p.Location && p.Location.district) || '';
+            var city = (p.Location && p.Location.city && p.Location.city.name) || '';
+            if (name && !seen[name]) { seen[name] = 1; suggestions.push({ text: name, type: 'project' }); }
+            if (district && !seen[district]) { seen[district] = 1; suggestions.push({ text: district, type: 'area' }); }
+            if (city && !seen['city:' + city]) { seen['city:' + city] = 1; suggestions.push({ text: city, type: 'city' }); }
+          });
+        }
+        fetch(acBase + '&page=1')
           .then(function(r) { return r.json(); })
           .then(function(json) {
-            var seen = {};
-            (json.response || []).forEach(function(p) {
-              var name = p.ShortName || '';
-              var district = (p.Location && p.Location.district) || '';
-              var city = (p.Location && p.Location.city && p.Location.city.name) || '';
-              if (name && !seen[name]) { seen[name] = 1; suggestions.push({ text: name, type: 'project' }); }
-              if (district && !seen[district]) { seen[district] = 1; suggestions.push({ text: district, type: 'area' }); }
-              if (city && !seen['city:' + city]) { seen['city:' + city] = 1; suggestions.push({ text: city, type: 'city' }); }
-            });
+            acIngest(json.response || []);
+            var maxPages = (json.filter_params && json.filter_params.max_pages) || 1;
+            var remaining = [];
+            for (var p = 2; p <= maxPages; p++) remaining.push(fetch(acBase + '&page=' + p).then(function(r) { return r.json(); }));
+            return Promise.all(remaining);
           })
+          .then(function(jsons) { jsons.forEach(function(j) { acIngest(j.response || []); }); })
           .catch(function() {});
 
         locField.addEventListener('input', function() {

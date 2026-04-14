@@ -1029,29 +1029,42 @@
     }
 
     /* ── API Fetch ─────────────────────── */
-    function fetchPage(page) {
-      var base = 'https://api.behomes.tech/v3/';
-      var params = 'lang=en&api_key=EAJF8XND&filter=yes&objects_per_page=50&page=' + page;
-      var behomesPromise = Promise.all([
-        fetch(base + 'get_behomes_objects?'  + params),
-      ]).then(function (responses) {
-        return Promise.all(responses.map(function (r) {
-          return r.ok ? r.json().catch(function () { return []; }) : Promise.resolve([]);
-        }));
-      }).then(function (jsons) {
-        var offplan = extractItems(jsons[0], 'offplan');
-        return offplan;
-      });
+    var BEHOMES_BASE = 'https://api.behomes.tech/v3/';
+    var BEHOMES_PER_PAGE = 200;
+    var HANDOVER_CUTOFF = new Date('2026-01-01').getTime(); /* hide handed-over projects */
 
-      /* On the first page, also fetch Supabase secondary listings */
-      if (page === 1) {
-        return Promise.all([behomesPromise, fetchSupabaseSecondary()])
-          .then(function (results) {
-            return results[0].concat(results[1]);
+    function fetchBehomesPage(page) {
+      var params = 'lang=en&api_key=EAJF8XND&filter=yes&objects_per_page=' + BEHOMES_PER_PAGE + '&page=' + page;
+      return fetch(BEHOMES_BASE + 'get_behomes_objects?' + params)
+        .then(function (r) { return r.ok ? r.json().catch(function () { return {}; }) : {}; });
+    }
+
+    function fetchAllListings() {
+      /* Fetch page 1 to discover total pages, plus Supabase secondary in parallel */
+      return Promise.all([fetchBehomesPage(1), fetchSupabaseSecondary()])
+        .then(function (first) {
+          var json1 = first[0];
+          var secondary = first[1];
+          var offplan = extractItems(json1, 'offplan');
+          var maxPages = (json1.filter_params && json1.filter_params.max_pages) || 1;
+
+          if (maxPages <= 1) {
+            offplan = offplan.filter(function (p) { return !p.DeliveryDate || p.DeliveryDate >= HANDOVER_CUTOFF; });
+            return offplan.concat(secondary);
+          }
+
+          /* Fetch remaining pages in parallel */
+          var remaining = [];
+          for (var p = 2; p <= maxPages; p++) remaining.push(fetchBehomesPage(p));
+
+          return Promise.all(remaining).then(function (jsons) {
+            jsons.forEach(function (j) {
+              offplan = offplan.concat(extractItems(j, 'offplan'));
+            });
+            offplan = offplan.filter(function (p) { return !p.DeliveryDate || p.DeliveryDate >= HANDOVER_CUTOFF; });
+            return offplan.concat(secondary);
           });
-      }
-
-      return behomesPromise;
+        });
     }
 
     /* ── Dropdowns ─────────────────────── */
@@ -1131,7 +1144,7 @@
         result.sort(function (a, b) {
           if (a._featured && !b._featured) return -1;
           if (!a._featured && b._featured) return 1;
-          return 0;
+          return (b.CreatedDate || 0) - (a.CreatedDate || 0);
         });
       }
 
@@ -1433,47 +1446,14 @@
       renderCards();
     });
 
-    /* Load More */
+    /* Load More — all data is already fetched, just reveal more cards */
     loadMoreBtn.addEventListener('click', function () {
-      if (isLoading) return;
-
-      /* Still items left in local filtered set */
       if (visibleCount < filteredProperties.length) {
         visibleCount += 12;
         renderCards();
-        return;
-      }
-
-      /* Need next API page */
-      if (!hasMorePages) {
+      } else {
         loadMoreWrap.style.display = 'none';
-        return;
       }
-
-      isLoading = true;
-      setLoadMoreBusy();
-
-      apiPage++;
-      fetchPage(apiPage).then(function (newProps) {
-        if (!newProps || newProps.length === 0) {
-          hasMorePages = false;
-          loadMoreWrap.style.display = 'none';
-          isLoading = false;
-          return;
-        }
-        allProperties = allProperties.concat(newProps);
-        rebuildDropdowns();
-        visibleCount += 12;
-        isLoading = false;
-        renderCards();
-
-        /* Heuristic: if both endpoints returned 0 or we got < 2, assume end */
-        if (newProps.length < 2) hasMorePages = false;
-
-      }).catch(function () {
-        isLoading = false;
-        setLoadMoreIdle();
-      });
     });
 
     /* ── Error State HTML ──────────────── */
@@ -1500,7 +1480,7 @@
 
     /* ── Init ──────────────────────────── */
     function init() {
-      fetchPage(1).then(function (props) {
+      fetchAllListings().then(function (props) {
         if (!props || props.length === 0) {
           grid.innerHTML = errorStateHTML;
           return;

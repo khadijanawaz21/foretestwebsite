@@ -143,7 +143,9 @@ document.addEventListener('fore:ready', function () {
   // ════════════════════════════════════════════
 
   // TODO: move to server-side proxy before production
-  const API_OFFPLAN   = 'https://api.behomes.tech/v3/get_behomes_objects?lang=en&api_key=EAJF8XND&filter=yes&objects_per_page=50&page=1';
+  const BEHOMES_BASE  = 'https://api.behomes.tech/v3/get_behomes_objects?lang=en&api_key=EAJF8XND&filter=yes';
+  const BEHOMES_PER_PAGE = 200;
+  const HANDOVER_CUTOFF = new Date('2026-01-01').getTime();
 
   // Secondary listings — Supabase config
   const SUPA_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
@@ -361,7 +363,7 @@ document.addEventListener('fore:ready', function () {
   async function loadProperties() {
     showSkeletons(6);
     try {
-      // Fetch off-plan from Behomes API and secondary from Supabase in parallel
+      // Fetch off-plan from Behomes API (all pages) and secondary from Supabase in parallel
       const supaSecondary = window.supabase
         ? window.supabase.createClient(SUPA_URL, SUPA_KEY)
             .from('secondary_listings').select('*')
@@ -369,14 +371,33 @@ document.addEventListener('fore:ready', function () {
             .catch(function() { return []; })
         : Promise.resolve([]);
 
-      const [opRes, secArr] = await Promise.all([
-        fetch(API_OFFPLAN).then(r => r.json()).catch(() => ({})),
+      // Fetch page 1 to discover total pages
+      const [page1Res, secArr] = await Promise.all([
+        fetch(BEHOMES_BASE + '&objects_per_page=' + BEHOMES_PER_PAGE + '&page=1').then(r => r.json()).catch(() => ({})),
         supaSecondary,
       ]);
 
-      // ── Off-plan: flat project array ──
-      const opArr  = extractArray(opRes);
-      console.log('[FORE] Off-Plan API — first result:', opArr[0] ?? opRes);
+      let opArr = extractArray(page1Res);
+      const maxPages = (page1Res.filter_params && page1Res.filter_params.max_pages) || 1;
+
+      // Fetch remaining pages in parallel
+      if (maxPages > 1) {
+        const remaining = [];
+        for (let p = 2; p <= maxPages; p++) {
+          remaining.push(
+            fetch(BEHOMES_BASE + '&objects_per_page=' + BEHOMES_PER_PAGE + '&page=' + p)
+              .then(r => r.json()).catch(() => ({}))
+          );
+        }
+        const jsons = await Promise.all(remaining);
+        jsons.forEach(j => { opArr = opArr.concat(extractArray(j)); });
+      }
+
+      // Filter out handed-over projects and sort newest first
+      opArr = opArr.filter(p => !p.DeliveryDate || p.DeliveryDate >= HANDOVER_CUTOFF);
+      opArr.sort((a, b) => (b.CreatedDate || 0) - (a.CreatedDate || 0));
+
+      console.log('[FORE] Off-Plan API — ' + opArr.length + ' total listings (newest first)');
       console.log('[FORE] Secondary Supabase — ' + secArr.length + ' listings');
 
       cachedOffPlan   = opArr.length  ? opArr  : FALLBACK_OFFPLAN;
