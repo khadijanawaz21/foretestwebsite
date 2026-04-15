@@ -209,13 +209,23 @@ module.exports = async function handler(req, res) {
 
   try {
     // Step 1: Get PF access token
-    console.log('[PF-SYNC] Authenticating with Property Finder...');
-    const token = await getPfToken();
-    console.log('[PF-SYNC] Authenticated successfully');
+    let pfToken;
+    try {
+      console.log('[PF-SYNC] Authenticating with Property Finder...');
+      pfToken = await getPfToken();
+      console.log('[PF-SYNC] Authenticated successfully');
+    } catch (authErr) {
+      return res.status(500).json({ error: 'PF Auth failed: ' + authErr.message, step: 'auth' });
+    }
 
     // Step 2: Fetch all listings
-    const pfListings = await fetchAllPfListings(token);
-    console.log(`[PF-SYNC] Fetched ${pfListings.length} listings from Property Finder`);
+    let pfListings;
+    try {
+      pfListings = await fetchAllPfListings(pfToken);
+      console.log(`[PF-SYNC] Fetched ${pfListings.length} listings from Property Finder`);
+    } catch (fetchErr) {
+      return res.status(500).json({ error: 'PF Fetch failed: ' + fetchErr.message, step: 'fetch_listings' });
+    }
 
     if (pfListings.length === 0) {
       return res.status(200).json({ success: true, count: 0, message: 'No listings found on Property Finder' });
