@@ -72,9 +72,54 @@ async function fetchAllPfListings(token) {
   return allListings;
 }
 
+// ── Resolve location IDs to names via PF Locations API ──
+async function resolveLocationNames(listings, token) {
+  // Collect unique location IDs
+  const locationIds = [...new Set(
+    listings
+      .map(l => l.location && l.location.id)
+      .filter(Boolean)
+  )];
+
+  if (locationIds.length === 0) return {};
+
+  const locationMap = {};
+
+  // Fetch each location by ID (PF locations endpoint requires search, but supports filter[id])
+  for (const id of locationIds) {
+    try {
+      const res = await fetch(`${PF_API_BASE}/v1/locations?filter[id]=${id}&perPage=1`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json',
+        },
+      });
+      if (res.ok) {
+        const json = await res.json();
+        const loc = (json.data || [])[0];
+        if (loc) {
+          // Build full location path from tree: e.g. "Dubai Marina, Dubai"
+          const tree = loc.tree || [];
+          const parts = tree.map(t => t.name).filter(Boolean);
+          const name = loc.name || '';
+          locationMap[id] = {
+            name: name,
+            fullPath: parts.length > 0 ? parts.join(', ') : name,
+            city: (tree.find(t => t.type === 'CITY') || {}).name || '',
+          };
+        }
+      }
+    } catch (e) {
+      console.error(`[PF-SYNC] Failed to resolve location ${id}:`, e.message);
+    }
+  }
+
+  return locationMap;
+}
+
 // ── Map a PF listing to our secondary_listings schema ──
 // Based on PF "response-combined-flat" schema from OpenAPI spec
-function mapToRow(pf) {
+function mapToRow(pf, locationMap) {
   // Title: { en, ar } object
   const title = (pf.title && pf.title.en) || '';
 
@@ -128,10 +173,13 @@ function mapToRow(pf) {
     area_sqft: Number(pf.size) || null,
     floor: pf.floorNumber || null,
 
-    // Location — PF only returns location.id, not a name
-    // We'll use the reference or leave blank; you can enrich later
-    location: '',
-    city: pf.uaeEmirate === 'abu_dhabi' ? 'Abu Dhabi' : 'Dubai',
+    // Location — resolved from PF Locations API
+    location: (locationMap || {})[pf.location && pf.location.id]
+      ? locationMap[pf.location.id].name
+      : '',
+    city: (locationMap || {})[pf.location && pf.location.id]
+      ? (locationMap[pf.location.id].city || (pf.uaeEmirate === 'abu_dhabi' ? 'Abu Dhabi' : 'Dubai'))
+      : (pf.uaeEmirate === 'abu_dhabi' ? 'Abu Dhabi' : 'Dubai'),
 
     status: 'Vacant',
     furnished: mapFurnishing(pf.furnishingType),
@@ -261,8 +309,16 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ success: true, count: 0, message: 'No listings found on Property Finder' });
     }
 
+    // Step 2b: Resolve location IDs to names
+    let locationMap = {};
+    try {
+      locationMap = await resolveLocationNames(pfListings, pfToken);
+    } catch (e) {
+      console.error('[PF-SYNC] Location resolution failed, continuing without:', e.message);
+    }
+
     // Step 3: Map and filter
-    const rows = pfListings.map(mapToRow).filter(r => r.dld_permit);
+    const rows = pfListings.map(pf => mapToRow(pf, locationMap)).filter(r => r.dld_permit);
     const skipped = pfListings.length - rows.length;
 
     // Step 4: Upsert in batches
