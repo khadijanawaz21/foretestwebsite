@@ -988,6 +988,42 @@
 
     .filter-tab-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
 
+    /* ── PF Sync Button ── */
+    .btn-pf-sync {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(201,169,110,0.08);
+      border: 0.5px solid var(--gold-border);
+      color: var(--gold);
+      font-family: var(--font-ui);
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.3s ease, border-color 0.3s ease;
+      white-space: nowrap;
+    }
+    .btn-pf-sync:hover { background: rgba(201,169,110,0.15); border-color: var(--gold); }
+    .btn-pf-sync:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-pf-sync:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+
+    .pf-sync-icon.spinning { animation: spin 1s linear infinite; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    .pf-sync-result {
+      font-size: 11px;
+      font-weight: 400;
+      padding: 10px 14px;
+      border-radius: 2px;
+      margin-bottom: 12px;
+    }
+    .pf-sync-result.success { background: rgba(76,175,80,0.1); border: 0.5px solid rgba(76,175,80,0.3); color: #81C784; }
+    .pf-sync-result.error { background: rgba(244,67,54,0.1); border: 0.5px solid rgba(244,67,54,0.3); color: #EF9A9A; }
+
     /* Type badge for table */
     .type-badge {
       display: inline-block;
@@ -1073,12 +1109,19 @@
 
       <!-- ── All Listings Tab ── -->
       <div class="tab-panel active" id="tab-listings">
-        <div class="filter-tabs" id="listingFilterTabs">
-          <button class="filter-tab-btn active" data-filter="all">All</button>
-          <button class="filter-tab-btn" data-filter="secondary_offplan">Off-Plan Resale</button>
-          <button class="filter-tab-btn" data-filter="ready_secondary">Ready</button>
-          <button class="filter-tab-btn" data-filter="commercial">Commercial</button>
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:8px;">
+          <div class="filter-tabs" id="listingFilterTabs" style="margin-bottom:0;">
+            <button class="filter-tab-btn active" data-filter="all">All</button>
+            <button class="filter-tab-btn" data-filter="secondary_offplan">Off-Plan Resale</button>
+            <button class="filter-tab-btn" data-filter="ready_secondary">Ready</button>
+            <button class="filter-tab-btn" data-filter="commercial">Commercial</button>
+          </div>
+          <button class="btn-pf-sync" id="pfSyncBtn" onclick="syncPropertyFinder()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pf-sync-icon"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+            <span id="pfSyncLabel">Sync Property Finder</span>
+          </button>
         </div>
+        <div class="pf-sync-result" id="pfSyncResult" style="display:none;"></div>
         <div class="table-loading" id="tableLoading">Loading listings...</div>
         <div style="overflow-x:auto;">
           <table class="listings-table" id="listingsTable" style="display:none;">
@@ -1865,6 +1908,46 @@
     let activeListingFilter = 'all';
     // All listings cached for filtering
     let allListingsData = [];
+
+    // ══════════════════════════════════════════════
+    // PROPERTY FINDER SYNC
+    // ══════════════════════════════════════════════
+    async function syncPropertyFinder() {
+      const btn = document.getElementById('pfSyncBtn');
+      const label = document.getElementById('pfSyncLabel');
+      const icon = btn.querySelector('.pf-sync-icon');
+      const resultDiv = document.getElementById('pfSyncResult');
+
+      btn.disabled = true;
+      label.textContent = 'Syncing...';
+      icon.classList.add('spinning');
+      resultDiv.style.display = 'none';
+
+      try {
+        const res = await fetch('/api/sync-pf-listings?admin_key=' + encodeURIComponent(prompt('Enter sync secret key (CRON_SECRET):')));
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Sync failed');
+        }
+
+        resultDiv.className = 'pf-sync-result success';
+        resultDiv.innerHTML = `<strong>Sync complete.</strong> ${data.count} listing${data.count !== 1 ? 's' : ''} synced from Property Finder. ${data.skipped_no_permit ? `(${data.skipped_no_permit} skipped — no DLD permit)` : ''}`;
+        resultDiv.style.display = 'block';
+
+        // Refresh listings table
+        loadListings();
+      } catch (err) {
+        resultDiv.className = 'pf-sync-result error';
+        resultDiv.innerHTML = `<strong>Sync failed.</strong> ${err.message}`;
+        resultDiv.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        label.textContent = 'Sync Property Finder';
+        icon.classList.remove('spinning');
+      }
+    }
 
     // ══════════════════════════════════════════════
     // DOM REFS
