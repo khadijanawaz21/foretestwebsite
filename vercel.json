@@ -13,10 +13,6 @@
     {
       "path": "/api/sync-listings",
       "schedule": "0 6 * * *"
-    },
-    {
-      "path": "/api/sync-pf-listings",
-      "schedule": "0 * * * *"
     }
   ]
 }
