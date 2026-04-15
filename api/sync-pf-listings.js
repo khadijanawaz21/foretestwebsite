@@ -166,7 +166,7 @@ function mapToRow(pf, locationMap) {
     listingType = 'commercial';
   }
 
-  return {
+  const row = {
     name: title,
     price: Number(price) || 0,
     bedrooms: pf.bedrooms != null ? String(pf.bedrooms) : null,
@@ -199,8 +199,6 @@ function mapToRow(pf, locationMap) {
     dld_permit: dldPermit,
     rera_permit: compliance.listingAdvertisementNumber || '',
 
-    agent: agentName,
-
     listing_type: listingType,
     property_type: mapPropertyType(pf.type),
     building_name: pf.developer || '',
@@ -210,6 +208,13 @@ function mapToRow(pf, locationMap) {
     featured: false,
     created_at: pf.createdAt || new Date().toISOString(),
   };
+
+  // Only set agent if PF provides one — don't overwrite manually assigned agents
+  if (agentName) {
+    row.agent = agentName;
+  }
+
+  return row;
 }
 
 function mapFurnishing(val) {
