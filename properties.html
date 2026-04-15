@@ -1072,6 +1072,7 @@
       return supaClient
         .from('secondary_listings')
         .select('*')
+        .order('created_at', { ascending: false })
         .then(function (res) {
           if (res.error) { console.error('Supabase error:', res.error); return []; }
           return (res.data || []).filter(function (s) {

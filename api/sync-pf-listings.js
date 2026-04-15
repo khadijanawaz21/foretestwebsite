@@ -40,7 +40,7 @@ async function fetchAllPfListings(token) {
 
   while (true) {
     // PF API uses "perPage" not "per_page"
-    const url = `${PF_API_BASE}/v1/listings?page=${page}&perPage=${perPage}`;
+    const url = `${PF_API_BASE}/v1/listings?page=${page}&perPage=${perPage}&sort[createdAt]=desc`;
     console.log(`[PF-SYNC] Fetching page ${page}...`);
 
     const res = await fetch(url, {
@@ -92,6 +92,7 @@ async function resolveLocationNames(listings, token) {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Accept': 'application/json',
+          'Accept-Language': 'en',
         },
       });
       if (res.ok) {
@@ -207,6 +208,7 @@ function mapToRow(pf, locationMap) {
     ownership: 'Freehold',
     published: true,
     featured: false,
+    created_at: pf.createdAt || new Date().toISOString(),
   };
 }
 
