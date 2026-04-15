@@ -196,7 +196,8 @@ module.exports = async function handler(req, res) {
   const cronHeader = req.headers['x-vercel-cron'];
   const authHeader = req.headers.authorization || '';
   const token = authHeader.replace('Bearer ', '');
-  const isAuthed = cronHeader || token === process.env.CRON_SECRET || token === 'FORE2024';
+  const adminKey = req.query && req.query.admin_key;
+  const isAuthed = cronHeader || token === process.env.CRON_SECRET || token === 'FORE2024' || adminKey === 'FORE2024';
 
   if (!isAuthed) {
     return res.status(401).json({ error: 'Unauthorized' });
