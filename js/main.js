@@ -290,6 +290,9 @@ document.addEventListener('fore:ready', function () {
     const price     = rawPrice ? 'AED ' + Number(rawPrice).toLocaleString() : '—';
     const beds      = s.bedrooms || '';
     const area      = s.area_sqft ? Number(s.area_sqft).toLocaleString() + ' sq ft' : '';
+    const propType  = s.property_type || '';
+    const isRent    = s.status === 'Rented' || (s.annual_rent && s.annual_rent > 0 && !rawPrice);
+    const saleBadge = isRent ? 'For Rent' : 'For Sale';
 
     const imgHtml   = imgSrc
       ? `<img src="${imgSrc}" alt="${name}" loading="lazy" onerror="this.style.display='none'" />`
@@ -299,15 +302,12 @@ document.addEventListener('fore:ready', function () {
       <a href="property-detail.html?id=${escHtml(s.id || '')}&type=secondary" class="prop-card" style="--card-delay:${delay}">
         <div class="prop-card-img">
           ${imgHtml}
-          <span class="prop-badge">Secondary</span>
+          <span class="prop-badge">${saleBadge}</span>
         </div>
         <div class="prop-card-body">
+          ${propType || beds ? `<div class="prop-type-line">${escHtml(beds ? beds + 'BR ' : '')}${escHtml(propType)}</div>` : ''}
           <h3 class="prop-name">${name}</h3>
           ${loc ? `<p class="prop-location">${escHtml(loc)}</p>` : ''}
-          <div class="prop-meta">
-            <span>${escHtml(beds)}</span>
-            ${area ? `<span>${area}</span>` : ''}
-          </div>
           <p class="prop-price">${price}</p>
         </div>
       </a>`;
@@ -377,6 +377,9 @@ document.addEventListener('fore:ready', function () {
       const supaSecondary = window.supabase
         ? window.supabase.createClient(SUPA_URL, SUPA_KEY)
             .from('secondary_listings').select('*')
+            .not('dld_permit', 'is', null)
+            .neq('dld_permit', '')
+            .order('created_at', { ascending: false })
             .then(function(res) { return (res.data || []); })
             .catch(function() { return []; })
         : Promise.resolve([]);

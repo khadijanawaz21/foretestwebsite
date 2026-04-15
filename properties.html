@@ -469,6 +469,16 @@
       color: #CE93D8;
       border: 0.5px solid rgba(156,39,176,0.25);
     }
+    .pc-badge.sale {
+      background: rgba(76,175,80,0.12);
+      color: #81C784;
+      border: 0.5px solid rgba(76,175,80,0.25);
+    }
+    .pc-badge.rent {
+      background: rgba(255,152,0,0.12);
+      color: #FFB74D;
+      border: 0.5px solid rgba(255,152,0,0.25);
+    }
 
     /* Delivery year chip */
     .pc-year {
@@ -1276,8 +1286,15 @@
 
       var market    = getMarketType(p);
       var lt        = p._listingType || '';
-      var badgeText = p._supabaseBadge || (market === 'secondary' ? 'Secondary' : market === 'commercial' ? 'Commercial' : 'Off-Plan');
-      var badgeCls  = market === 'secondary' ? 'secondary' : market === 'commercial' ? 'commercial' : 'offplan';
+      var isRent    = (p._supabaseStatus || '').toLowerCase() === 'rented' || (p._annualRent && p._annualRent > 0 && !p.LayoutPriceMin);
+      var badgeText, badgeCls;
+      if (market === 'secondary' || market === 'commercial') {
+        badgeText = isRent ? 'For Rent' : 'For Sale';
+        badgeCls  = isRent ? 'rent' : 'sale';
+      } else {
+        badgeText = p._supabaseBadge || 'Off-Plan';
+        badgeCls  = 'offplan';
+      }
       var price     = formatPrice(p.LayoutPriceMin);
       var year      = formatYear(p.DeliveryDate);
       var location  = getLocation(p);
@@ -1363,7 +1380,7 @@
           completionHtml +
           '<div class="pc-footer">' +
             '<div>' +
-              '<div class="pc-price-label">Starting from</div>' +
+              (market === 'secondary' || market === 'commercial' ? '' : '<div class="pc-price-label">Starting from</div>') +
               priceHtml +
             '</div>' +
             '<div class="pc-arrow">' +

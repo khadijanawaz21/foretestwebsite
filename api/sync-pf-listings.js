@@ -182,7 +182,7 @@ function mapToRow(pf, locationMap) {
       ? (locationMap[pf.location.id].city || (pf.uaeEmirate === 'abu_dhabi' ? 'Abu Dhabi' : 'Dubai'))
       : (pf.uaeEmirate === 'abu_dhabi' ? 'Abu Dhabi' : 'Dubai'),
 
-    status: 'Vacant',
+    status: priceObj.type === 'sale' ? 'Vacant' : (priceObj.type ? 'Rented' : 'Vacant'),
     furnished: mapFurnishing(pf.furnishingType),
     view: '',
     parking: pf.hasParkingOnSite || false,
