@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════════
 // Property Finder → Supabase Sync (Vercel Serverless Function)
-// Fetches all listings from PF Enterprise API, upserts into
-// secondary_listings using dld_permit as the unique key.
+// Based on PF Enterprise API OpenAPI spec v1.0.1
+// Upserts into secondary_listings using dld_permit as unique key.
 // ═══════════════════════════════════════════════════════════════
 
 const SUPABASE_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
@@ -19,10 +19,7 @@ async function getPfToken() {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
     },
-    body: JSON.stringify({
-      apiKey: key,
-      apiSecret: secret,
-    }),
+    body: JSON.stringify({ apiKey: key, apiSecret: secret }),
   });
 
   if (!res.ok) {
@@ -31,7 +28,8 @@ async function getPfToken() {
   }
 
   const data = await res.json();
-  return data.access_token || data.token;
+  // Response: { accessToken, expiresIn, tokenType }
+  return data.accessToken;
 }
 
 // ── Fetch all listings from PF with pagination ──
@@ -41,7 +39,8 @@ async function fetchAllPfListings(token) {
   const perPage = 100;
 
   while (true) {
-    const url = `${PF_API_BASE}/v1/listings?page=${page}&per_page=${perPage}`;
+    // PF API uses "perPage" not "per_page"
+    const url = `${PF_API_BASE}/v1/listings?page=${page}&perPage=${perPage}`;
     console.log(`[PF-SYNC] Fetching page ${page}...`);
 
     const res = await fetch(url, {
@@ -58,20 +57,14 @@ async function fetchAllPfListings(token) {
 
     const json = await res.json();
 
-    // PF API may return { data: [...], meta: { current_page, last_page } }
-    // or { listings: [...] } — handle both shapes
-    const listings = json.data || json.listings || json.results || [];
+    // PF response: { results: [...], pagination: { page, perPage, total, totalPages, nextPage, prevPage } }
+    const listings = json.results || [];
     if (listings.length === 0) break;
 
     allListings = allListings.concat(listings);
 
-    // Check pagination — stop if we've reached the last page
-    const meta = json.meta || json.pagination || {};
-    const lastPage = meta.last_page || meta.total_pages || meta.pages;
-    if (lastPage && page >= lastPage) break;
-
-    // Safety: if no pagination info, stop after first page
-    if (!lastPage && listings.length < perPage) break;
+    const pagination = json.pagination || {};
+    if (!pagination.nextPage || page >= (pagination.totalPages || page)) break;
 
     page++;
   }
@@ -80,61 +73,90 @@ async function fetchAllPfListings(token) {
 }
 
 // ── Map a PF listing to our secondary_listings schema ──
+// Based on PF "response-combined-flat" schema from OpenAPI spec
 function mapToRow(pf) {
-  // PF response structure (common field names — adjust if your response differs)
-  // The mapping handles nested and flat structures
-  const location = pf.location || pf.community || {};
-  const agent = pf.agent || pf.broker || {};
-  const photos = pf.photos || pf.images || pf.media || [];
-  const amenities = pf.amenities || pf.features || [];
+  // Title: { en, ar } object
+  const title = (pf.title && pf.title.en) || '';
 
-  // Extract photo URLs — handle both string arrays and object arrays
-  const photoUrls = photos.map(p => (typeof p === 'string' ? p : (p.url || p.full || p.main || ''))).filter(Boolean);
+  // Description: { en, ar } object
+  const description = (pf.description && pf.description.en) || '';
 
-  // Build agent display name
-  const agentName = agent.name || [agent.first_name, agent.last_name].filter(Boolean).join(' ') || '';
+  // Price: { type, amounts: { sale, yearly, monthly, daily, weekly } }
+  const priceObj = pf.price || {};
+  const amounts = priceObj.amounts || {};
+  const price = amounts.sale || amounts.yearly || amounts.monthly || amounts.daily || 0;
+
+  // Images: { images: [{ original: { url }, large: { url }, ... }], videos: {} }
+  const media = pf.media || {};
+  const images = media.images || [];
+  const photoUrls = images
+    .map(img => {
+      if (img.original && img.original.url) return img.original.url;
+      if (img.large && img.large.url) return img.large.url;
+      return '';
+    })
+    .filter(Boolean);
+
+  // Amenities: string array like ["central-ac", "shared-pool", ...]
+  const amenities = pf.amenities || [];
+  const featuresStr = amenities
+    .map(a => a.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()))
+    .join(', ');
+
+  // Agent: assignedTo { id, name, photos }
+  const assignedTo = pf.assignedTo || {};
+  const agentName = assignedTo.name || '';
+
+  // DLD permit: compliance.listingAdvertisementNumber (RERA permit number)
+  const compliance = pf.compliance || {};
+  const dldPermit = compliance.listingAdvertisementNumber || pf.reference || '';
+
+  // Determine listing_type based on projectStatus and category
+  let listingType = 'ready_secondary';
+  if (pf.projectStatus === 'off_plan' || pf.projectStatus === 'off_plan_primary') {
+    listingType = 'secondary_offplan';
+  }
+  if (pf.category === 'commercial') {
+    listingType = 'commercial';
+  }
 
   return {
-    // Core fields
-    name: pf.title || pf.title_en || pf.name || '',
-    price: Number(pf.price) || 0,
+    name: title,
+    price: Number(price) || 0,
     bedrooms: pf.bedrooms != null ? String(pf.bedrooms) : null,
-    bathrooms: Number(pf.bathrooms) || null,
-    area_sqft: Number(pf.size || pf.area || pf.size_sqft || pf.area_sqft) || null,
-    floor: pf.floor != null ? String(pf.floor) : null,
+    bathrooms: pf.bathrooms != null ? Number(pf.bathrooms) : null,
+    area_sqft: Number(pf.size) || null,
+    floor: pf.floorNumber || null,
 
-    // Location
-    location: typeof location === 'string' ? location : (location.name || location.community || location.area || pf.community_name || ''),
-    city: (typeof location === 'object' ? location.city : null) || pf.city || 'Dubai',
+    // Location — PF only returns location.id, not a name
+    // We'll use the reference or leave blank; you can enrich later
+    location: '',
+    city: pf.uaeEmirate === 'abu_dhabi' ? 'Abu Dhabi' : 'Dubai',
 
-    // Status & details
-    status: pf.completion_status === 'completed' ? 'Vacant' : (pf.furnishing === 'furnished' ? 'Rented' : 'Vacant'),
-    furnished: mapFurnishing(pf.furnishing || pf.furnished),
-    view: pf.view || '',
-    parking: pf.parking != null ? Number(pf.parking) > 0 : false,
-    service_charge: Number(pf.service_charge) || null,
+    status: 'Vacant',
+    furnished: mapFurnishing(pf.furnishingType),
+    view: '',
+    parking: pf.hasParkingOnSite || false,
+    service_charge: null,
 
-    // Description & features
-    description: pf.description || pf.description_en || '',
-    features: Array.isArray(amenities) ? amenities.map(a => (typeof a === 'string' ? a : (a.name || a.text || ''))).filter(Boolean).join(', ') : (typeof amenities === 'string' ? amenities : ''),
+    description: description,
+    features: featuresStr,
 
-    // Images
     image_main: photoUrls[0] || null,
     images: photoUrls.join(', ') || null,
-    floor_plan: pf.floor_plan_url || pf.floor_plan || null,
+    floor_plan: null,
 
-    // Permit & reference — THIS IS THE UNIQUE KEY
-    dld_permit: pf.permit_number || pf.rera_permit || pf.reference || pf.permit || pf.dld_permit_number || '',
+    // Unique key for upsert
+    dld_permit: dldPermit,
+    rera_permit: compliance.listingAdvertisementNumber || '',
 
-    // Agent
     agent: agentName,
 
-    // Listing metadata
-    listing_type: 'ready_secondary',
-    property_type: mapPropertyType(pf.property_type || pf.type || pf.category),
-    building_name: pf.building || pf.tower_name || pf.project_name || '',
-    reference_number: pf.reference || pf.reference_number || '',
-    ownership: pf.ownership || 'Freehold',
+    listing_type: listingType,
+    property_type: mapPropertyType(pf.type),
+    building_name: pf.developer || '',
+    reference_number: pf.reference || '',
+    ownership: 'Freehold',
     published: true,
     featured: false,
   };
@@ -142,31 +164,40 @@ function mapToRow(pf) {
 
 function mapFurnishing(val) {
   if (!val) return 'Unfurnished';
-  const v = String(val).toLowerCase();
-  if (v === 'furnished' || v === 'yes') return 'Furnished';
-  if (v.includes('semi') || v === 'partly') return 'Semi-Furnished';
+  if (val === 'furnished') return 'Furnished';
+  if (val === 'semi-furnished') return 'Semi-Furnished';
   return 'Unfurnished';
 }
 
 function mapPropertyType(val) {
   if (!val) return 'Apartment';
-  const v = String(val).toLowerCase();
-  if (v.includes('villa')) return 'Villa';
-  if (v.includes('town')) return 'Townhouse';
-  if (v.includes('pent')) return 'Penthouse';
-  if (v.includes('duplex')) return 'Duplex';
-  if (v.includes('studio')) return 'Studio';
-  if (v.includes('loft')) return 'Loft';
-  if (v.includes('office')) return 'Office';
-  if (v.includes('retail') || v.includes('shop')) return 'Retail';
-  if (v.includes('warehouse')) return 'Warehouse';
-  if (v.includes('land')) return 'Land';
-  return 'Apartment';
+  const map = {
+    'apartment': 'Apartment',
+    'villa': 'Villa',
+    'townhouse': 'Townhouse',
+    'penthouse': 'Penthouse',
+    'duplex': 'Duplex',
+    'hotel-apartment': 'Apartment',
+    'office-space': 'Office',
+    'retail': 'Retail',
+    'shop': 'Retail',
+    'show-room': 'Retail',
+    'warehouse': 'Warehouse',
+    'land': 'Land',
+    'farm': 'Land',
+    'full-floor': 'Apartment',
+    'half-floor': 'Apartment',
+    'whole-building': 'Apartment',
+    'compound': 'Villa',
+    'bungalow': 'Villa',
+    'co-working-space': 'Office',
+    'business-center': 'Office',
+  };
+  return map[val] || 'Apartment';
 }
 
 // ── Upsert rows into Supabase (using dld_permit as conflict key) ──
 async function supabaseUpsert(rows, serviceKey) {
-  // Use the Supabase REST API with on-conflict resolution on dld_permit
   const res = await fetch(`${SUPABASE_URL}/rest/v1/secondary_listings?on_conflict=dld_permit`, {
     method: 'POST',
     headers: {
@@ -189,7 +220,6 @@ async function supabaseUpsert(rows, serviceKey) {
 
 // ── Handler ──
 module.exports = async function handler(req, res) {
-  // Simple auth: check URL param, Authorization header, or Vercel cron
   const url = new URL(req.url, `https://${req.headers.host}`);
   const adminKey = url.searchParams.get('admin_key');
   const authHeader = req.headers.authorization || '';
@@ -202,7 +232,7 @@ module.exports = async function handler(req, res) {
     || (process.env.CRON_SECRET && (bearerToken === process.env.CRON_SECRET || adminKey === process.env.CRON_SECRET));
 
   if (!isAuthed) {
-    return res.status(401).json({ error: 'Unauthorized', debug: { hasAdminKey: !!adminKey, hasBearerToken: !!bearerToken, hasCronHeader: !!cronHeader } });
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   const serviceKey = process.env.SERVICE_KEY;
@@ -211,12 +241,10 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // Step 1: Get PF access token
+    // Step 1: Authenticate
     let pfToken;
     try {
-      console.log('[PF-SYNC] Authenticating with Property Finder...');
       pfToken = await getPfToken();
-      console.log('[PF-SYNC] Authenticated successfully');
     } catch (authErr) {
       return res.status(500).json({ error: 'PF Auth failed: ' + authErr.message, step: 'auth' });
     }
@@ -225,7 +253,6 @@ module.exports = async function handler(req, res) {
     let pfListings;
     try {
       pfListings = await fetchAllPfListings(pfToken);
-      console.log(`[PF-SYNC] Fetched ${pfListings.length} listings from Property Finder`);
     } catch (fetchErr) {
       return res.status(500).json({ error: 'PF Fetch failed: ' + fetchErr.message, step: 'fetch_listings' });
     }
@@ -234,11 +261,11 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ success: true, count: 0, message: 'No listings found on Property Finder' });
     }
 
-    // Step 3: Map to our schema
-    const rows = pfListings.map(mapToRow).filter(r => r.dld_permit); // skip rows without a permit number
-    console.log(`[PF-SYNC] Mapped ${rows.length} listings (skipped ${pfListings.length - rows.length} without DLD permit)`);
+    // Step 3: Map and filter
+    const rows = pfListings.map(mapToRow).filter(r => r.dld_permit);
+    const skipped = pfListings.length - rows.length;
 
-    // Step 4: Upsert in batches of 50
+    // Step 4: Upsert in batches
     let upserted = 0;
     for (let i = 0; i < rows.length; i += 50) {
       const batch = rows.slice(i, i + 50);
@@ -246,12 +273,11 @@ module.exports = async function handler(req, res) {
       upserted += count;
     }
 
-    console.log(`[PF-SYNC] Done. Upserted ${upserted} listings.`);
     return res.status(200).json({
       success: true,
       count: upserted,
       total_fetched: pfListings.length,
-      skipped_no_permit: pfListings.length - rows.length,
+      skipped_no_permit: skipped,
     });
   } catch (err) {
     console.error('[PF-SYNC] Error:', err);
