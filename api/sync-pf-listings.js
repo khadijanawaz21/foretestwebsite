@@ -5,26 +5,23 @@
 // ═══════════════════════════════════════════════════════════════
 
 const SUPABASE_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
-const PF_AUTH_URL = 'https://auth.propertyfinder.com/auth/oauth/v1/token';
-const PF_API_BASE = 'https://rest.apiv2.propertyfinder.ae'; // adjust if different
+const PF_API_BASE = 'https://atlas.propertyfinder.com';
 
-// ── Get PF access token via OAuth2 client credentials ──
+// ── Get PF access token ──
 async function getPfToken() {
   const key = process.env.PF_API_KEY;
   const secret = process.env.PF_API_SECRET;
   if (!key || !secret) throw new Error('PF_API_KEY or PF_API_SECRET not configured');
 
-  const credentials = Buffer.from(`${key}:${secret}`).toString('base64');
-
-  const res = await fetch(PF_AUTH_URL, {
+  const res = await fetch(`${PF_API_BASE}/v1/auth/token`, {
     method: 'POST',
     headers: {
-      'Authorization': `Basic ${credentials}`,
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
     },
     body: JSON.stringify({
-      scope: 'listings:full_access',
-      grant_type: 'client_credentials',
+      apiKey: key,
+      apiSecret: secret,
     }),
   });
 
@@ -34,7 +31,7 @@ async function getPfToken() {
   }
 
   const data = await res.json();
-  return data.access_token;
+  return data.access_token || data.token;
 }
 
 // ── Fetch all listings from PF with pagination ──
@@ -192,15 +189,20 @@ async function supabaseUpsert(rows, serviceKey) {
 
 // ── Handler ──
 module.exports = async function handler(req, res) {
-  // Allow: Vercel cron header, CRON_SECRET bearer, or admin password bearer
-  const cronHeader = req.headers['x-vercel-cron'];
+  // Simple auth: check URL param, Authorization header, or Vercel cron
+  const url = new URL(req.url, `https://${req.headers.host}`);
+  const adminKey = url.searchParams.get('admin_key');
   const authHeader = req.headers.authorization || '';
-  const token = authHeader.replace('Bearer ', '');
-  const adminKey = req.query && req.query.admin_key;
-  const isAuthed = cronHeader || token === process.env.CRON_SECRET || token === 'FORE2024' || adminKey === 'FORE2024';
+  const bearerToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+  const cronHeader = req.headers['x-vercel-cron'];
+
+  const isAuthed = cronHeader
+    || bearerToken === 'FORE2024'
+    || adminKey === 'FORE2024'
+    || (process.env.CRON_SECRET && (bearerToken === process.env.CRON_SECRET || adminKey === process.env.CRON_SECRET));
 
   if (!isAuthed) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    return res.status(401).json({ error: 'Unauthorized', debug: { hasAdminKey: !!adminKey, hasBearerToken: !!bearerToken, hasCronHeader: !!cronHeader } });
   }
 
   const serviceKey = process.env.SERVICE_KEY;
