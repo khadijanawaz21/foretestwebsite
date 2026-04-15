@@ -1925,7 +1925,9 @@
       resultDiv.style.display = 'none';
 
       try {
-        const res = await fetch('/api/sync-pf-listings?admin_key=' + encodeURIComponent(prompt('Enter sync secret key (CRON_SECRET):')));
+        const res = await fetch('/api/sync-pf-listings', {
+          headers: { 'Authorization': 'Bearer ' + ADMIN_PASSWORD }
+        });
 
         const data = await res.json();
 

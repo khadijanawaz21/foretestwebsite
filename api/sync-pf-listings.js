@@ -192,12 +192,13 @@ async function supabaseUpsert(rows, serviceKey) {
 
 // ── Handler ──
 module.exports = async function handler(req, res) {
-  // Allow cron (Vercel injects x-vercel-cron) or manual trigger with CRON_SECRET
+  // Allow: Vercel cron header, CRON_SECRET bearer, or admin password bearer
   const cronHeader = req.headers['x-vercel-cron'];
-  const authHeader = req.headers.authorization;
-  const isAdmin = req.query.admin_key === process.env.CRON_SECRET;
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.replace('Bearer ', '');
+  const isAuthed = cronHeader || token === process.env.CRON_SECRET || token === 'FORE2024';
 
-  if (!cronHeader && authHeader !== `Bearer ${process.env.CRON_SECRET}` && !isAdmin) {
+  if (!isAuthed) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
