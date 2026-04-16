@@ -438,6 +438,34 @@
       line-height: 1.7;
     }
 
+    /* Amenity Grid */
+    .amenity-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 8px;
+      padding-top: 6px;
+    }
+    .amenity-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      background: var(--bg);
+      border: 0.5px solid var(--subtle-border);
+      border-radius: 2px;
+      cursor: pointer;
+      font-size: 11px;
+      color: var(--white-70);
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+    }
+    .amenity-chip:hover { border-color: var(--gold-border); color: var(--white); }
+    .amenity-chip input { accent-color: var(--gold); cursor: pointer; }
+    .amenity-chip:has(input:checked) {
+      background: rgba(201,169,110,0.08);
+      border-color: var(--gold-border);
+      color: var(--gold);
+    }
+
     /* Toggle */
     .toggle-wrap {
       display: flex;
@@ -1112,10 +1140,9 @@
         <!-- PF Sync Row -->
         <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
           <div class="filter-tabs" id="listingFilterTabs" style="margin-bottom:0;">
-            <button class="filter-tab-btn active" data-filter="all">All</button>
-            <button class="filter-tab-btn" data-filter="secondary_offplan">Off-Plan Resale</button>
-            <button class="filter-tab-btn" data-filter="ready_secondary">Ready</button>
-            <button class="filter-tab-btn" data-filter="commercial">Commercial</button>
+            <button class="filter-tab-btn active" data-filter="offplan">Off-Plan</button>
+            <button class="filter-tab-btn" data-filter="sale">For Sale</button>
+            <button class="filter-tab-btn" data-filter="rent">For Rent</button>
           </div>
           <button class="btn-pf-sync" id="pfSyncBtn" onclick="syncPropertyFinder()" style="display:inline-flex !important; visibility:visible !important;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pf-sync-icon"><path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
@@ -1234,8 +1261,13 @@
                 <option value="Townhouse">Townhouse</option>
                 <option value="Penthouse">Penthouse</option>
                 <option value="Duplex">Duplex</option>
-                <option value="Studio">Studio</option>
-                <option value="Loft">Loft</option>
+                <option value="Hotel Apartment">Hotel Apartment</option>
+                <option value="Compound">Compound</option>
+                <option value="Bungalow">Bungalow</option>
+                <option value="Full Floor">Full Floor</option>
+                <option value="Half Floor">Half Floor</option>
+                <option value="Whole Building">Whole Building</option>
+                <option value="Land">Land</option>
               </select>
             </div>
 
@@ -1326,7 +1358,12 @@
                 <option value="Townhouse">Townhouse</option>
                 <option value="Penthouse">Penthouse</option>
                 <option value="Duplex">Duplex</option>
-                <option value="Studio">Studio</option>
+                <option value="Hotel Apartment">Hotel Apartment</option>
+                <option value="Compound">Compound</option>
+                <option value="Bungalow">Bungalow</option>
+                <option value="Full Floor">Full Floor</option>
+                <option value="Half Floor">Half Floor</option>
+                <option value="Whole Building">Whole Building</option>
               </select>
             </div>
 
@@ -1420,11 +1457,19 @@
                 <option value="">Select</option>
                 <option value="Office">Office</option>
                 <option value="Retail">Retail</option>
-                <option value="Warehouse">Warehouse</option>
-                <option value="Full Floor">Full Floor</option>
                 <option value="Shop">Shop</option>
                 <option value="Showroom">Showroom</option>
+                <option value="Warehouse">Warehouse</option>
+                <option value="Factory">Factory</option>
+                <option value="Full Floor">Full Floor</option>
+                <option value="Half Floor">Half Floor</option>
+                <option value="Whole Building">Whole Building</option>
+                <option value="Business Center">Business Center</option>
+                <option value="Co-Working Space">Co-Working Space</option>
+                <option value="Staff Accommodation">Staff Accommodation</option>
+                <option value="Labor Camp">Labor Camp</option>
                 <option value="Land">Land</option>
+                <option value="Farm">Farm</option>
               </select>
             </div>
 
@@ -1526,8 +1571,38 @@
           </div>
 
           <div class="form-group full">
-            <label class="form-label" for="features">Features / Amenities (comma separated)</label>
-            <input class="form-input" type="text" id="features" placeholder="e.g. Pool, Gym, Concierge, Balcony, Maid's Room" />
+            <label class="form-label">Features / Amenities</label>
+            <input type="hidden" id="features" />
+            <div class="amenity-grid" id="amenityGrid">
+              <label class="amenity-chip"><input type="checkbox" value="Central A/C"><span>Central A/C</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Built-in Wardrobes"><span>Built-in Wardrobes</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Kitchen Appliances"><span>Kitchen Appliances</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Security"><span>Security</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Concierge"><span>Concierge</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Maid Service"><span>Maid Service</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Balcony"><span>Balcony</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Private Gym"><span>Private Gym</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Shared Gym"><span>Shared Gym</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Private Jacuzzi"><span>Private Jacuzzi</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Shared Spa"><span>Shared Spa</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Covered Parking"><span>Covered Parking</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Maid's Room"><span>Maid's Room</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Study"><span>Study</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Children's Play Area"><span>Children's Play Area</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Pets Allowed"><span>Pets Allowed</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Barbecue Area"><span>Barbecue Area</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Shared Pool"><span>Shared Pool</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Children's Pool"><span>Children's Pool</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Private Garden"><span>Private Garden</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Private Pool"><span>Private Pool</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="View of Water"><span>View of Water</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="View of Landmark"><span>View of Landmark</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Walk-in Closet"><span>Walk-in Closet</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Lobby in Building"><span>Lobby in Building</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Networked"><span>Networked</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Dining in Building"><span>Dining in Building</span></label>
+              <label class="amenity-chip"><input type="checkbox" value="Conference Room"><span>Conference Room</span></label>
+            </div>
           </div>
 
           <!-- Image uploads -->
@@ -1916,8 +1991,8 @@
 
     const ADMIN_PASSWORD = 'FORE2024';
 
-    // Current listing type filter for table
-    let activeListingFilter = 'all';
+    // Current listing type filter for table (offplan / sale / rent)
+    let activeListingFilter = 'offplan';
     // All listings cached for filtering
     let allListingsData = [];
 
@@ -2468,9 +2543,19 @@
     function renderListingsTable() {
       let data = allListingsData;
 
-      // Apply filter
-      if (activeListingFilter !== 'all') {
-        data = data.filter(item => (item.listing_type || 'ready_secondary') === activeListingFilter);
+      // Apply filter: offplan / sale / rent
+      if (activeListingFilter === 'offplan') {
+        data = data.filter(item => (item.listing_type || '') === 'secondary_offplan');
+      } else if (activeListingFilter === 'sale') {
+        data = data.filter(item => {
+          if ((item.listing_type || '') === 'secondary_offplan') return false;
+          return (item.offering_type || 'sale') === 'sale';
+        });
+      } else if (activeListingFilter === 'rent') {
+        data = data.filter(item => {
+          if ((item.listing_type || '') === 'secondary_offplan') return false;
+          return item.offering_type === 'rent';
+        });
       }
 
       if (!data || data.length === 0) {
@@ -2488,11 +2573,16 @@
         const statusText = item.status || 'N/A';
         const imgSrc = item.image_main || 'https://placehold.co/64x44/1C1C1C/555?text=No+img';
 
-        // Type badge
+        // Type badge: show Off-Plan / For Sale / For Rent
         let typeBadgeClass = 'ready';
-        let typeBadgeText = 'READY';
-        if (lt === 'secondary_offplan') { typeBadgeClass = 'offplan-resale'; typeBadgeText = 'OFF-PLAN RESALE'; }
-        else if (lt === 'commercial') { typeBadgeClass = 'commercial'; typeBadgeText = 'COMMERCIAL'; }
+        let typeBadgeText = 'FOR SALE';
+        if (lt === 'secondary_offplan') {
+          typeBadgeClass = 'offplan-resale';
+          typeBadgeText = 'OFF-PLAN';
+        } else if (item.offering_type === 'rent') {
+          typeBadgeClass = 'commercial';
+          typeBadgeText = 'FOR RENT';
+        }
 
         // Property type display
         const propType = item.property_type || item.commercial_type || '';
@@ -2521,6 +2611,26 @@
       emptyState.style.display = 'none';
       listingsTable.style.display = 'table';
     }
+
+    // ══════════════════════════════════════════════
+    // AMENITY CHECKBOX SYNC
+    // ══════════════════════════════════════════════
+    function updateFeaturesHidden() {
+      const checked = Array.from(document.querySelectorAll('#amenityGrid input[type="checkbox"]:checked'))
+        .map(cb => cb.value);
+      document.getElementById('features').value = checked.join(', ');
+    }
+    function setAmenitiesFromString(str) {
+      const values = (str || '').split(',').map(s => s.trim()).filter(Boolean);
+      const lcValues = values.map(v => v.toLowerCase());
+      document.querySelectorAll('#amenityGrid input[type="checkbox"]').forEach(cb => {
+        cb.checked = lcValues.includes(cb.value.toLowerCase());
+      });
+      document.getElementById('features').value = values.join(', ');
+    }
+    document.querySelectorAll('#amenityGrid input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', updateFeaturesHidden);
+    });
 
     // ══════════════════════════════════════════════
     // LISTINGS — FORM SUBMIT
@@ -2646,7 +2756,7 @@
         document.getElementById('city').value = data.city || 'Dubai';
         document.getElementById('view').value = data.view || '';
         document.getElementById('description').value = data.description || '';
-        document.getElementById('features').value = data.features || '';
+        setAmenitiesFromString(data.features || '');
         document.getElementById('dldPermit').value = data.dld_permit || '';
         document.getElementById('reraPermit').value = data.rera_permit || '';
         document.getElementById('referenceNumber').value = data.reference_number || '';
@@ -2724,6 +2834,7 @@
       listingForm.reset();
       editIdInput.value = '';
       setListingType('ready_secondary');
+      setAmenitiesFromString('');
       parkingLabel.textContent = 'No';
       opParkingLabel.textContent = 'No';
       featuredLabel.textContent = 'No';

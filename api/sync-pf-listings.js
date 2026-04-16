@@ -143,10 +143,40 @@ function mapToRow(pf, locationMap) {
     })
     .filter(Boolean);
 
-  // Amenities: string array like ["central-ac", "shared-pool", ...]
+  // Amenities: map PF slugs to our display labels (matches admin checkbox values)
+  const amenityMap = {
+    'central-ac': 'Central A/C',
+    'built-in-wardrobes': 'Built-in Wardrobes',
+    'kitchen-appliances': 'Kitchen Appliances',
+    'security': 'Security',
+    'concierge': 'Concierge',
+    'maid-service': 'Maid Service',
+    'balcony': 'Balcony',
+    'private-gym': 'Private Gym',
+    'shared-gym': 'Shared Gym',
+    'private-jacuzzi': 'Private Jacuzzi',
+    'shared-spa': 'Shared Spa',
+    'covered-parking': 'Covered Parking',
+    'maids-room': "Maid's Room",
+    'study': 'Study',
+    'childrens-play-area': "Children's Play Area",
+    'pets-allowed': 'Pets Allowed',
+    'barbecue-area': 'Barbecue Area',
+    'shared-pool': 'Shared Pool',
+    'childrens-pool': "Children's Pool",
+    'private-garden': 'Private Garden',
+    'private-pool': 'Private Pool',
+    'view-of-water': 'View of Water',
+    'view-of-landmark': 'View of Landmark',
+    'walk-in-closet': 'Walk-in Closet',
+    'lobby-in-building': 'Lobby in Building',
+    'networked': 'Networked',
+    'dining-in-building': 'Dining in Building',
+    'conference-room': 'Conference Room',
+  };
   const amenities = pf.amenities || [];
   const featuresStr = amenities
-    .map(a => a.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()))
+    .map(a => amenityMap[a] || a.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()))
     .join(', ');
 
   // DLD permit: compliance.listingAdvertisementNumber (RERA permit number)
@@ -226,21 +256,24 @@ function mapPropertyType(val) {
     'townhouse': 'Townhouse',
     'penthouse': 'Penthouse',
     'duplex': 'Duplex',
-    'hotel-apartment': 'Apartment',
+    'hotel-apartment': 'Hotel Apartment',
+    'bungalow': 'Bungalow',
+    'compound': 'Compound',
+    'full-floor': 'Full Floor',
+    'half-floor': 'Half Floor',
+    'whole-building': 'Whole Building',
     'office-space': 'Office',
     'retail': 'Retail',
-    'shop': 'Retail',
-    'show-room': 'Retail',
+    'shop': 'Shop',
+    'show-room': 'Showroom',
     'warehouse': 'Warehouse',
+    'factory': 'Factory',
+    'co-working-space': 'Co-Working Space',
+    'business-center': 'Business Center',
+    'staff-accommodation': 'Staff Accommodation',
+    'labor-camp': 'Labor Camp',
     'land': 'Land',
-    'farm': 'Land',
-    'full-floor': 'Apartment',
-    'half-floor': 'Apartment',
-    'whole-building': 'Apartment',
-    'compound': 'Villa',
-    'bungalow': 'Villa',
-    'co-working-space': 'Office',
-    'business-center': 'Office',
+    'farm': 'Farm',
   };
   return map[val] || 'Apartment';
 }
