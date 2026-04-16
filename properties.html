@@ -859,10 +859,9 @@
 
       <!-- Market toggle -->
       <div class="fb-toggle">
-        <button class="fb-toggle-btn active" data-market="all">All</button>
-        <button class="fb-toggle-btn" data-market="offplan">Off-Plan</button>
-        <button class="fb-toggle-btn" data-market="secondary">Secondary</button>
-        <button class="fb-toggle-btn" data-market="commercial">Commercial</button>
+        <button class="fb-toggle-btn active" data-market="offplan">Off-Plan</button>
+        <button class="fb-toggle-btn" data-market="sale">For Sale</button>
+        <button class="fb-toggle-btn" data-market="rent">For Rent</button>
       </div>
 
       <div class="fb-sep"></div>
@@ -976,7 +975,7 @@
     var isLoading        = false;
     var hasMorePages     = true;
 
-    var activeMarket = 'all';
+    var activeMarket = 'offplan';
     var activeType   = '';
     var activeCity   = '';
     var activeBeds   = 'any';
@@ -1107,6 +1106,7 @@
               Type: { name: s.property_type || s.commercial_type || '' },
               Organisation: { organizationName: lt === 'secondary_offplan' ? (s.developer || '') : '' },
               _supabaseStatus: s.status,
+              _offeringType: s.offering_type || 'sale',
               _supabaseLinkType: 'secondary',
               _supabaseBadge: badgeText,
               _buildingName: s.building_name || '',
@@ -1219,8 +1219,20 @@
     function applyFilters() {
       var result = allProperties.slice();
 
-      if (activeMarket !== 'all') {
-        result = result.filter(function (p) { return getMarketType(p) === activeMarket; });
+      if (activeMarket === 'offplan') {
+        result = result.filter(function (p) { return getMarketType(p) === 'offplan'; });
+      } else if (activeMarket === 'sale') {
+        result = result.filter(function (p) {
+          var mt = getMarketType(p);
+          if (mt === 'offplan') return false;
+          return (p._offeringType || 'sale') === 'sale';
+        });
+      } else if (activeMarket === 'rent') {
+        result = result.filter(function (p) {
+          var mt = getMarketType(p);
+          if (mt === 'offplan') return false;
+          return p._offeringType === 'rent';
+        });
       }
 
       if (activeType) {
@@ -1286,7 +1298,7 @@
 
       var market    = getMarketType(p);
       var lt        = p._listingType || '';
-      var isRent    = (p._supabaseStatus || '').toLowerCase() === 'rented' || (p._annualRent && p._annualRent > 0 && !p.LayoutPriceMin);
+      var isRent    = p._offeringType === 'rent';
       var badgeText, badgeCls;
       if (market === 'secondary' || market === 'commercial') {
         badgeText = isRent ? 'For Rent' : 'For Sale';
@@ -1574,10 +1586,10 @@
       activeCity   = '';
       activeSort   = '';
       activeBeds   = 'any';
-      activeMarket = 'all';
+      activeMarket = 'offplan';
       activeDev    = '';
       document.querySelectorAll('.fb-toggle-btn').forEach(function (b) { b.classList.remove('active'); });
-      document.querySelector('[data-market="all"]').classList.add('active');
+      document.querySelector('[data-market="offplan"]').classList.add('active');
       document.querySelectorAll('.fb-bed-btn').forEach(function (b) { b.classList.remove('active'); });
       document.querySelector('[data-beds="any"]').classList.add('active');
       document.querySelectorAll('.dev-logo-btn').forEach(function (b) { b.classList.remove('active'); });

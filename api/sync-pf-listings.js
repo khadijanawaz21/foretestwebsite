@@ -149,10 +149,6 @@ function mapToRow(pf, locationMap) {
     .map(a => a.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()))
     .join(', ');
 
-  // Agent: assignedTo { id, name, photos }
-  const assignedTo = pf.assignedTo || {};
-  const agentName = assignedTo.name || '';
-
   // DLD permit: compliance.listingAdvertisementNumber (RERA permit number)
   const compliance = pf.compliance || {};
   const dldPermit = compliance.listingAdvertisementNumber || pf.reference || '';
@@ -183,6 +179,7 @@ function mapToRow(pf, locationMap) {
       : (pf.uaeEmirate === 'abu_dhabi' ? 'Abu Dhabi' : 'Dubai'),
 
     status: priceObj.type === 'sale' ? 'Vacant' : (priceObj.type ? 'Rented' : 'Vacant'),
+    offering_type: priceObj.type === 'sale' ? 'sale' : (priceObj.type ? 'rent' : 'sale'),
     furnished: mapFurnishing(pf.furnishingType),
     view: '',
     parking: pf.hasParkingOnSite || false,
@@ -209,10 +206,7 @@ function mapToRow(pf, locationMap) {
     created_at: pf.createdAt || new Date().toISOString(),
   };
 
-  // Only set agent if PF provides one — don't overwrite manually assigned agents
-  if (agentName) {
-    row.agent = agentName;
-  }
+  // Note: agent is intentionally NOT synced from PF — manually assigned in admin panel
 
   return row;
 }

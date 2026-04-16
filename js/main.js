@@ -291,7 +291,7 @@ document.addEventListener('fore:ready', function () {
     const beds      = s.bedrooms || '';
     const area      = s.area_sqft ? Number(s.area_sqft).toLocaleString() + ' sq ft' : '';
     const propType  = s.property_type || '';
-    const isRent    = s.status === 'Rented' || (s.annual_rent && s.annual_rent > 0 && !rawPrice);
+    const isRent    = s.offering_type === 'rent';
     const saleBadge = isRent ? 'For Rent' : 'For Sale';
 
     const imgHtml   = imgSrc
@@ -339,6 +339,12 @@ document.addEventListener('fore:ready', function () {
     let filtered = listings;
     if (activeHpDev && type === 'offplan') {
       filtered = listings.filter(p => getDevKey(p) === activeHpDev);
+    }
+    // Filter secondary listings by sale/rent offering
+    if (type === 'sale') {
+      filtered = filtered.filter(s => (s.offering_type || 'sale') === 'sale');
+    } else if (type === 'rent') {
+      filtered = filtered.filter(s => s.offering_type === 'rent');
     }
     const items = filtered.slice(0, 6);
     if (!items.length) {
@@ -434,11 +440,15 @@ document.addEventListener('fore:ready', function () {
       tab.classList.add('active');
       tab.setAttribute('aria-selected', 'true');
 
+      // Show/hide developer filter — only relevant for off-plan
+      const devBar = document.getElementById('hpDevBar');
+      if (devBar) devBar.style.display = activeTab === 'offplan' ? '' : 'none';
+
       // Use cached data — no re-fetch
       if (activeTab === 'offplan' && cachedOffPlan) {
         renderCards(cachedOffPlan, 'offplan');
-      } else if (activeTab === 'secondary' && cachedSecondary) {
-        renderCards(cachedSecondary, 'secondary');
+      } else if ((activeTab === 'sale' || activeTab === 'rent') && cachedSecondary) {
+        renderCards(cachedSecondary, activeTab);
       } else {
         // Data not yet ready (shouldn't happen but guard anyway)
         showSkeletons(6);

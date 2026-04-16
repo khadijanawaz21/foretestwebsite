@@ -1172,6 +1172,14 @@
 
           <!-- ═══ SHARED FIELDS ═══ -->
           <div class="form-group full">
+            <label class="form-label" for="offeringType">Offering Type <span style="color:var(--error);">*</span></label>
+            <select class="form-select" id="offeringType" required>
+              <option value="sale">For Sale</option>
+              <option value="rent">For Rent</option>
+            </select>
+          </div>
+
+          <div class="form-group full">
             <label class="form-label" for="title">Listing Name / Title</label>
             <input class="form-input" type="text" id="title" required />
           </div>
@@ -2527,6 +2535,7 @@
       // Build payload based on listing type
       const payload = {
         listing_type: lt,
+        offering_type: document.getElementById('offeringType').value,
         name: document.getElementById('title').value.trim(),
         price: Number(document.getElementById('price').value) || 0,
         area_sqft: Number(document.getElementById('area').value) || 0,
@@ -2627,6 +2636,7 @@
         setListingType(lt);
 
         editIdInput.value = data.id;
+        document.getElementById('offeringType').value = data.offering_type || 'sale';
         document.getElementById('title').value = data.name || '';
         document.getElementById('price').value = data.price || '';
         document.getElementById('area').value = data.area_sqft || '';
