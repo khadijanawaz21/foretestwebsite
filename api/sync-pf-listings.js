@@ -208,7 +208,7 @@ function mapToRow(pf, locationMap) {
       ? (locationMap[pf.location.id].city || (pf.uaeEmirate === 'abu_dhabi' ? 'Abu Dhabi' : 'Dubai'))
       : (pf.uaeEmirate === 'abu_dhabi' ? 'Abu Dhabi' : 'Dubai'),
 
-    status: priceObj.type === 'sale' ? 'Vacant' : (priceObj.type ? 'Rented' : 'Vacant'),
+    status: 'Vacant',
     offering_type: priceObj.type === 'sale' ? 'sale' : (priceObj.type ? 'rent' : 'sale'),
     furnished: mapFurnishing(pf.furnishingType),
     view: '',
