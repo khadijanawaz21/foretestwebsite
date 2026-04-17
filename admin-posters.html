@@ -425,13 +425,15 @@ async function toDataURL(url) {
     // Use our proxy to avoid CORS issues in Chrome
     const proxyUrl = `/api/image-proxy?url=${encodeURIComponent(url)}`;
     const resp = await fetch(proxyUrl);
+    if (!resp.ok) throw new Error('Proxy returned ' + resp.status);
     const blob = await resp.blob();
-    return await new Promise(resolve => {
+    return await new Promise((resolve, reject) => {
       const r = new FileReader();
       r.onloadend = () => { imgCache[url] = r.result; resolve(r.result); };
+      r.onerror = reject;
       r.readAsDataURL(blob);
     });
-  } catch { return url; }
+  } catch (e) { console.warn('toDataURL failed for', url, e); return ''; }
 }
 
 // ══ FORMATS ══
@@ -957,7 +959,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     await document.fonts.ready;
     await new Promise(r => setTimeout(r, 700));
 
-    const canvas = await html2canvas(cap, { width: fmt.w, height: fmt.h, scale: 1, useCORS: false, allowTaint: true, backgroundColor: '#060e17', logging: false });
+    const canvas = await html2canvas(cap, { width: fmt.w, height: fmt.h, scale: 1, useCORS: false, allowTaint: false, backgroundColor: '#060e17', logging: true });
     const a = document.createElement('a');
     a.download = `FORE-${S.badge.replace(/\s/g,'-')}-${Date.now()}.png`;
     a.href = canvas.toDataURL('image/png');

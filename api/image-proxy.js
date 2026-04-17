@@ -7,6 +7,10 @@ const ALLOWED_HOSTS = [
   'fairopportunityrealestate.com',
 ];
 
+function isAllowed(hostname) {
+  return ALLOWED_HOSTS.includes(hostname) || hostname.endsWith('.supabase.co');
+}
+
 module.exports = async (req, res) => {
   const { url } = req.query;
   if (!url) return res.status(400).send('Missing url parameter');
@@ -14,7 +18,7 @@ module.exports = async (req, res) => {
   let parsed;
   try { parsed = new URL(url); } catch { return res.status(400).send('Invalid url'); }
 
-  if (!ALLOWED_HOSTS.includes(parsed.hostname)) {
+  if (!isAllowed(parsed.hostname)) {
     return res.status(403).send('Host not allowed');
   }
 
