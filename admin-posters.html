@@ -1056,7 +1056,8 @@ async function exportVideoWithOverlay(posterCanvas, videoFile, fmt) {
   video.preload = 'auto';
   video.src = URL.createObjectURL(videoFile);
 
-  await new Promise((res, rej) => { video.onloadedmetadata = res; video.onerror = rej; });
+  // Wait for video to be fully ready
+  await new Promise((res, rej) => { video.onloadeddata = res; video.onerror = rej; });
 
   const W = fmt.w, H = fmt.h;
   const fps = 30;
@@ -1066,7 +1067,12 @@ async function exportVideoWithOverlay(posterCanvas, videoFile, fmt) {
   // Compositing canvas
   const comp = document.createElement('canvas');
   comp.width = W; comp.height = H;
-  const ctx = comp.getContext('2d');
+  const ctx = comp.getContext('2d', { willReadFrequently: true });
+
+  // Collect encoded chunks
+  const chunks = [];
+  let encoderDone;
+  const flushPromise = new Promise(r => { encoderDone = r; });
 
   // Set up MP4 muxer
   const muxer = new Mp4Muxer.Muxer({
@@ -1077,35 +1083,51 @@ async function exportVideoWithOverlay(posterCanvas, videoFile, fmt) {
 
   // Set up VideoEncoder
   const encoder = new VideoEncoder({
-    output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
-    error: e => console.error('Encoder error:', e),
+    output: (chunk, meta) => {
+      muxer.addVideoChunk(chunk, meta);
+    },
+    error: e => { console.error('Encoder error:', e); },
   });
 
+  // Use Baseline profile for maximum compatibility
   encoder.configure({
-    codec: 'avc1.640028',
+    codec: 'avc1.42001f',
     width: W,
     height: H,
-    bitrate: 8_000_000,
+    bitrate: 5_000_000,
     framerate: fps,
+    latencyMode: 'quality',
+    avc: { format: 'avc' },
   });
 
-  // Seek through video frame by frame and encode
+  // Seek frame-by-frame and encode
   for (let i = 0; i < totalFrames; i++) {
-    const time = i / fps;
-    video.currentTime = time;
+    const targetTime = Math.min(i / fps, duration - 0.001);
+    video.currentTime = targetTime;
     await new Promise(r => { video.onseeked = r; });
+    // Small delay to ensure frame is decoded and painted
+    await new Promise(r => setTimeout(r, 30));
 
-    // Draw video frame (cover)
+    // Draw video frame scaled to cover poster
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
     const vw = video.videoWidth || W, vh = video.videoHeight || H;
-    const scale = Math.max(W / vw, H / vh);
-    const sw = vw * scale, sh = vh * scale;
+    const sc = Math.max(W / vw, H / vh);
+    const sw = vw * sc, sh = vh * sc;
     ctx.drawImage(video, (W - sw) / 2, (H - sh) / 2, sw, sh);
-    // Overlay poster
+    // Poster overlay
     ctx.drawImage(posterCanvas, 0, 0, W, H);
 
-    const frame = new VideoFrame(comp, { timestamp: i * (1_000_000 / fps) });
-    encoder.encode(frame, { keyFrame: i % (fps * 2) === 0 });
+    const timestamp = Math.round(i * (1_000_000 / fps));
+    const frame = new VideoFrame(comp, { timestamp });
+    const keyFrame = i % (fps * 2) === 0;
+    encoder.encode(frame, { keyFrame });
     frame.close();
+
+    // Avoid backpressure — wait for encoder queue to drain periodically
+    if (encoder.encodeQueueSize > 5) {
+      await new Promise(r => setTimeout(r, 10));
+    }
   }
 
   await encoder.flush();
@@ -1113,6 +1135,10 @@ async function exportVideoWithOverlay(posterCanvas, videoFile, fmt) {
   muxer.finalize();
 
   const buf = muxer.target.buffer;
+  if (!buf || buf.byteLength === 0) {
+    throw new Error('MP4 encoding produced empty file');
+  }
+
   const blob = new Blob([buf], { type: 'video/mp4' });
   const a = document.createElement('a');
   a.download = `FORE-${S.badge.replace(/\s/g,'-')}-${Date.now()}.mp4`;
