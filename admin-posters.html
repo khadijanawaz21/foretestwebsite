@@ -875,7 +875,7 @@ function getPosterHTML(fmt, data) {
 
       <!-- Hero location text -->
       <div style="text-align:center;padding:0 ${pad}px;position:absolute;top:${heroTop}px;left:0;right:0;">
-        <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${eyebrowSz}px;color:rgba(255,255,255,0.4);letter-spacing:0.4em;text-transform:uppercase;margin-bottom:${Math.round(14*u)}px;">Dubai · UAE</div>
+        <div style="display:inline-block;font-family:'Montserrat',sans-serif;font-weight:500;font-size:${eyebrowSz}px;color:rgba(201,169,110,0.85);letter-spacing:0.4em;text-transform:uppercase;margin-bottom:${Math.round(14*u)}px;padding:${Math.round(6*u)}px ${Math.round(20*u)}px;border:1px solid rgba(201,169,110,0.3);border-radius:${Math.round(4*u)}px;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);">Dubai · UAE</div>
         <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;font-size:${titleSz}px;color:#fff;line-height:0.92;letter-spacing:-0.02em;white-space:nowrap;text-shadow:0 2px 20px rgba(0,0,0,0.8),0 4px 60px rgba(0,0,0,0.5),0 0 120px rgba(0,0,0,0.3);">${esc(heroMain)}${heroGold ? `<span style="color:#C9A96A;"> ${esc(heroGold)}</span>` : ''}</div>
         ${subRaw ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:${Math.round(58*u)}px;color:rgba(255,255,255,0.45);margin-top:${Math.round(8*u)}px;">${esc(subRaw)}</div>` : ''}
         ${propLabel}
