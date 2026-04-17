@@ -794,7 +794,10 @@ function getPosterHTML(fmt, data) {
   }
 
   // Property name shown under hero (building / unit label)
-  const propLabel = title ? `<div style="display:inline-block;margin-top:${Math.round(18*u)}px;padding:${Math.round(10*u)}px ${Math.round(32*u)}px;background:rgba(255,255,255,0.92);border-radius:${Math.round(8*u)}px;max-width:${Math.round(960*u)}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span style="font-family:'Montserrat',sans-serif;font-weight:500;font-size:${Math.round(28*u)}px;color:#1a1a1a;letter-spacing:0.04em;line-height:1.2;">${esc(title)}</span></div>` : '';
+  // Scale font down for long titles so it always stays on one line
+  const titleBaseSz = 28 * u;
+  const titleFontSz = Math.round(title.length > 40 ? titleBaseSz * (40 / title.length) : title.length > 28 ? titleBaseSz * 0.85 : titleBaseSz);
+  const propLabel = title ? `<div style="display:inline-block;margin-top:${Math.round(18*u)}px;padding:${Math.round(10*u)}px ${Math.round(32*u)}px;background:rgba(255,255,255,0.92);border-radius:${Math.round(8*u)}px;max-width:${Math.round(960*u)}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span style="font-family:'Montserrat',sans-serif;font-weight:500;font-size:${titleFontSz}px;color:#1a1a1a;letter-spacing:0.04em;line-height:1.2;">${esc(title)}</span></div>` : '';
 
   // ── Amenities ──
   const amHTML = amenities.length ? `
