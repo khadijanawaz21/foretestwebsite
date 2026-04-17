@@ -762,7 +762,10 @@ function getPosterHTML(fmt, data) {
   const badgeSz    = Math.round(18 * u);
   const badgePad   = `${Math.round(10 * u)}px ${Math.round(28 * u)}px`;
   const eyebrowSz  = Math.round(20 * u);
-  const titleSz    = isSquare ? Math.round(120 * u) : isTall ? Math.round(168 * u) : Math.round(148 * u);
+  const titleSzBase = isSquare ? 120 * u : isTall ? 168 * u : 148 * u;
+  // Auto-shrink hero text so community name always fits on one line
+  const heroLen = ((location || 'Dubai').split(',')[0].trim()).length;
+  const titleSz = Math.round(heroLen > 18 ? titleSzBase * Math.min(1, 18 / heroLen * 1.15) : heroLen > 12 ? titleSzBase * 0.9 : titleSzBase);
   const amGap      = Math.round(0 * u);
   const amH        = isSquare ? Math.round(90 * u) : Math.round(110 * u);
   const amIconSz   = Math.round(36 * u);
@@ -869,7 +872,7 @@ function getPosterHTML(fmt, data) {
       <!-- Hero location text -->
       <div style="text-align:center;padding:0 ${pad}px;position:absolute;top:${heroTop}px;left:0;right:0;">
         <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${eyebrowSz}px;color:rgba(255,255,255,0.4);letter-spacing:0.4em;text-transform:uppercase;margin-bottom:${Math.round(14*u)}px;">Dubai · UAE</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;font-size:${titleSz}px;color:#fff;line-height:0.92;letter-spacing:-0.02em;text-shadow:0 2px 20px rgba(0,0,0,0.8),0 4px 60px rgba(0,0,0,0.5),0 0 120px rgba(0,0,0,0.3);">${esc(heroMain)}${heroGold ? `<span style="color:#C9A96A;"> ${esc(heroGold)}</span>` : ''}</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;font-size:${titleSz}px;color:#fff;line-height:0.92;letter-spacing:-0.02em;white-space:nowrap;text-shadow:0 2px 20px rgba(0,0,0,0.8),0 4px 60px rgba(0,0,0,0.5),0 0 120px rgba(0,0,0,0.3);">${esc(heroMain)}${heroGold ? `<span style="color:#C9A96A;"> ${esc(heroGold)}</span>` : ''}</div>
         ${subRaw ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:${Math.round(58*u)}px;color:rgba(255,255,255,0.45);margin-top:${Math.round(8*u)}px;">${esc(subRaw)}</div>` : ''}
         ${propLabel}
       </div>
