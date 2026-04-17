@@ -569,17 +569,83 @@
       padding: 28px;
     }
     @media (max-width: 580px) { .pd-agent-card { flex-direction: column; text-align: center; gap: 18px; padding: 24px 20px; } }
+    /* Sidebar agent variant — tuned for narrow column */
+    .pd-sb-agent {
+      padding: 28px 24px 26px;
+      position: relative;
+    }
+    .pd-sb-agent::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 24px; right: 24px;
+      height: 0.5px;
+      background: linear-gradient(90deg, transparent, var(--gold-border) 20%, var(--gold-border) 80%, transparent);
+      opacity: 0.6;
+    }
+    .pd-sb-agent-label {
+      font-size: 7.5px;
+      font-weight: 600;
+      letter-spacing: 2.8px;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-align: center;
+      margin-bottom: 20px;
+    }
     .pd-agent-card.sidebar {
       flex-direction: column;
+      align-items: center;
       text-align: center;
-      gap: 16px;
-      padding: 20px 16px;
+      gap: 0;
+      padding: 0;
       background: transparent;
       border: 0;
+      box-shadow: none;
     }
-    .pd-agent-card.sidebar .pd-agent-photo { width: 96px; height: 96px; }
-    .pd-agent-card.sidebar .pd-agent-btns { flex-direction: column; width: 100%; }
-    .pd-agent-card.sidebar .pd-agent-btn { justify-content: center; width: 100%; }
+    .pd-agent-card.sidebar .pd-agent-photo {
+      width: 104px;
+      height: 104px;
+      border: 0;
+      padding: 3px;
+      background: linear-gradient(135deg, var(--gold) 0%, rgba(201,169,110,0.25) 100%);
+      margin-bottom: 18px;
+      box-shadow:
+        0 6px 20px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(201,169,110,0.15);
+    }
+    .pd-agent-card.sidebar .pd-agent-info { width: 100%; text-align: center; }
+    .pd-agent-card.sidebar .pd-agent-name {
+      font-size: 21px;
+      margin-bottom: 6px;
+      line-height: 1.15;
+    }
+    .pd-agent-card.sidebar .pd-agent-role {
+      font-size: 7.5px;
+      letter-spacing: 2.8px;
+      margin-bottom: 12px;
+    }
+    .pd-agent-card.sidebar .pd-agent-langs {
+      display: inline-block;
+      font-size: 10px;
+      padding: 5px 12px;
+      background: rgba(255,255,255,0.03);
+      border: 0.5px solid var(--subtle-border);
+      border-radius: 999px;
+      color: var(--white-50);
+      margin-bottom: 22px;
+    }
+    .pd-agent-card.sidebar .pd-agent-btns {
+      flex-direction: column;
+      width: 100%;
+      gap: 8px;
+    }
+    .pd-agent-card.sidebar .pd-agent-btn {
+      justify-content: center;
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 9.5px;
+      letter-spacing: 2px;
+      border-radius: 2px;
+    }
     .pd-agent-photo {
       width: 88px;
       height: 88px;
@@ -1784,7 +1850,7 @@
           bookingFormEl.style.display = 'none';
           sbAgentEl.style.display = 'block';
           sbAgentEl.innerHTML =
-            '<div class="pd-sb-form-title">Your Agent</div>' +
+            '<div class="pd-sb-agent-label">Your Agent</div>' +
             '<div class="pd-agent-card sidebar">' + agentHtml + '</div>';
         }
       }
