@@ -345,15 +345,6 @@
             <input type="file" id="manualImageFile" accept="image/jpeg,image/png,image/webp" />
           </div>
         </div>
-        <div class="form-group" style="margin-top:12px;">
-          <label class="form-label">Property Video <span style="color:var(--white-20);">(optional)</span></label>
-          <div class="upload-zone" id="manualVideoZone">
-            <svg style="display:block;margin:0 auto 8px;opacity:0.3;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-            <div class="upload-zone-text">Drop video here or click to browse</div>
-            <div class="upload-zone-hint">MP4 · max 50MB</div>
-            <input type="file" id="manualVideoFile" accept="video/mp4" />
-          </div>
-        </div>
       </div>
 
       <!-- Amenities -->
@@ -422,28 +413,6 @@ const TABLE = 'secondary_listings';
 const LOGS_TABLE = 'poster_logs';
 const ADMIN_PASSWORD = 'FORE2024';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-const LOGO_URL = window.location.origin + '/brand_assets/logo.png';
-
-// ══ IMAGE PROXY (fixes Chrome CORS for html2canvas) ══
-const imgCache = {};
-async function toDataURL(url) {
-  if (!url) return '';
-  if (url.startsWith('data:')) return url;
-  if (imgCache[url]) return imgCache[url];
-  try {
-    // Use our proxy to avoid CORS issues in Chrome
-    const proxyUrl = `/api/image-proxy?url=${encodeURIComponent(url)}`;
-    const resp = await fetch(proxyUrl);
-    if (!resp.ok) throw new Error('Proxy returned ' + resp.status);
-    const blob = await resp.blob();
-    return await new Promise((resolve, reject) => {
-      const r = new FileReader();
-      r.onloadend = () => { imgCache[url] = r.result; resolve(r.result); };
-      r.onerror = reject;
-      r.readAsDataURL(blob);
-    });
-  } catch (e) { console.warn('toDataURL failed for', url, e); return ''; }
-}
 
 // ══ FORMATS ══
 // Each format: canonical W×H, preview scale, preview display W×H
@@ -500,7 +469,7 @@ let S = {
   badge: 'FOR SALE',
   title: '', location: '', price: '',
   beds: '', baths: '', sqft: '',
-  image: '', video: '', amenities: [], agent: '',
+  image: '', amenities: [], agent: '',
 };
 
 // ══════════════════════════════════
@@ -571,7 +540,7 @@ function renderListingGrid() {
     const bt = lt === 'offplan' ? 'OFF-PLAN' : lt === 'rent' ? 'FOR RENT' : 'FOR SALE';
     const sel = S.selectedId === l.id ? ' selected' : '';
     const img = l.image_main
-      ? `<img class="listing-thumb" src="${esc(l.image_main)}" onerror="this.style.background='#1c1c1c'" />`
+      ? `<img class="listing-thumb" src="${esc(l.image_main)}" crossorigin="anonymous" onerror="this.style.background='#1c1c1c'" />`
       : `<div class="listing-thumb" style="display:flex;align-items:center;justify-content:center;font-size:9px;color:#333;"></div>`;
     return `<div class="listing-card${sel}" onclick="selectListing('${l.id}')">
       ${img}
@@ -683,7 +652,7 @@ document.querySelectorAll('[data-badge]').forEach(b => {
       renderPoster();
 
       zone.innerHTML = `<div class="upload-preview">
-        <img src="${esc(url)}" />
+        <img src="${esc(url)}" crossorigin="anonymous" />
         <div class="upload-preview-info">
           <div class="upload-preview-name">${esc(file.name)}</div>
           <div class="upload-preview-status" style="color:var(--success);">Uploaded</div>
@@ -711,65 +680,6 @@ document.querySelectorAll('[data-badge]').forEach(b => {
     input.value = '';
   }
 })();
-
-// ── Manual video upload zone (browser-only, no server upload) ──
-(function initVideoZone() {
-  const zone  = document.getElementById('manualVideoZone');
-  const input = document.getElementById('manualVideoFile');
-
-  zone.addEventListener('click', () => input.click());
-  zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('dragover'); });
-  zone.addEventListener('dragleave', ()  => zone.classList.remove('dragover'));
-  zone.addEventListener('drop', e => {
-    e.preventDefault(); zone.classList.remove('dragover');
-    if (e.dataTransfer.files[0]) handleVideoFile(e.dataTransfer.files[0]);
-  });
-  input.addEventListener('change', () => { if (input.files[0]) handleVideoFile(input.files[0]); });
-
-  function handleVideoFile(file) {
-    if (file.type !== 'video/mp4') { showToast('Only MP4 files allowed', true); return; }
-    if (file.size > 50 * 1024 * 1024) { showToast('File too large — max 50MB', true); return; }
-
-    S.videoFile = file;
-    S.video = URL.createObjectURL(file);
-    updateDownloadBtn();
-    renderPoster();
-
-    zone.innerHTML = `<div class="upload-preview">
-      <video src="${S.video}" style="width:72px;height:52px;object-fit:cover;border-radius:2px;border:0.5px solid var(--subtle-border);flex-shrink:0;" muted></video>
-      <div class="upload-preview-info">
-        <div class="upload-preview-name">${esc(file.name)}</div>
-        <div class="upload-preview-status" style="color:var(--success);">Ready</div>
-      </div>
-      <button type="button" class="upload-remove" id="videoRemoveBtn">&times;</button>
-    </div>`;
-    document.getElementById('videoRemoveBtn').addEventListener('click', e => {
-      e.stopPropagation();
-      if (S.video) URL.revokeObjectURL(S.video);
-      S.video = ''; S.videoFile = null;
-      updateDownloadBtn(); resetVideoZone(); renderPoster();
-    });
-  }
-
-  function resetVideoZone() {
-    zone.innerHTML = `
-      <svg style="display:block;margin:0 auto 8px;opacity:0.3;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-      <div class="upload-zone-text">Drop video here or click to browse</div>
-      <div class="upload-zone-hint">MP4 · max 50MB</div>
-      <input type="file" id="manualVideoFile" accept="video/mp4" />`;
-    zone.querySelector('#manualVideoFile').addEventListener('change', e => { if (e.target.files[0]) handleVideoFile(e.target.files[0]); });
-    zone.addEventListener('click', () => zone.querySelector('input').click());
-    input.value = '';
-  }
-})();
-
-function updateDownloadBtn() {
-  const btn = document.getElementById('downloadBtn');
-  const isVideo = !!S.video;
-  btn.innerHTML = isVideo
-    ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download MP4`
-    : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PNG`;
-}
 
 // ══════════════════════════════════
 // AMENITIES
@@ -818,7 +728,7 @@ function setAgent(name) {
 // ══════════════════════════════════
 function getPosterHTML(fmt, data) {
   const { w, h } = FORMATS[fmt];
-  const { badge, title, location, price, beds, baths, sqft, image, video, amenities, agentName, agentPhone, agentPhoto, agentInitials } = data;
+  const { badge, title, location, price, beds, baths, sqft, image, video, videoMode, amenities, agentName, agentPhone, agentPhoto, agentInitials } = data;
 
   // ── Scale all sizes relative to 1080px wide canonical ──
   const u = w / 1080; // unit multiplier (always 1 since all fmts are 1080 wide)
@@ -834,14 +744,7 @@ function getPosterHTML(fmt, data) {
   const badgeSz    = Math.round(18 * u);
   const badgePad   = `${Math.round(10 * u)}px ${Math.round(28 * u)}px`;
   const eyebrowSz  = Math.round(20 * u);
-  const titleSzBase = isSquare ? 120 * u : isTall ? 168 * u : 148 * u;
-  // Auto-shrink hero text so community name always fits on one line
-  // Italic serif chars average ~0.55em wide; available width = canvas - 2*pad
-  const heroText = (location || 'Dubai').split(',')[0].trim();
-  const heroLen = heroText.length;
-  const availW = w - (pad * 2);
-  const estWidth = heroLen * titleSzBase * 0.55;
-  const titleSz = Math.round(estWidth > availW ? titleSzBase * (availW / estWidth) * 0.92 : titleSzBase);
+  const titleSz    = isSquare ? Math.round(120 * u) : isTall ? Math.round(168 * u) : Math.round(148 * u);
   const amGap      = Math.round(0 * u);
   const amH        = isSquare ? Math.round(90 * u) : Math.round(110 * u);
   const amIconSz   = Math.round(36 * u);
@@ -873,10 +776,7 @@ function getPosterHTML(fmt, data) {
   }
 
   // Property name shown under hero (building / unit label)
-  // Scale font down for long titles so it always stays on one line
-  const titleBaseSz = 28 * u;
-  const titleFontSz = Math.round(title.length > 40 ? titleBaseSz * (40 / title.length) : title.length > 28 ? titleBaseSz * 0.85 : titleBaseSz);
-  const propLabel = title ? `<div style="display:inline-block;margin-top:${Math.round(18*u)}px;padding:${Math.round(10*u)}px ${Math.round(32*u)}px;background:rgba(255,255,255,0.92);border-radius:${Math.round(8*u)}px;max-width:${Math.round(960*u)}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span style="font-family:'Montserrat',sans-serif;font-weight:500;font-size:${titleFontSz}px;color:#1a1a1a;letter-spacing:0.04em;line-height:1.2;">${esc(title)}</span></div>` : '';
+  const propLabel = title ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:${Math.round(52*u)}px;color:rgba(255,255,255,0.5);margin-top:${Math.round(8*u)}px;line-height:1;">${esc(title)}</div>` : '';
 
   // ── Amenities ──
   const amHTML = amenities.length ? `
@@ -919,7 +819,7 @@ function getPosterHTML(fmt, data) {
   const agentHTML = agentName ? `
     <div style="display:flex;align-items:center;gap:${Math.round(22*u)}px;padding:${Math.round(22*u)}px 0 0;border-top:0.5px solid rgba(255,255,255,0.1);margin-top:${Math.round(4*u)}px;">
       ${agentPhoto
-        ? `<img src="${esc(agentPhoto)}" style="width:${avSz}px;height:${avSz}px;border-radius:50%;border:1.5px solid rgba(201,169,110,0.45);object-fit:cover;flex-shrink:0;" />`
+        ? `<img src="${esc(agentPhoto)}" crossorigin="anonymous" style="width:${avSz}px;height:${avSz}px;border-radius:50%;border:1.5px solid rgba(201,169,110,0.45);object-fit:cover;flex-shrink:0;" />`
         : `<div style="width:${avSz}px;height:${avSz}px;border-radius:50%;border:1.5px solid rgba(201,169,110,0.45);background:rgba(201,169,110,0.1);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:${Math.round(28*u)}px;color:#C9A96A;flex-shrink:0;">${esc(agentInitials||'')}</div>`}
       <div>
         <div style="font-family:'Montserrat',sans-serif;font-weight:600;font-size:${agentNmSz}px;color:#fff;letter-spacing:0.02em;">${esc(agentName)}</div>
@@ -933,7 +833,7 @@ function getPosterHTML(fmt, data) {
   const panelPad   = Math.round(52*u);
 
   return `
-    ${video ? `<video class="p-bg-img" src="${esc(video)}" autoplay loop muted playsinline></video>` : image ? `<img class="p-bg-img" src="${esc(image)}" />` : `<div class="p-bg-grad"></div>`}
+    ${video ? `<video class="p-bg-img" src="${esc(video)}" autoplay loop muted playsinline style="object-fit:cover;"></video>` : image ? `<img class="p-bg-img" src="${esc(image)}" crossorigin="anonymous" />` : videoMode ? `` : `<div class="p-bg-grad"></div>`}
     <div style="position:absolute;bottom:0;left:0;right:0;height:${bottomFade}px;background:linear-gradient(to top,rgba(4,8,14,0.98) 0%,rgba(4,8,14,0.9) 15%,rgba(4,8,14,0.65) 35%,rgba(4,8,14,0.25) 60%,transparent 100%);z-index:1;"></div>
     <div style="position:absolute;top:0;left:0;right:0;height:${Math.round(220*u)}px;background:linear-gradient(to bottom,rgba(4,8,14,0.75) 0%,transparent 100%);z-index:1;"></div>
 
@@ -941,14 +841,14 @@ function getPosterHTML(fmt, data) {
 
       <!-- Top bar -->
       <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:${Math.round(44*u)}px ${pad}px 0;">
-        <img src="${data.logoSrc || LOGO_URL}" style="width:${Math.round(280*u)}px;height:auto;display:block;" />
+        <img src="brand_assets/logo.png" style="width:${Math.round(280*u)}px;height:auto;display:block;" />
         <div style="padding:${badgePad};border:1.5px solid rgba(201,169,110,0.65);font-family:'Montserrat',sans-serif;font-size:${badgeSz}px;font-weight:600;letter-spacing:0.22em;color:#C9A96A;text-transform:uppercase;background:rgba(201,169,110,0.07);">${esc(badge)}</div>
       </div>
 
       <!-- Hero location text -->
       <div style="text-align:center;padding:0 ${pad}px;position:absolute;top:${heroTop}px;left:0;right:0;">
-        <div style="display:inline-block;font-family:'Montserrat',sans-serif;font-weight:500;font-size:${eyebrowSz}px;color:rgba(201,169,110,0.85);letter-spacing:0.4em;text-transform:uppercase;margin-bottom:${Math.round(14*u)}px;padding:${Math.round(6*u)}px ${Math.round(20*u)}px;border:1px solid rgba(201,169,110,0.3);border-radius:${Math.round(4*u)}px;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);">Dubai · UAE</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;font-size:${titleSz}px;color:#fff;line-height:0.92;letter-spacing:-0.02em;white-space:nowrap;text-shadow:0 2px 20px rgba(0,0,0,0.8),0 4px 60px rgba(0,0,0,0.5),0 0 120px rgba(0,0,0,0.3);">${esc(heroMain)}${heroGold ? `<span style="color:#C9A96A;"> ${esc(heroGold)}</span>` : ''}</div>
+        <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${eyebrowSz}px;color:rgba(255,255,255,0.4);letter-spacing:0.4em;text-transform:uppercase;margin-bottom:${Math.round(14*u)}px;">Dubai · UAE</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;font-size:${titleSz}px;color:#fff;line-height:0.92;letter-spacing:-0.02em;text-shadow:0 2px 40px rgba(0,0,0,0.5);">${esc(heroMain)}${heroGold ? `<span style="color:#C9A96A;"> ${esc(heroGold)}</span>` : ''}</div>
         ${subRaw ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:${Math.round(58*u)}px;color:rgba(255,255,255,0.45);margin-top:${Math.round(8*u)}px;">${esc(subRaw)}</div>` : ''}
         ${propLabel}
       </div>
@@ -971,6 +871,91 @@ function getPosterHTML(fmt, data) {
 }
 
 // ══════════════════════════════════
+// VIDEO STATE
+// ══════════════════════════════════
+S.video     = '';   // object URL for preview
+S.videoFile = null; // raw File for export
+
+function updateDownloadBtn() {
+  const btn = document.getElementById('downloadBtn');
+  btn.innerHTML = S.videoFile
+    ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg> Download MP4`
+    : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PNG`;
+}
+
+// ══════════════════════════════════
+// VIDEO UPLOAD ZONE (manual mode)
+// ══════════════════════════════════
+// injected into DOM after manualSection is created
+(function injectVideoZone() {
+  // Wait for DOM then append to manualSection
+  const tryInject = setInterval(() => {
+    const sec = document.getElementById('manualSection');
+    if (!sec) return;
+    clearInterval(tryInject);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'form-group';
+    wrap.style.marginTop = '12px';
+    wrap.innerHTML = `
+      <label class="form-label">Property Video <span style="color:var(--white-20);">(optional — exports as MP4)</span></label>
+      <div class="upload-zone" id="videoZone">
+        <svg style="display:block;margin:0 auto 8px;opacity:0.3;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        <div class="upload-zone-text">Drop MP4 here or click to browse</div>
+        <div class="upload-zone-hint">MP4 · max 100MB · poster overlaid on export</div>
+        <input type="file" id="videoFile" accept="video/mp4,video/quicktime" />
+      </div>`;
+    sec.appendChild(wrap);
+    initVideoZone();
+  }, 50);
+})();
+
+function initVideoZone() {
+  const zone  = document.getElementById('videoZone');
+  const input = document.getElementById('videoFile');
+  if (!zone || !input) return;
+
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', ()  => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('dragover'); if (e.dataTransfer.files[0]) handleVideo(e.dataTransfer.files[0]); });
+  input.addEventListener('change', () => { if (input.files[0]) handleVideo(input.files[0]); });
+
+  function handleVideo(file) {
+    if (!file.type.startsWith('video/')) { showToast('MP4 files only', true); return; }
+    if (file.size > 100 * 1024 * 1024) { showToast('Max 100MB', true); return; }
+    if (S.video) URL.revokeObjectURL(S.video);
+    S.video = URL.createObjectURL(file);
+    S.videoFile = file;
+    updateDownloadBtn();
+    renderPoster();
+    zone.innerHTML = `<div class="upload-preview">
+      <video src="${S.video}" style="width:72px;height:52px;object-fit:cover;border-radius:2px;border:0.5px solid var(--subtle-border);flex-shrink:0;" muted></video>
+      <div class="upload-preview-info">
+        <div class="upload-preview-name">${esc(file.name)}</div>
+        <div class="upload-preview-status" style="color:var(--success);">Ready · exports as MP4</div>
+      </div>
+      <button type="button" class="upload-remove" id="videoRemoveBtn">&times;</button>
+    </div>`;
+    document.getElementById('videoRemoveBtn').addEventListener('click', e => {
+      e.stopPropagation();
+      URL.revokeObjectURL(S.video);
+      S.video = ''; S.videoFile = null;
+      updateDownloadBtn(); renderPoster(); resetVideoZone();
+    });
+  }
+
+  function resetVideoZone() {
+    zone.innerHTML = `
+      <svg style="display:block;margin:0 auto 8px;opacity:0.3;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      <div class="upload-zone-text">Drop MP4 here or click to browse</div>
+      <div class="upload-zone-hint">MP4 · max 100MB · poster overlaid on export</div>
+      <input type="file" id="videoFile" accept="video/mp4,video/quicktime" />`;
+    document.getElementById('videoFile').addEventListener('change', e => { if (e.target.files[0]) handleVideo(e.target.files[0]); });
+  }
+}
+
+// ══════════════════════════════════
 // RENDER POSTER
 // ══════════════════════════════════
 function getAgentData() {
@@ -982,9 +967,8 @@ function getAgentData() {
 function renderPoster() {
   updateFmtHint();
   const fmt = FORMATS[S.fmt];
-  const data = { badge: S.badge, title: S.title, location: S.location, price: S.price, beds: S.beds, baths: S.baths, sqft: S.sqft, image: S.image, video: S.video, amenities: S.amenities, ...getAgentData() };
+  const data = { badge: S.badge, title: S.title, location: S.location, price: S.price, beds: S.beds, baths: S.baths, sqft: S.sqft, image: S.image, video: S.video, videoMode: false, amenities: S.amenities, ...getAgentData() };
 
-  // Size + scale preview
   const scale = fmt.scale;
   const pw = document.getElementById('posterPreview');
   pw.style.width  = fmt.w + 'px';
@@ -993,7 +977,6 @@ function renderPoster() {
   pw.style.transformOrigin = 'top left';
   pw.innerHTML = getPosterHTML(S.fmt, data);
 
-  // Update wrapper
   const wrap = document.getElementById('previewWrap');
   wrap.style.width  = Math.round(fmt.w * scale) + 'px';
   wrap.style.height = Math.round(fmt.h * scale) + 'px';
@@ -1006,20 +989,23 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   const btn = document.getElementById('downloadBtn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Generating...';
+
   try {
-    const fmt = FORMATS[S.fmt];
-    const agentData = getAgentData();
+    const fmt  = FORMATS[S.fmt];
+    const isVideo = !!(S.video && S.videoFile);
 
-    // Convert all images to data URLs to avoid Chrome CORS issues with html2canvas
-    const [imageSrc, logoSrc, agentPhotoSrc] = await Promise.all([
-      toDataURL(S.image),
-      toDataURL(LOGO_URL),
-      toDataURL(agentData.agentPhoto),
-    ]);
+    // For PNG: render poster normally with image bg
+    // For MP4: render poster with NO background (transparent overlay on video)
+    const data = {
+      badge: S.badge, title: S.title, location: S.location,
+      price: S.price, beds: S.beds, baths: S.baths, sqft: S.sqft,
+      image: isVideo ? '' : S.image,
+      video: '',           // never put video in capture div
+      videoMode: isVideo,  // Bug 2 fix: skip solid bg div
+      amenities: S.amenities,
+      ...getAgentData()
+    };
 
-    const isVideoMode = !!(S.video && S.videoFile);
-    // For video: skip background image (video plays behind), use transparent bg
-    const data = { badge: S.badge, title: S.title, location: S.location, price: S.price, beds: S.beds, baths: S.baths, sqft: S.sqft, image: isVideoMode ? '' : imageSrc, amenities: S.amenities, ...agentData, agentPhoto: agentPhotoSrc, logoSrc };
     const cap = document.getElementById('posterCapture');
     cap.style.width  = fmt.w + 'px';
     cap.style.height = fmt.h + 'px';
@@ -1027,16 +1013,19 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     cap.innerHTML = getPosterHTML(S.fmt, data);
 
     await document.fonts.ready;
-    await new Promise(r => setTimeout(r, 700));
+    await new Promise(r => setTimeout(r, 600));
 
-    const posterCanvas = await html2canvas(cap, { width: fmt.w, height: fmt.h, scale: 1, useCORS: false, allowTaint: false, backgroundColor: isVideoMode ? null : '#060e17', logging: true });
+    const posterCanvas = await html2canvas(cap, {
+      width: fmt.w, height: fmt.h, scale: 1,
+      useCORS: true, allowTaint: false,
+      backgroundColor: isVideo ? null : '#060e17',
+      logging: false
+    });
 
-    if (S.video && S.videoFile) {
-      // ── MP4 export: overlay poster on video ──
+    if (isVideo) {
       btn.innerHTML = '<span class="spinner"></span> Rendering video...';
       await exportVideoWithOverlay(posterCanvas, S.videoFile, fmt);
     } else {
-      // ── PNG export ──
       const a = document.createElement('a');
       a.download = `FORE-${S.badge.replace(/\s/g,'-')}-${Date.now()}.png`;
       a.href = posterCanvas.toDataURL('image/png');
@@ -1056,57 +1045,75 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   }
 });
 
-// ── Video export: composites poster overlay onto the original video ──
-async function exportVideoWithOverlay(posterCanvas, videoFile, fmt) {
+// ══════════════════════════════════
+// VIDEO EXPORT — Bug 1 fix: proper async flow
+// ══════════════════════════════════
+function exportVideoWithOverlay(posterCanvas, videoFile, fmt) {
   return new Promise((resolve, reject) => {
     const video = document.createElement('video');
-    video.muted = true;
+    video.muted      = true;
     video.playsInline = true;
-    video.src = URL.createObjectURL(videoFile);
+    video.preload    = 'auto';
+    video.src        = URL.createObjectURL(videoFile);
 
     video.onloadedmetadata = () => {
-      const outCanvas = document.createElement('canvas');
-      outCanvas.width = fmt.w;
-      outCanvas.height = fmt.h;
-      const ctx = outCanvas.getContext('2d');
+      const out    = document.createElement('canvas');
+      out.width    = fmt.w;
+      out.height   = fmt.h;
+      const ctx    = out.getContext('2d');
 
-      const stream = outCanvas.captureStream(30);
-      const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') ? 'video/webm;codecs=vp9' : 'video/webm';
+      // Pick best supported format
+      const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+        ? 'video/webm;codecs=vp9'
+        : 'video/webm';
+
+      const stream   = out.captureStream(30);
       const recorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 8_000_000 });
-      const chunks = [];
+      const chunks   = [];
 
       recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
       recorder.onstop = () => {
         const blob = new Blob(chunks, { type: mimeType });
-        const a = document.createElement('a');
+        const a    = document.createElement('a');
         a.download = `FORE-${S.badge.replace(/\s/g,'-')}-${Date.now()}.webm`;
-        a.href = URL.createObjectURL(blob);
+        a.href     = URL.createObjectURL(blob);
         a.click();
-        URL.revokeObjectURL(a.href);
+        setTimeout(() => URL.revokeObjectURL(a.href), 5000);
         URL.revokeObjectURL(video.src);
         resolve();
       };
       recorder.onerror = reject;
 
+      let recording = true;
+
+      // Bug 1 fix: stop recording via event, not polling paused state
+      video.onended = () => {
+        recording = false;
+        recorder.stop();
+      };
+
       function drawFrame() {
-        if (video.ended || video.paused) { recorder.stop(); return; }
-        // Draw video frame scaled to fill poster dimensions
-        const vw = video.videoWidth, vh = video.videoHeight;
+        if (!recording) return;
+        // Scale video to fill canvas (cover behaviour)
+        const vw = video.videoWidth || fmt.w;
+        const vh = video.videoHeight || fmt.h;
         const scale = Math.max(fmt.w / vw, fmt.h / vh);
         const sw = vw * scale, sh = vh * scale;
         const sx = (fmt.w - sw) / 2, sy = (fmt.h - sh) / 2;
         ctx.drawImage(video, sx, sy, sw, sh);
-        // Draw poster overlay on top (transparent areas show video)
+        // Overlay poster (transparent bg areas show video through)
         ctx.drawImage(posterCanvas, 0, 0, fmt.w, fmt.h);
         requestAnimationFrame(drawFrame);
       }
 
       recorder.start();
-      video.play();
-      drawFrame();
+
+      // Bug 1 fix: start drawing only AFTER video is confirmed playing
+      video.onplaying = () => { drawFrame(); };
+      video.play().catch(reject);
     };
 
-    video.onerror = reject;
+    video.onerror = () => reject(new Error('Video failed to load'));
   });
 }
 
