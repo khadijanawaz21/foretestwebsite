@@ -414,6 +414,27 @@ const TABLE = 'secondary_listings';
 const LOGS_TABLE = 'poster_logs';
 const ADMIN_PASSWORD = 'FORE2024';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const LOGO_URL = window.location.origin + '/brand_assets/logo.png';
+
+// ══ IMAGE PROXY (fixes Chrome CORS for download) ══
+const imgCache = {};
+async function toDataURL(url) {
+  if (!url) return '';
+  if (url.startsWith('data:')) return url;
+  if (imgCache[url]) return imgCache[url];
+  try {
+    const proxyUrl = `/api/image-proxy?url=${encodeURIComponent(url)}`;
+    const resp = await fetch(proxyUrl);
+    if (!resp.ok) throw new Error('Proxy returned ' + resp.status);
+    const blob = await resp.blob();
+    return await new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onloadend = () => { imgCache[url] = r.result; resolve(r.result); };
+      r.onerror = reject;
+      r.readAsDataURL(blob);
+    });
+  } catch (e) { console.warn('toDataURL failed for', url, e); return ''; }
+}
 
 // ══ FORMATS ══
 // Each format: canonical W×H, preview scale, preview display W×H
@@ -541,7 +562,7 @@ function renderListingGrid() {
     const bt = lt === 'offplan' ? 'OFF-PLAN' : lt === 'rent' ? 'FOR RENT' : 'FOR SALE';
     const sel = S.selectedId === l.id ? ' selected' : '';
     const img = l.image_main
-      ? `<img class="listing-thumb" src="${esc(l.image_main)}" crossorigin="anonymous" onerror="this.style.background='#1c1c1c'" />`
+      ? `<img class="listing-thumb" src="${esc(l.image_main)}" onerror="this.style.background='#1c1c1c'" />`
       : `<div class="listing-thumb" style="display:flex;align-items:center;justify-content:center;font-size:9px;color:#333;"></div>`;
     return `<div class="listing-card${sel}" onclick="selectListing('${l.id}')">
       ${img}
@@ -653,7 +674,7 @@ document.querySelectorAll('[data-badge]').forEach(b => {
       renderPoster();
 
       zone.innerHTML = `<div class="upload-preview">
-        <img src="${esc(url)}" crossorigin="anonymous" />
+        <img src="${esc(url)}" />
         <div class="upload-preview-info">
           <div class="upload-preview-name">${esc(file.name)}</div>
           <div class="upload-preview-status" style="color:var(--success);">Uploaded</div>
@@ -745,7 +766,13 @@ function getPosterHTML(fmt, data) {
   const badgeSz    = Math.round(18 * u);
   const badgePad   = `${Math.round(10 * u)}px ${Math.round(28 * u)}px`;
   const eyebrowSz  = Math.round(20 * u);
-  const titleSz    = isSquare ? Math.round(120 * u) : isTall ? Math.round(168 * u) : Math.round(148 * u);
+  const titleSzBase = isSquare ? 120 * u : isTall ? 168 * u : 148 * u;
+  // Auto-shrink hero text so community name always fits on one line
+  const heroText = (location || 'Dubai').split(',')[0].trim();
+  const heroLen = heroText.length;
+  const availW = w - (pad * 2);
+  const estWidth = heroLen * titleSzBase * 0.55;
+  const titleSz = Math.round(estWidth > availW ? titleSzBase * (availW / estWidth) * 0.92 : titleSzBase);
   const amGap      = Math.round(0 * u);
   const amH        = isSquare ? Math.round(90 * u) : Math.round(110 * u);
   const amIconSz   = Math.round(36 * u);
@@ -777,7 +804,10 @@ function getPosterHTML(fmt, data) {
   }
 
   // Property name shown under hero (building / unit label)
-  const propLabel = title ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:${Math.round(52*u)}px;color:rgba(255,255,255,0.5);margin-top:${Math.round(8*u)}px;line-height:1;">${esc(title)}</div>` : '';
+  // Scale font down for long titles so it always stays on one line
+  const titleBaseSz = 28 * u;
+  const titleFontSz = Math.round(title.length > 40 ? titleBaseSz * (40 / title.length) : title.length > 28 ? titleBaseSz * 0.85 : titleBaseSz);
+  const propLabel = title ? `<div style="display:inline-block;margin-top:${Math.round(18*u)}px;padding:${Math.round(10*u)}px ${Math.round(32*u)}px;background:rgba(255,255,255,0.92);border-radius:${Math.round(8*u)}px;max-width:${Math.round(960*u)}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span style="font-family:'Montserrat',sans-serif;font-weight:500;font-size:${titleFontSz}px;color:#1a1a1a;letter-spacing:0.04em;line-height:1.2;">${esc(title)}</span></div>` : '';
 
   // ── Amenities ──
   const amHTML = amenities.length ? `
@@ -820,7 +850,7 @@ function getPosterHTML(fmt, data) {
   const agentHTML = agentName ? `
     <div style="display:flex;align-items:center;gap:${Math.round(22*u)}px;padding:${Math.round(22*u)}px 0 0;border-top:0.5px solid rgba(255,255,255,0.1);margin-top:${Math.round(4*u)}px;">
       ${agentPhoto
-        ? `<img src="${esc(agentPhoto)}" crossorigin="anonymous" style="width:${avSz}px;height:${avSz}px;border-radius:50%;border:1.5px solid rgba(201,169,110,0.45);object-fit:cover;flex-shrink:0;" />`
+        ? `<img src="${esc(agentPhoto)}" style="width:${avSz}px;height:${avSz}px;border-radius:50%;border:1.5px solid rgba(201,169,110,0.45);object-fit:cover;flex-shrink:0;" />`
         : `<div style="width:${avSz}px;height:${avSz}px;border-radius:50%;border:1.5px solid rgba(201,169,110,0.45);background:rgba(201,169,110,0.1);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:${Math.round(28*u)}px;color:#C9A96A;flex-shrink:0;">${esc(agentInitials||'')}</div>`}
       <div>
         <div style="font-family:'Montserrat',sans-serif;font-weight:600;font-size:${agentNmSz}px;color:#fff;letter-spacing:0.02em;">${esc(agentName)}</div>
@@ -834,7 +864,7 @@ function getPosterHTML(fmt, data) {
   const panelPad   = Math.round(52*u);
 
   return `
-    ${video ? `<video class="p-bg-img" src="${esc(video)}" autoplay loop muted playsinline style="object-fit:cover;"></video>` : image ? `<img class="p-bg-img" src="${esc(image)}" crossorigin="anonymous" />` : videoMode ? `` : `<div class="p-bg-grad"></div>`}
+    ${video ? `<video class="p-bg-img" src="${esc(video)}" autoplay loop muted playsinline style="object-fit:cover;"></video>` : image ? `<img class="p-bg-img" src="${esc(image)}" />` : videoMode ? `` : `<div class="p-bg-grad"></div>`}
     <div style="position:absolute;bottom:0;left:0;right:0;height:${bottomFade}px;background:linear-gradient(to top,rgba(4,8,14,0.98) 0%,rgba(4,8,14,0.9) 15%,rgba(4,8,14,0.65) 35%,rgba(4,8,14,0.25) 60%,transparent 100%);z-index:1;"></div>
     <div style="position:absolute;top:0;left:0;right:0;height:${Math.round(220*u)}px;background:linear-gradient(to bottom,rgba(4,8,14,0.75) 0%,transparent 100%);z-index:1;"></div>
 
@@ -842,14 +872,14 @@ function getPosterHTML(fmt, data) {
 
       <!-- Top bar -->
       <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:${Math.round(44*u)}px ${pad}px 0;">
-        <img src="brand_assets/logo.png" style="width:${Math.round(280*u)}px;height:auto;display:block;" />
+        <img src="${data.logoSrc || LOGO_URL}" style="width:${Math.round(280*u)}px;height:auto;display:block;" />
         <div style="padding:${badgePad};border:1.5px solid rgba(201,169,110,0.65);font-family:'Montserrat',sans-serif;font-size:${badgeSz}px;font-weight:600;letter-spacing:0.22em;color:#C9A96A;text-transform:uppercase;background:rgba(201,169,110,0.07);">${esc(badge)}</div>
       </div>
 
       <!-- Hero location text -->
       <div style="text-align:center;padding:0 ${pad}px;position:absolute;top:${heroTop}px;left:0;right:0;">
-        <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${eyebrowSz}px;color:rgba(255,255,255,0.4);letter-spacing:0.4em;text-transform:uppercase;margin-bottom:${Math.round(14*u)}px;">Dubai · UAE</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;font-size:${titleSz}px;color:#fff;line-height:0.92;letter-spacing:-0.02em;text-shadow:0 2px 40px rgba(0,0,0,0.5);">${esc(heroMain)}${heroGold ? `<span style="color:#C9A96A;"> ${esc(heroGold)}</span>` : ''}</div>
+        <div style="display:inline-block;font-family:'Montserrat',sans-serif;font-weight:500;font-size:${eyebrowSz}px;color:rgba(201,169,110,0.85);letter-spacing:0.4em;text-transform:uppercase;margin-bottom:${Math.round(14*u)}px;padding:${Math.round(6*u)}px ${Math.round(20*u)}px;border:1px solid rgba(201,169,110,0.3);border-radius:${Math.round(4*u)}px;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);">Dubai · UAE</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;font-size:${titleSz}px;color:#fff;line-height:0.92;letter-spacing:-0.02em;white-space:nowrap;text-shadow:0 2px 20px rgba(0,0,0,0.8),0 4px 60px rgba(0,0,0,0.5),0 0 120px rgba(0,0,0,0.3);">${esc(heroMain)}${heroGold ? `<span style="color:#C9A96A;"> ${esc(heroGold)}</span>` : ''}</div>
         ${subRaw ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:${Math.round(58*u)}px;color:rgba(255,255,255,0.45);margin-top:${Math.round(8*u)}px;">${esc(subRaw)}</div>` : ''}
         ${propLabel}
       </div>
@@ -994,17 +1024,23 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   try {
     const fmt  = FORMATS[S.fmt];
     const isVideo = !!(S.video && S.videoFile);
+    const agentData = getAgentData();
 
-    // For PNG: render poster normally with image bg
-    // For MP4: render poster with NO background (transparent overlay on video)
+    // Convert images to data URLs via proxy (fixes Chrome CORS)
+    const [imageSrc, logoSrc, agentPhotoSrc] = await Promise.all([
+      isVideo ? Promise.resolve('') : toDataURL(S.image),
+      toDataURL(LOGO_URL),
+      toDataURL(agentData.agentPhoto),
+    ]);
+
     const data = {
       badge: S.badge, title: S.title, location: S.location,
       price: S.price, beds: S.beds, baths: S.baths, sqft: S.sqft,
-      image: isVideo ? '' : S.image,
-      video: '',           // never put video in capture div
-      videoMode: isVideo,  // Bug 2 fix: skip solid bg div
+      image: imageSrc,
+      video: '',
+      videoMode: isVideo,
       amenities: S.amenities,
-      ...getAgentData()
+      ...agentData, agentPhoto: agentPhotoSrc, logoSrc
     };
 
     const cap = document.getElementById('posterCapture');
@@ -1018,7 +1054,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
 
     const posterCanvas = await html2canvas(cap, {
       width: fmt.w, height: fmt.h, scale: 1,
-      useCORS: true, allowTaint: false,
+      useCORS: false, allowTaint: false,
       backgroundColor: isVideo ? null : '#060e17',
       logging: false
     });
