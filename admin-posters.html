@@ -422,7 +422,9 @@ async function toDataURL(url) {
   if (url.startsWith('data:')) return url;
   if (imgCache[url]) return imgCache[url];
   try {
-    const resp = await fetch(url);
+    // Use our proxy to avoid CORS issues in Chrome
+    const proxyUrl = `/api/image-proxy?url=${encodeURIComponent(url)}`;
+    const resp = await fetch(proxyUrl);
     const blob = await resp.blob();
     return await new Promise(resolve => {
       const r = new FileReader();
