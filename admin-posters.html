@@ -764,8 +764,12 @@ function getPosterHTML(fmt, data) {
   const eyebrowSz  = Math.round(20 * u);
   const titleSzBase = isSquare ? 120 * u : isTall ? 168 * u : 148 * u;
   // Auto-shrink hero text so community name always fits on one line
-  const heroLen = ((location || 'Dubai').split(',')[0].trim()).length;
-  const titleSz = Math.round(heroLen > 18 ? titleSzBase * Math.min(1, 18 / heroLen * 1.15) : heroLen > 12 ? titleSzBase * 0.9 : titleSzBase);
+  // Italic serif chars average ~0.55em wide; available width = canvas - 2*pad
+  const heroText = (location || 'Dubai').split(',')[0].trim();
+  const heroLen = heroText.length;
+  const availW = w - (pad * 2);
+  const estWidth = heroLen * titleSzBase * 0.55;
+  const titleSz = Math.round(estWidth > availW ? titleSzBase * (availW / estWidth) * 0.92 : titleSzBase);
   const amGap      = Math.round(0 * u);
   const amH        = isSquare ? Math.round(90 * u) : Math.round(110 * u);
   const amIconSz   = Math.round(36 * u);
