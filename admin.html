@@ -1566,33 +1566,6 @@
             </div>
           </div>
 
-          <!-- ═══ DISTRESSED DEAL SECTION ═══ -->
-          <div class="section-divider">
-            <div class="section-title">Distressed Deal</div>
-            <div class="section-subtitle">Mark this listing as a distressed deal to feature it in the distressed deals widget</div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Distressed Deal</label>
-            <div class="toggle-wrap">
-              <label class="toggle">
-                <input type="checkbox" id="isDistressed" />
-                <span class="toggle-track"></span>
-              </label>
-              <span class="toggle-label" id="isDistressedLabel">No</span>
-            </div>
-          </div>
-
-          <div class="form-group" id="distressedOriginalPriceGroup" style="display:none;">
-            <label class="form-label" for="distressedOriginalPrice">Original Price (AED)</label>
-            <input class="form-input" type="number" id="distressedOriginalPrice" min="0" />
-          </div>
-
-          <div class="form-group" id="distressedDiscountGroup" style="display:none;">
-            <label class="form-label" for="distressedDiscount">Discount %</label>
-            <input class="form-input" type="number" id="distressedDiscount" min="0" max="100" step="0.1" placeholder="Auto-calculated" readonly />
-          </div>
-
           <div class="form-group full">
             <label class="form-label" for="description">Description</label>
             <textarea class="form-textarea" id="description" rows="4"></textarea>
@@ -1680,30 +1653,179 @@
         </form>
       </div>
 
-      <!-- ── Distressed Deals Tab (filtered view from main listings) ── -->
+      <!-- ── Distressed Deals Tab ── -->
       <div class="tab-panel" id="tab-distressed">
-        <p style="font-size:11px;color:var(--white-35);margin-bottom:20px;letter-spacing:0.5px;">
-          These are listings marked as distressed deals. To add or remove a deal, edit the listing and toggle "Distressed Deal" on or off.
-        </p>
-        <div class="table-loading" id="ddTableLoading">Loading distressed deals...</div>
-        <div style="overflow-x:auto;">
-          <table class="listings-table" id="ddTable" style="display:none;">
-            <thead>
-              <tr>
-                <th>Photo</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Original</th>
-                <th>Discount</th>
-                <th>Agent</th>
-                <th>Published</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="ddBody"></tbody>
-          </table>
+        <div class="sub-tabs">
+          <button class="sub-tab-btn dd-sub active" data-ddsub="ddList">All Distressed Deals</button>
+          <button class="sub-tab-btn dd-sub" data-ddsub="ddAdd">Add Distressed Deal</button>
         </div>
-        <div class="empty-state" id="ddEmpty" style="display:none;">No distressed deals yet. Edit any listing and toggle "Distressed Deal" to feature it here.</div>
+
+        <!-- Distressed: All Deals -->
+        <div class="sub-panel dd-subpanel active" id="ddsub-ddList">
+          <div class="table-loading" id="ddTableLoading">Loading distressed deals...</div>
+          <div style="overflow-x:auto;">
+            <table class="listings-table" id="ddTable" style="display:none;">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Cash Price</th>
+                  <th>Discount</th>
+                  <th>Reason</th>
+                  <th>Agent</th>
+                  <th>Active</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ddBody"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="ddEmpty" style="display:none;">No distressed deals yet. Add your first deal to get started.</div>
+        </div>
+
+        <!-- Distressed: Add / Edit -->
+        <div class="sub-panel dd-subpanel" id="ddsub-ddAdd">
+          <form id="ddForm" class="form-grid">
+            <input type="hidden" id="ddEditId" />
+
+            <div class="form-group full">
+              <label class="form-label" for="ddName">Name / Title</label>
+              <input class="form-input" type="text" id="ddName" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ddPropertyType">Property Type</label>
+              <select class="form-select" id="ddPropertyType">
+                <option value="">Select</option>
+                <option value="Apartment">Apartment</option>
+                <option value="Villa">Villa</option>
+                <option value="Townhouse">Townhouse</option>
+                <option value="Penthouse">Penthouse</option>
+                <option value="Duplex">Duplex</option>
+                <option value="Studio">Studio</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ddBedrooms">Bedrooms</label>
+              <select class="form-select" id="ddBedrooms">
+                <option value="">Select</option>
+                <option value="Studio">Studio</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5+">5+</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ddArea">Area (sq ft)</label>
+              <input class="form-input" type="number" id="ddArea" min="0" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ddLocation">Location / Community</label>
+              <input class="form-input" type="text" id="ddLocation" placeholder="e.g. Dubai Marina, JBR" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ddCity">City</label>
+              <input class="form-input" type="text" id="ddCity" value="Dubai" />
+            </div>
+
+            <div class="section-divider">
+              <div class="section-title">Pricing</div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ddCashPrice">Cash Price (AED)</label>
+              <input class="form-input" type="number" id="ddCashPrice" min="0" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ddOriginalPrice">Original Price (AED)</label>
+              <input class="form-input" type="number" id="ddOriginalPrice" min="0" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ddDiscount">Discount %</label>
+              <input class="form-input" type="number" id="ddDiscount" min="0" max="100" step="0.1" placeholder="Auto-calculated" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ddReason">Reason</label>
+              <select class="form-select" id="ddReason">
+                <option value="">Select</option>
+                <option value="Motivated Seller">Motivated Seller</option>
+                <option value="Cash Deal">Cash Deal</option>
+                <option value="Cancellation Unit">Cancellation Unit</option>
+                <option value="Quick Sale">Quick Sale</option>
+              </select>
+            </div>
+
+            <div class="section-divider">
+              <div class="section-title">Details &amp; Media</div>
+            </div>
+
+            <div class="form-group full">
+              <label class="form-label" for="ddDescription">Description</label>
+              <textarea class="form-textarea" id="ddDescription" rows="4"></textarea>
+            </div>
+
+            <div class="form-group full">
+              <label class="form-label" for="ddFeatures">Features (comma separated)</label>
+              <input class="form-input" type="text" id="ddFeatures" placeholder="e.g. Pool, Gym, Balcony" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Main Image</label>
+              <input type="hidden" id="ddMainImage" />
+              <div id="ddMainImageUpload"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Additional Images</label>
+              <input type="hidden" id="ddAdditionalImages" />
+              <div id="ddAdditionalImagesUpload"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ddHandover">Handover Date</label>
+              <input class="form-input" type="text" id="ddHandover" placeholder="e.g. Q4 2025, Ready" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ddPaymentPlan">Payment Plan</label>
+              <input class="form-input" type="text" id="ddPaymentPlan" placeholder="e.g. 60/40, Cash Only" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ddAgent">Agent</label>
+              <select class="form-select" id="ddAgent">
+                <option value="">Select</option>
+                <option value="Elena Guseva">Elena Guseva</option>
+                <option value="Sabbir Khan">Sabbir Khan</option>
+                <option value="Anastasiia Guseva">Anastasiia Guseva</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Active</label>
+              <div class="toggle-wrap">
+                <label class="toggle">
+                  <input type="checkbox" id="ddActive" checked />
+                  <span class="toggle-track"></span>
+                </label>
+                <span class="toggle-label" id="ddActiveLabel">Active</span>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn-submit" id="ddSubmitBtn">Save Deal</button>
+              <button type="button" class="btn-cancel" id="ddCancelBtn" style="display:none;">Cancel Edit</button>
+            </div>
+          </form>
+        </div>
       </div>
 
       <!-- ── Blog Tab ── -->
@@ -1857,6 +1979,7 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhbWtuZWtkYnRybXhvcHl3Z3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NjMxOTksImV4cCI6MjA4OTAzOTE5OX0.HCmQ_4cyuImr3S1wQ-V6oW2G2U4a1rzMUlLPqHC-OeA';
     const TABLE = 'secondary_listings';
     const BLOG_TABLE = 'blog_posts';
+    const DD_TABLE = 'distressed_deals';
     const STORAGE_BUCKET = 'media';
 
     let supabaseClient = null;
@@ -2107,35 +2230,6 @@
     opParkingCheckbox.addEventListener('change', () => {
       opParkingLabel.textContent = opParkingCheckbox.checked ? 'Yes' : 'No';
     });
-
-    // ══════════════════════════════════════════════
-    // DISTRESSED DEAL TOGGLE + AUTO-DISCOUNT
-    // ══════════════════════════════════════════════
-    const isDistressedCheckbox = document.getElementById('isDistressed');
-    const isDistressedLabel = document.getElementById('isDistressedLabel');
-    const distressedOriginalPriceGroup = document.getElementById('distressedOriginalPriceGroup');
-    const distressedDiscountGroup = document.getElementById('distressedDiscountGroup');
-    const distressedOriginalPriceInput = document.getElementById('distressedOriginalPrice');
-    const distressedDiscountInput = document.getElementById('distressedDiscount');
-
-    isDistressedCheckbox.addEventListener('change', () => {
-      const show = isDistressedCheckbox.checked;
-      isDistressedLabel.textContent = show ? 'Yes' : 'No';
-      distressedOriginalPriceGroup.style.display = show ? 'flex' : 'none';
-      distressedDiscountGroup.style.display = show ? 'flex' : 'none';
-    });
-
-    function calcDistressedDiscount() {
-      const price = Number(document.getElementById('price').value) || 0;
-      const orig = Number(distressedOriginalPriceInput.value) || 0;
-      if (price > 0 && orig > 0 && orig > price) {
-        distressedDiscountInput.value = (((orig - price) / orig) * 100).toFixed(1);
-      } else {
-        distressedDiscountInput.value = '';
-      }
-    }
-    distressedOriginalPriceInput.addEventListener('input', calcDistressedDiscount);
-    document.getElementById('price').addEventListener('input', calcDistressedDiscount);
 
     // ══════════════════════════════════════════════
     // LISTING FILTER TABS (above table)
@@ -2572,9 +2666,6 @@
         agent: document.getElementById('agent').value,
         featured: featuredCheckbox.checked,
         published: publishedCheckbox.checked,
-        is_distressed: isDistressedCheckbox.checked,
-        distressed_original_price: isDistressedCheckbox.checked ? (Number(distressedOriginalPriceInput.value) || null) : null,
-        discount_percent: isDistressedCheckbox.checked ? (Number(distressedDiscountInput.value) || null) : null,
       };
 
       // Type-specific fields
@@ -2678,15 +2769,6 @@
         publishedCheckbox.checked = data.published !== false;
         publishedLabel.textContent = data.published !== false ? 'Published' : 'Draft';
 
-        // Distressed deal fields
-        isDistressedCheckbox.checked = !!data.is_distressed;
-        isDistressedLabel.textContent = data.is_distressed ? 'Yes' : 'No';
-        const showDistressed = !!data.is_distressed;
-        distressedOriginalPriceGroup.style.display = showDistressed ? 'flex' : 'none';
-        distressedDiscountGroup.style.display = showDistressed ? 'flex' : 'none';
-        distressedOriginalPriceInput.value = data.distressed_original_price || '';
-        distressedDiscountInput.value = data.discount_percent || '';
-
         // Type-specific fields
         if (lt === 'ready_secondary') {
           document.getElementById('propertyType').value = data.property_type || '';
@@ -2767,14 +2849,6 @@
       document.getElementById('rentalYieldDisplay').classList.add('empty');
       document.getElementById('comYieldDisplay').textContent = 'Enter price + annual rent';
       document.getElementById('comYieldDisplay').classList.add('empty');
-      // Reset distressed fields
-      isDistressedCheckbox.checked = false;
-      isDistressedLabel.textContent = 'No';
-      distressedOriginalPriceGroup.style.display = 'none';
-      distressedDiscountGroup.style.display = 'none';
-      distressedOriginalPriceInput.value = '';
-      distressedDiscountInput.value = '';
-
       submitBtn.textContent = 'Save Listing';
       cancelEditBtn.style.display = 'none';
       mainImageUpload._reset();
@@ -2808,14 +2882,15 @@
     document.getElementById('confirmDelete').addEventListener('click', async () => {
       if (!deleteTargetId) return;
       try {
-        const tableMap = { blog: BLOG_TABLE };
+        const tableMap = { blog: BLOG_TABLE, distressed: DD_TABLE };
         const table = tableMap[deleteTargetType] || TABLE;
         const { error } = await db.from(table).delete().eq('id', deleteTargetId);
         if (error) throw error;
-        const labels = { blog: 'Post deleted.', listing: 'Listing deleted.' };
+        const labels = { blog: 'Post deleted.', distressed: 'Deal deleted.', listing: 'Listing deleted.' };
         showToast(labels[deleteTargetType] || 'Listing deleted.');
         if (deleteTargetType === 'blog') loadBlogPosts();
-        else { loadListings(); loadDistressedDeals(); }
+        else if (deleteTargetType === 'distressed') loadDistressedDeals();
+        else loadListings();
       } catch (err) {
         showToast('Error deleting. Check console.', true);
         console.error(err);
@@ -3095,8 +3170,68 @@
     });
 
     // ══════════════════════════════════════════════
-    // DISTRESSED DEALS — LOAD (from secondary_listings)
+    // DISTRESSED DEALS — SUB-TABS
     // ══════════════════════════════════════════════
+    document.querySelectorAll('.dd-sub').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.dd-sub').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.dd-subpanel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('ddsub-' + btn.dataset.ddsub).classList.add('active');
+      });
+    });
+
+    function switchToDDSub(name) {
+      document.querySelectorAll('.dd-sub').forEach(b => b.classList.toggle('active', b.dataset.ddsub === name));
+      document.querySelectorAll('.dd-subpanel').forEach(p => p.classList.toggle('active', p.id === 'ddsub-' + name));
+    }
+
+    // ══════════════════════════════════════════════
+    // DISTRESSED DEALS — UPLOAD ZONES
+    // ══════════════════════════════════════════════
+    const ddMainImageUpload = createUploadZone(
+      document.getElementById('ddMainImageUpload'),
+      document.getElementById('ddMainImage'),
+      'distressed'
+    );
+    const ddAdditionalImagesUpload = createMultiUploadZone(
+      document.getElementById('ddAdditionalImagesUpload'),
+      document.getElementById('ddAdditionalImages'),
+      'distressed',
+      5
+    );
+
+    // ══════════════════════════════════════════════
+    // DISTRESSED DEALS — AUTO-CALCULATE DISCOUNT
+    // ══════════════════════════════════════════════
+    const ddCashPriceInput = document.getElementById('ddCashPrice');
+    const ddOriginalPriceInput = document.getElementById('ddOriginalPrice');
+    const ddDiscountInput = document.getElementById('ddDiscount');
+
+    function calcDDDiscount() {
+      const cash = parseFloat(ddCashPriceInput.value);
+      const orig = parseFloat(ddOriginalPriceInput.value);
+      if (cash > 0 && orig > 0 && orig > cash) {
+        ddDiscountInput.value = Math.round(((orig - cash) / orig) * 100 * 10) / 10;
+      }
+    }
+    ddCashPriceInput.addEventListener('input', calcDDDiscount);
+    ddOriginalPriceInput.addEventListener('input', calcDDDiscount);
+
+    // ══════════════════════════════════════════════
+    // DISTRESSED DEALS — ACTIVE TOGGLE
+    // ══════════════════════════════════════════════
+    const ddActiveCheckbox = document.getElementById('ddActive');
+    const ddActiveLabel = document.getElementById('ddActiveLabel');
+    ddActiveCheckbox.addEventListener('change', () => {
+      ddActiveLabel.textContent = ddActiveCheckbox.checked ? 'Active' : 'Inactive';
+    });
+
+    // ══════════════════════════════════════════════
+    // DISTRESSED DEALS — LOAD & RENDER
+    // ══════════════════════════════════════════════
+    let allDDData = [];
+
     async function loadDistressedDeals() {
       const loading = document.getElementById('ddTableLoading');
       const table = document.getElementById('ddTable');
@@ -3109,38 +3244,41 @@
 
       try {
         const { data, error } = await db
-          .from(TABLE)
+          .from(DD_TABLE)
           .select('*')
-          .eq('is_distressed', true)
           .order('created_at', { ascending: false });
 
         if (error) throw error;
+        allDDData = data || [];
 
-        if (!data || !data.length) {
+        if (!allDDData.length) {
           loading.style.display = 'none';
           empty.style.display = 'block';
           return;
         }
 
         body.innerHTML = '';
-        data.forEach(item => {
+        allDDData.forEach(item => {
           const tr = document.createElement('tr');
-          const imgSrc = item.image_main || 'https://placehold.co/64x44/1C1C1C/555?text=No+img';
           const discountBadge = item.discount_percent
             ? `<span style="background:rgba(229,57,53,0.15);color:#F44336;font-size:8px;font-weight:600;padding:3px 8px;border-radius:10px;letter-spacing:1px;">-${item.discount_percent}%</span>`
             : '<span style="color:var(--white-35);font-size:11px;">—</span>';
-          const pubClass = item.published !== false ? 'published' : 'draft';
+          const reasonTag = item.reason
+            ? `<span style="font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:1px;padding:3px 8px;border-radius:2px;background:rgba(201,169,110,0.1);color:var(--gold-light);border:0.5px solid var(--gold-border);">${escHtml(item.reason)}</span>`
+            : '';
+          const activeClass = item.active ? 'status-vacant' : 'status-rented';
+          const activeText = item.active ? 'Active' : 'Inactive';
 
           tr.innerHTML = `
-            <td><img src="${escHtml(imgSrc)}" alt="" class="listing-thumb" loading="lazy" /></td>
             <td style="color:var(--white);font-weight:400;">${escHtml(item.name || '')}</td>
-            <td>AED ${Number(item.price || 0).toLocaleString()}</td>
-            <td>${item.distressed_original_price ? 'AED ' + Number(item.distressed_original_price).toLocaleString() : '—'}</td>
+            <td>AED ${Number(item.cash_price || 0).toLocaleString()}</td>
             <td>${discountBadge}</td>
+            <td>${reasonTag}</td>
             <td>${escHtml(item.agent || '')}</td>
-            <td><span class="pub-dot ${pubClass}" title="${pubClass === 'published' ? 'Published' : 'Draft'}"></span></td>
+            <td><span class="status-badge ${activeClass}">${activeText}</span></td>
             <td>
-              <button class="action-btn" onclick="editListing('${item.id}')">Edit</button>
+              <button class="action-btn" onclick="editDDeal('${item.id}')">Edit</button>
+              <button class="action-btn delete" onclick="promptDelete('${item.id}','distressed')">Delete</button>
             </td>
           `;
           body.appendChild(tr);
@@ -3153,6 +3291,121 @@
         console.error(err);
       }
     }
+
+    // ══════════════════════════════════════════════
+    // DISTRESSED DEALS — FORM SUBMIT
+    // ══════════════════════════════════════════════
+    const ddForm = document.getElementById('ddForm');
+    const ddSubmitBtn = document.getElementById('ddSubmitBtn');
+    const ddCancelBtn = document.getElementById('ddCancelBtn');
+    const ddEditIdInput = document.getElementById('ddEditId');
+
+    ddForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      ddSubmitBtn.disabled = true;
+      ddSubmitBtn.textContent = 'Saving...';
+
+      const payload = {
+        name: document.getElementById('ddName').value.trim(),
+        property_type: document.getElementById('ddPropertyType').value,
+        bedrooms: document.getElementById('ddBedrooms').value,
+        area_sqft: parseFloat(document.getElementById('ddArea').value) || null,
+        location: document.getElementById('ddLocation').value.trim(),
+        city: document.getElementById('ddCity').value.trim() || 'Dubai',
+        cash_price: parseFloat(ddCashPriceInput.value) || 0,
+        original_price: parseFloat(ddOriginalPriceInput.value) || null,
+        discount_percent: parseFloat(ddDiscountInput.value) || null,
+        reason: document.getElementById('ddReason').value,
+        description: document.getElementById('ddDescription').value.trim(),
+        features: document.getElementById('ddFeatures').value.trim(),
+        image_main: document.getElementById('ddMainImage').value.trim(),
+        images: document.getElementById('ddAdditionalImages').value.trim(),
+        handover: document.getElementById('ddHandover').value.trim(),
+        payment_plan: document.getElementById('ddPaymentPlan').value.trim(),
+        agent: document.getElementById('ddAgent').value,
+        active: ddActiveCheckbox.checked,
+      };
+
+      try {
+        const editId = ddEditIdInput.value;
+        let error;
+        if (editId) {
+          ({ error } = await db.from(DD_TABLE).update(payload).eq('id', editId));
+        } else {
+          ({ error } = await db.from(DD_TABLE).insert([payload]));
+        }
+        if (error) throw error;
+
+        showToast(editId ? 'Deal updated.' : 'Deal saved.');
+        resetDDForm();
+        switchToDDSub('ddList');
+        loadDistressedDeals();
+      } catch (err) {
+        showToast('Error saving deal. Check console.', true);
+        console.error(err);
+      } finally {
+        ddSubmitBtn.disabled = false;
+        ddSubmitBtn.textContent = 'Save Deal';
+      }
+    });
+
+    // ══════════════════════════════════════════════
+    // DISTRESSED DEALS — EDIT
+    // ══════════════════════════════════════════════
+    async function editDDeal(id) {
+      try {
+        const { data, error } = await db.from(DD_TABLE).select('*').eq('id', id).single();
+        if (error) throw error;
+
+        ddEditIdInput.value = data.id;
+        document.getElementById('ddName').value = data.name || '';
+        document.getElementById('ddPropertyType').value = data.property_type || '';
+        document.getElementById('ddBedrooms').value = data.bedrooms || '';
+        document.getElementById('ddArea').value = data.area_sqft || '';
+        document.getElementById('ddLocation').value = data.location || '';
+        document.getElementById('ddCity').value = data.city || 'Dubai';
+        ddCashPriceInput.value = data.cash_price || '';
+        ddOriginalPriceInput.value = data.original_price || '';
+        ddDiscountInput.value = data.discount_percent || '';
+        document.getElementById('ddReason').value = data.reason || '';
+        document.getElementById('ddDescription').value = data.description || '';
+        document.getElementById('ddFeatures').value = data.features || '';
+        document.getElementById('ddHandover').value = data.handover || '';
+        document.getElementById('ddPaymentPlan').value = data.payment_plan || '';
+        document.getElementById('ddAgent').value = data.agent || '';
+        ddActiveCheckbox.checked = data.active !== false;
+        ddActiveLabel.textContent = data.active !== false ? 'Active' : 'Inactive';
+
+        ddMainImageUpload._setUrl(data.image_main || '');
+        ddAdditionalImagesUpload._setUrls((data.images || '').split(',').filter(Boolean));
+
+        ddSubmitBtn.textContent = 'Update Deal';
+        ddCancelBtn.style.display = 'inline-block';
+        switchToDDSub('ddAdd');
+      } catch (err) {
+        showToast('Error loading deal.', true);
+        console.error(err);
+      }
+    }
+
+    // ══════════════════════════════════════════════
+    // DISTRESSED DEALS — RESET FORM
+    // ══════════════════════════════════════════════
+    function resetDDForm() {
+      ddForm.reset();
+      ddEditIdInput.value = '';
+      ddActiveCheckbox.checked = true;
+      ddActiveLabel.textContent = 'Active';
+      ddSubmitBtn.textContent = 'Save Deal';
+      ddCancelBtn.style.display = 'none';
+      ddMainImageUpload._reset();
+      ddAdditionalImagesUpload._reset();
+    }
+
+    ddCancelBtn.addEventListener('click', () => {
+      resetDDForm();
+      switchToDDSub('ddList');
+    });
   </script>
 </body>
 </html>

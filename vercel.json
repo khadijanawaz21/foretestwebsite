@@ -1,0 +1,18 @@
+{
+  "buildCommand": "",
+  "outputDirectory": "",
+  "functions": {
+    "api/sync-listings.js": {
+      "maxDuration": 60
+    },
+    "api/sync-pf-listings.js": {
+      "maxDuration": 60
+    }
+  },
+  "crons": [
+    {
+      "path": "/api/sync-listings",
+      "schedule": "0 6 * * *"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+node_modules/
+.DS_Store
+temporary screenshots/
+.claude/
+.vercel
+property-photos/

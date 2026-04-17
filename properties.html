@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="google-site-verification" content="IRVV0Zu1oJqf6kIZfefGa_KiP-2qhx0yCLaLgXNuL04" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Properties for Sale in Dubai | FORE</title>
+  <meta name="description" content="Browse Dubai off-plan and secondary market properties. Filter by type, location, bedrooms, and price." />
+
+  <link rel="icon" type="image/png" href="brand_assets/favicon.png" />
+  <link rel="apple-touch-icon" href="brand_assets/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" crossorigin />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="mobile.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    /* ══════════════════════════════════════════
+       PROPERTIES PAGE — SPECIFIC STYLES
+    ══════════════════════════════════════════ */
+
+    /* ── Page Hero ─────────────────────────── */
+    .ph-hero {
+      position: relative;
+      min-height: 360px;
+      display: flex;
+      align-items: flex-end;
+      padding: 150px 10% 60px;
+      overflow: hidden;
+    }
+    .ph-hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 65% 0%,   rgba(201,169,110,0.13) 0%, transparent 55%),
+        radial-gradient(ellipse at 5%  90%,  rgba(201,169,110,0.07) 0%, transparent 50%),
+        radial-gradient(ellipse at 90% 70%,  rgba(201,169,110,0.04) 0%, transparent 45%),
+        linear-gradient(180deg, #111111 0%, #0A0A0A 100%);
+    }
+    .ph-grain {
+      position: absolute;
+      inset: 0;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+    .ph-hero-deco {
+      position: absolute;
+      bottom: 0;
+      right: 10%;
+      width: 1px;
+      height: 40%;
+      background: linear-gradient(to top, var(--gold-border), transparent);
+    }
+    .ph-hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    .ph-hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(52px, 7vw, 96px);
+      font-weight: 300;
+      line-height: 0.95;
+      letter-spacing: -0.03em;
+      color: var(--white);
+      margin-bottom: 20px;
+    }
+    .ph-hero-meta {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .ph-hero-sub {
+      font-size: 11px;
+      font-weight: 300;
+      color: var(--white-50);
+      letter-spacing: 0.5px;
+      line-height: 1.7;
+    }
+    .ph-hero-count {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-style: italic;
+      color: var(--gold);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    .ph-hero-count.visible { opacity: 1; }
+
+    /* ── Filter Bar ────────────────────────── */
+    .filter-bar {
+      position: sticky;
+      top: 86px;
+      z-index: 800;
+      background: rgba(7,7,7,0.95);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border-bottom: 0.5px solid var(--gold-border);
+      padding: 0 10%;
+    }
+    .filter-bar-inner {
+      display: flex;
+      align-items: stretch;
+      min-height: 58px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .filter-bar-inner::-webkit-scrollbar { display: none; }
+
+    .fb-sep {
+      width: 0.5px;
+      background: var(--subtle-border);
+      flex-shrink: 0;
+      margin: 10px 0;
+    }
+
+    /* Search */
+    .fb-search {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 20px 0 0;
+      flex: 1;
+      min-width: 160px;
+      max-width: 220px;
+    }
+    .fb-search svg { flex-shrink: 0; }
+    .fb-search input {
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--white);
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 300;
+      width: 100%;
+      letter-spacing: 0.3px;
+    }
+    .fb-search input::placeholder { color: var(--white-35); }
+
+    /* Toggle (All / Off-Plan / Secondary) */
+    .fb-toggle {
+      display: flex;
+      align-items: center;
+      padding: 0 4px;
+      flex-shrink: 0;
+    }
+    .fb-toggle-btn {
+      font-family: var(--font-ui);
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--white-35);
+      padding: 0 14px;
+      height: 100%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: color 0.2s ease;
+      white-space: nowrap;
+      position: relative;
+    }
+    .fb-toggle-btn::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 14px;
+      right: 14px;
+      height: 1.5px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transition: transform 0.2s ease;
+    }
+    .fb-toggle-btn:hover { color: var(--white-70); }
+    .fb-toggle-btn.active { color: var(--gold); }
+    .fb-toggle-btn.active::after { transform: scaleX(1); }
+
+    /* Select dropdowns */
+    .fb-select-wrap {
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .fb-select {
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--white-70);
+      font-family: var(--font-ui);
+      font-size: 8.5px;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding-right: 18px;
+      -webkit-appearance: none;
+      appearance: none;
+      white-space: nowrap;
+    }
+    .fb-select option { background: #111111; }
+    .fb-select-wrap::after {
+      content: '';
+      position: absolute;
+      right: 22px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 4px solid rgba(255,255,255,0.3);
+      pointer-events: none;
+    }
+
+    /* Bedroom pills */
+    .fb-beds {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      padding: 0 16px;
+      flex-shrink: 0;
+    }
+    .fb-beds-label {
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--white-35);
+      margin-right: 6px;
+      white-space: nowrap;
+    }
+    .fb-bed-btn {
+      font-family: var(--font-ui);
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: var(--white-35);
+      background: none;
+      border: 0.5px solid transparent;
+      border-radius: 2px;
+      padding: 4px 9px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      white-space: nowrap;
+    }
+    .fb-bed-btn:hover { color: var(--white-70); border-color: var(--subtle-border); }
+    .fb-bed-btn.active {
+      color: var(--gold);
+      border-color: var(--gold-border);
+      background: rgba(201,169,110,0.06);
+    }
+
+    /* ── Developer Logo Bar ─────────────────── */
+    .dev-bar {
+      padding: 0 10%;
+      background: var(--bg);
+      border-bottom: 0.5px solid var(--subtle-border);
+    }
+    .dev-bar-inner {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 16px 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .dev-bar-inner::-webkit-scrollbar { display: none; }
+    .dev-bar-label {
+      font-family: var(--font-ui);
+      font-size: 7.5px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--white-35);
+      white-space: nowrap;
+      margin-right: 16px;
+      flex-shrink: 0;
+    }
+    .dev-logo-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 18px;
+      background: none;
+      border: 0.5px solid transparent;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+      opacity: 0.45;
+      flex-shrink: 0;
+      height: 44px;
+    }
+    .dev-logo-btn:hover {
+      opacity: 0.75;
+      border-color: var(--subtle-border);
+    }
+    .dev-logo-btn.active {
+      opacity: 1;
+      border-color: var(--gold-border);
+      background: rgba(201,169,110,0.06);
+    }
+    .dev-logo-btn img {
+      height: 32px;
+      width: auto;
+      object-fit: contain;
+    }
+    .dev-logo-btn img.logo-dark {
+      filter: brightness(0) invert(1);
+    }
+    .dev-logo-btn[data-dev="all"] {
+      font-family: var(--font-ui);
+      font-size: 8.5px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--white-50);
+      opacity: 0.65;
+    }
+    .dev-logo-btn[data-dev="all"].active {
+      color: var(--gold);
+      opacity: 1;
+    }
+
+    /* ── Results Bar ───────────────────────── */
+    .results-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 0 0;
+      margin-bottom: 28px;
+    }
+    .result-count {
+      font-family: var(--font-ui);
+      font-size: 8.5px;
+      font-weight: 500;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--white-35);
+    }
+    .result-count strong {
+      color: var(--white-70);
+      font-weight: 600;
+    }
+    .clear-btn {
+      font-family: var(--font-ui);
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: none;
+      border: 0.5px solid var(--gold-border);
+      border-radius: 2px;
+      padding: 7px 16px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      display: none;
+    }
+    .clear-btn.visible { display: block; }
+    .clear-btn:hover { background: var(--gold); color: var(--bg); }
+
+    /* ── Props Section + Grid ──────────────── */
+    .props-section {
+      padding: 0 10% 100px;
+      background: var(--bg);
+    }
+    .props-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    /* ── Property Card ─────────────────────── */
+    .prop-card-v2 {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: var(--bg-dark2);
+      border: 0.5px solid var(--subtle-border);
+      border-radius: 3px;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(22px);
+      transition: border-color 0.3s ease;
+    }
+    .prop-card-v2.card-visible {
+      animation: cardReveal 0.6s cubic-bezier(0.22,1,0.36,1) forwards;
+      animation-delay: var(--card-delay, 0s);
+    }
+    .prop-card-v2:hover { border-color: rgba(201,169,110,0.35); }
+    .prop-card-v2:hover .pc-img img { transform: scale(1.06); }
+    .prop-card-v2:hover .pc-arrow {
+      border-color: var(--gold-border);
+      background: rgba(201,169,110,0.08);
+    }
+    .prop-card-v2:focus-visible { outline: 1.5px solid var(--gold); outline-offset: 2px; }
+
+    /* Card image */
+    .pc-img {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/10;
+      overflow: hidden;
+      background: #111;
+    }
+    .pc-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.55s cubic-bezier(0.22,1,0.36,1);
+    }
+    .pc-img-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top,  rgba(0,0,0,0.75) 0%, transparent 55%),
+        linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, transparent 40%);
+    }
+    .pc-img-color {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(201,169,110,0.07) 0%, transparent 60%);
+      mix-blend-mode: overlay;
+    }
+    .pc-no-img {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #161616 0%, #1C1C1C 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pc-no-img svg { opacity: 0.08; }
+
+    /* Badge */
+    .pc-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      font-size: 7.5px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      border-radius: 1px;
+      z-index: 1;
+    }
+    .pc-badge.offplan {
+      background: rgba(201,169,110,0.15);
+      color: var(--gold);
+      border: 0.5px solid var(--gold-border);
+    }
+    .pc-badge.secondary {
+      background: rgba(255,255,255,0.07);
+      color: var(--white-70);
+      border: 0.5px solid rgba(255,255,255,0.12);
+    }
+    .pc-badge.commercial {
+      background: rgba(156,39,176,0.12);
+      color: #CE93D8;
+      border: 0.5px solid rgba(156,39,176,0.25);
+    }
+    .pc-badge.sale {
+      background: rgba(76,175,80,0.12);
+      color: #81C784;
+      border: 0.5px solid rgba(76,175,80,0.25);
+    }
+    .pc-badge.rent {
+      background: rgba(255,152,0,0.12);
+      color: #FFB74D;
+      border: 0.5px solid rgba(255,152,0,0.25);
+    }
+
+    /* Delivery year chip */
+    .pc-year {
+      position: absolute;
+      bottom: 12px;
+      right: 14px;
+      font-size: 8px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      z-index: 1;
+    }
+
+    /* Card body */
+    .pc-body { padding: 22px 22px 22px; }
+    .pc-type {
+      font-size: 8px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+    .pc-name {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 2vw, 26px);
+      font-weight: 400;
+      line-height: 1.15;
+      color: var(--white);
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+    .pc-developer {
+      font-size: 8.5px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--white-35);
+      margin-bottom: 6px;
+    }
+    .pc-location {
+      font-size: 8.5px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--white-50);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .pc-location::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+    .pc-footer {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding-top: 16px;
+      border-top: 0.5px solid var(--subtle-border);
+    }
+    .pc-price-label {
+      font-size: 7.5px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--white-35);
+      margin-bottom: 5px;
+    }
+    .pc-price {
+      font-family: var(--font-display);
+      font-size: 23px;
+      font-weight: 400;
+      color: var(--gold);
+      line-height: 1;
+      letter-spacing: -0.01em;
+    }
+    .pc-price.no-price {
+      font-size: 13px;
+      font-style: italic;
+      color: var(--white-35);
+    }
+    .pc-arrow {
+      width: 34px;
+      height: 34px;
+      border: 0.5px solid var(--subtle-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s, background 0.2s;
+      flex-shrink: 0;
+    }
+
+    /* ── Skeleton Loaders ──────────────────── */
+    .skel-card {
+      background: var(--bg-dark3, #1C1C1C);
+      border: 0.5px solid var(--subtle-border);
+      border-radius: 3px;
+      overflow: hidden;
+      animation: skel-pulse 2s ease-in-out infinite;
+    }
+    .skel-card:nth-child(2) { animation-delay: 0.1s; }
+    .skel-card:nth-child(3) { animation-delay: 0.2s; }
+    .skel-card:nth-child(4) { animation-delay: 0.3s; }
+    .skel-card:nth-child(5) { animation-delay: 0.15s; }
+    .skel-card:nth-child(6) { animation-delay: 0.25s; }
+    .skel-card:nth-child(7) { animation-delay: 0.35s; }
+    .skel-card:nth-child(8) { animation-delay: 0.05s; }
+    @keyframes skel-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.55; }
+    }
+    .skel-img {
+      width: 100%;
+      aspect-ratio: 16/10;
+    }
+    .skel-img, .skel-line {
+      background: linear-gradient(90deg,
+        var(--bg-dark2, #161616) 25%,
+        var(--bg-dark3, #1C1C1C) 37%,
+        rgba(201,169,110,0.03) 50%,
+        var(--bg-dark3, #1C1C1C) 63%,
+        var(--bg-dark2, #161616) 75%);
+      background-size: 400% 100%;
+      animation: skel-shimmer 1.8s ease infinite;
+    }
+    @keyframes skel-shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .skel-body { padding: 22px; }
+    .skel-line {
+      height: 10px;
+      border-radius: 2px;
+      margin-bottom: 10px;
+    }
+    .skel-line.h18 { height: 18px; }
+    .skel-line.h28 { height: 28px; margin-bottom: 6px; }
+    .skel-line.w40 { width: 40%; }
+    .skel-line.w60 { width: 60%; }
+    .skel-line.w80 { width: 80%; }
+    .skel-line.mt { margin-top: 16px; }
+
+    /* ── Load More ─────────────────────────── */
+    .load-more-wrap {
+      text-align: center;
+      padding-top: 56px;
+    }
+    .load-more-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--font-ui);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--white-70);
+      background: none;
+      border: 0.5px solid var(--subtle-border);
+      border-radius: 2px;
+      padding: 18px 48px;
+      cursor: pointer;
+      transition: color 0.25s, border-color 0.25s, background 0.25s, transform 0.2s;
+    }
+    .load-more-btn:hover {
+      color: var(--gold);
+      border-color: var(--gold-border);
+      background: rgba(201,169,110,0.04);
+    }
+    .load-more-btn:active { transform: translateY(1px); }
+    .load-more-btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+    .load-more-spinner {
+      width: 12px;
+      height: 12px;
+      border: 1.5px solid rgba(201,169,110,0.3);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    .load-more-btn.loading .load-more-spinner { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── No Results ────────────────────────── */
+    .no-results {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 96px 0;
+    }
+    .no-results-icon {
+      width: 48px;
+      height: 48px;
+      border: 0.5px solid var(--gold-border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+    }
+    .no-results-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 300;
+      color: var(--white-35);
+      margin-bottom: 10px;
+    }
+    .no-results-sub {
+      font-size: 11px;
+      color: var(--white-35);
+      letter-spacing: 0.5px;
+      margin-bottom: 28px;
+    }
+
+    /* ── Error State ───────────────────────── */
+    .error-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 96px 24px;
+    }
+    .error-state-icon {
+      width: 56px;
+      height: 56px;
+      border: 0.5px solid var(--gold-border, rgba(201,169,110,0.25));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+    }
+    .error-state-title {
+      font-family: var(--font-display, 'Cormorant Garamond', serif);
+      font-size: 28px;
+      font-weight: 300;
+      color: var(--white-70, rgba(255,255,255,0.7));
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+    .error-state-sub {
+      font-family: var(--font-ui, 'Montserrat', sans-serif);
+      font-size: 12px;
+      color: var(--white-35);
+      letter-spacing: 0.3px;
+      line-height: 1.7;
+      margin-bottom: 32px;
+      max-width: 420px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .error-state-links {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .error-state-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-ui, 'Montserrat', sans-serif);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 14px 28px;
+      border-radius: 2px;
+      transition: color 0.25s, border-color 0.25s, background 0.25s;
+    }
+    .error-state-link--wa {
+      color: #25D366;
+      border: 0.5px solid rgba(37,211,102,0.25);
+      background: rgba(37,211,102,0.04);
+    }
+    .error-state-link--wa:hover {
+      color: #fff;
+      border-color: #25D366;
+      background: rgba(37,211,102,0.12);
+    }
+    .error-state-link--wa:focus-visible {
+      outline: 2px solid #25D366;
+      outline-offset: 2px;
+    }
+    .error-state-link--email {
+      color: var(--gold, #C9A96E);
+      border: 0.5px solid var(--gold-border, rgba(201,169,110,0.25));
+      background: rgba(201,169,110,0.04);
+    }
+    .error-state-link--email:hover {
+      color: #fff;
+      border-color: var(--gold, #C9A96E);
+      background: rgba(201,169,110,0.12);
+    }
+    .error-state-link--email:focus-visible {
+      outline: 2px solid var(--gold, #C9A96E);
+      outline-offset: 2px;
+    }
+
+    /* ── Responsive ────────────────────────── */
+    @media (max-width: 1024px) {
+      .props-grid { grid-template-columns: repeat(2, 1fr); }
+      .filter-bar-inner {
+        flex-wrap: wrap;
+        min-height: auto;
+        padding: 8px 0;
+        gap: 0;
+      }
+      .fb-search {
+        max-width: none;
+        width: 100%;
+        padding: 8px 0 12px;
+        border-bottom: 0.5px solid var(--subtle-border);
+      }
+      .fb-sep { display: none; }
+      .fb-toggle, .fb-select-wrap, .fb-beds {
+        padding: 10px 16px 10px 0;
+        border-bottom: 0.5px solid rgba(255,255,255,0.04);
+      }
+      .ph-hero { padding: 140px 10% 52px; }
+    }
+
+    @media (max-width: 768px) {
+      .props-grid { grid-template-columns: 1fr; }
+      .ph-hero { padding: 130px 6% 40px; min-height: 300px; }
+      .props-section { padding: 0 6% 72px; }
+      .filter-bar { padding: 0 6%; }
+      .pc-name { font-size: 21px; }
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+  <!-- ── Nav Component ── -->
+  <div data-component="nav"></div>
+
+  <!-- ═══════════════════════════════════════════ PAGE HERO -->
+  <section class="ph-hero">
+    <div class="ph-hero-bg"></div>
+    <div class="ph-grain"></div>
+    <div class="ph-hero-deco"></div>
+    <div class="ph-hero-content">
+      <div class="section-tag">Dubai Real Estate</div>
+      <h1 class="ph-hero-title">
+        Browse<br>
+        <em class="gold">Properties</em>
+      </h1>
+      <div class="ph-hero-meta">
+        <p class="ph-hero-sub">Off-plan and secondary market opportunities across Dubai</p>
+        <span class="ph-hero-count" id="heroCount"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ STICKY FILTER BAR -->
+  <div class="filter-bar" id="filterBar">
+    <div class="filter-bar-inner">
+
+      <!-- Search -->
+      <div class="fb-search">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <circle cx="6" cy="6" r="5" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
+          <path d="M10 10l3 3" stroke="rgba(255,255,255,0.35)" stroke-width="1" stroke-linecap="round"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Search name, developer, location…" autocomplete="off" />
+      </div>
+
+      <div class="fb-sep"></div>
+
+      <!-- Market toggle -->
+      <div class="fb-toggle">
+        <button class="fb-toggle-btn active" data-market="offplan">Off-Plan</button>
+        <button class="fb-toggle-btn" data-market="sale">For Sale</button>
+        <button class="fb-toggle-btn" data-market="rent">For Rent</button>
+      </div>
+
+      <div class="fb-sep"></div>
+
+      <!-- Property type -->
+      <div class="fb-select-wrap">
+        <select class="fb-select" id="typeFilter">
+          <option value="">All Types</option>
+        </select>
+      </div>
+
+      <div class="fb-sep"></div>
+
+      <!-- City -->
+      <div class="fb-select-wrap">
+        <select class="fb-select" id="cityFilter">
+          <option value="">All Cities</option>
+        </select>
+      </div>
+
+      <div class="fb-sep"></div>
+
+      <!-- Bedrooms -->
+      <div class="fb-beds">
+        <span class="fb-beds-label">Beds</span>
+        <button class="fb-bed-btn active" data-beds="any">Any</button>
+        <button class="fb-bed-btn" data-beds="1">1</button>
+        <button class="fb-bed-btn" data-beds="2">2</button>
+        <button class="fb-bed-btn" data-beds="3">3</button>
+        <button class="fb-bed-btn" data-beds="4">4</button>
+        <button class="fb-bed-btn" data-beds="5">5+</button>
+      </div>
+
+      <div class="fb-sep"></div>
+
+      <!-- Sort -->
+      <div class="fb-select-wrap" style="border-right: none;">
+        <select class="fb-select" id="sortFilter">
+          <option value="">Sort: Default</option>
+          <option value="price-asc">Price: Low → High</option>
+          <option value="price-desc">Price: High → Low</option>
+        </select>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ DEVELOPER BAR -->
+  <div class="dev-bar">
+    <div class="dev-bar-inner">
+      <span class="dev-bar-label">Developer</span>
+      <button class="dev-logo-btn active" data-dev="all">All</button>
+      <button class="dev-logo-btn" data-dev="emaar"><img src="assets/developers/emaar.png" alt="Emaar" class="logo-dark" /></button>
+      <button class="dev-logo-btn" data-dev="damac"><img src="assets/developers/damac.png" alt="DAMAC" class="logo-dark" /></button>
+      <button class="dev-logo-btn" data-dev="sobha"><img src="assets/developers/sobha.png" alt="Sobha" class="logo-dark" /></button>
+      <button class="dev-logo-btn" data-dev="binghatti"><img src="assets/developers/binghatti.png" alt="Binghatti" class="logo-dark" /></button>
+      <button class="dev-logo-btn" data-dev="danube"><img src="assets/developers/danube.png" alt="Danube" class="logo-dark" /></button>
+      <button class="dev-logo-btn" data-dev="samana"><img src="assets/developers/samana.png" alt="Samana" class="logo-dark" /></button>
+      <button class="dev-logo-btn" data-dev="nakheel"><img src="assets/developers/nakheel.png" alt="Nakheel" class="logo-dark" /></button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ PROPERTY GRID -->
+  <section class="props-section">
+    <div class="results-bar">
+      <div class="result-count">Showing <strong id="resultCount">—</strong> properties</div>
+      <button class="clear-btn" id="clearFilters">✕ Clear Filters</button>
+    </div>
+
+    <div class="props-grid" id="propsGrid" aria-live="polite">
+      <!-- 8 skeleton cards on first load -->
+      <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line w40"></div><div class="skel-line h28 w80"></div><div class="skel-line w60"></div><div class="skel-line w60"></div><div class="skel-line h18 w40 mt"></div></div></div>
+      <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line w40"></div><div class="skel-line h28 w80"></div><div class="skel-line w60"></div><div class="skel-line w60"></div><div class="skel-line h18 w40 mt"></div></div></div>
+      <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line w40"></div><div class="skel-line h28 w80"></div><div class="skel-line w60"></div><div class="skel-line w60"></div><div class="skel-line h18 w40 mt"></div></div></div>
+      <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line w40"></div><div class="skel-line h28 w80"></div><div class="skel-line w60"></div><div class="skel-line w60"></div><div class="skel-line h18 w40 mt"></div></div></div>
+      <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line w40"></div><div class="skel-line h28 w80"></div><div class="skel-line w60"></div><div class="skel-line w60"></div><div class="skel-line h18 w40 mt"></div></div></div>
+      <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line w40"></div><div class="skel-line h28 w80"></div><div class="skel-line w60"></div><div class="skel-line w60"></div><div class="skel-line h18 w40 mt"></div></div></div>
+      <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line w40"></div><div class="skel-line h28 w80"></div><div class="skel-line w60"></div><div class="skel-line w60"></div><div class="skel-line h18 w40 mt"></div></div></div>
+      <div class="skel-card"><div class="skel-img"></div><div class="skel-body"><div class="skel-line w40"></div><div class="skel-line h28 w80"></div><div class="skel-line w60"></div><div class="skel-line w60"></div><div class="skel-line h18 w40 mt"></div></div></div>
+    </div>
+
+    <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
+      <button class="load-more-btn" id="loadMoreBtn">
+        <span class="load-more-spinner" id="loadSpinner"></span>
+        <span id="loadMoreText">Load More Properties</span>
+      </button>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ── Footer & WhatsApp ── -->
+  <div data-component="footer"></div>
+  <div data-component="whatsapp"></div>
+
+  <!-- ── Component: Distressed Deals Widget ── -->
+  <div data-component="distressed"></div>
+
+  <script src="js/components.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+
+  <script>
+  (function () {
+    'use strict';
+
+    /* ── State ─────────────────────────── */
+    var allProperties    = [];
+    var filteredProperties = [];
+    var visibleCount     = 12;
+    var apiPage          = 1;
+    var isLoading        = false;
+    var hasMorePages     = true;
+
+    var activeMarket = 'offplan';
+    var activeType   = '';
+    var activeCity   = '';
+    var activeBeds   = 'any';
+    var activeSort   = '';
+    var searchQuery  = '';
+    var activeDev    = '';
+
+    /* ── DOM refs ──────────────────────── */
+    var grid         = document.getElementById('propsGrid');
+    var resultCountEl = document.getElementById('resultCount');
+    var clearBtn     = document.getElementById('clearFilters');
+    var loadMoreWrap = document.getElementById('loadMoreWrap');
+    var loadMoreBtn  = document.getElementById('loadMoreBtn');
+    var loadMoreText = document.getElementById('loadMoreText');
+    var loadSpinner  = document.getElementById('loadSpinner');
+    var searchInput  = document.getElementById('searchInput');
+    var typeFilter   = document.getElementById('typeFilter');
+    var cityFilter   = document.getElementById('cityFilter');
+    var sortFilter   = document.getElementById('sortFilter');
+    var heroCount    = document.getElementById('heroCount');
+
+    /* ── Helpers ───────────────────────── */
+    function esc(str) {
+      return String(str == null ? '' : str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function formatPrice(val) {
+      var n = Number(val);
+      if (!n || isNaN(n)) return null;
+      return 'AED\u00A0' + n.toLocaleString('en-US');
+    }
+
+    function formatYear(ts) {
+      if (!ts) return null;
+      var d = new Date(Number(ts));
+      if (isNaN(d.getTime())) return null;
+      var yr = d.getFullYear();
+      if (yr < 2000 || yr > 2100) return null;
+      return yr;
+    }
+
+    function getMarketType(p) {
+      if (p._source === 'commercial') return 'commercial';
+      var v = (p.OffplanOrSecondary || '').toLowerCase();
+      if (v === 'commercial') return 'commercial';
+      if (v.indexOf('secondary') !== -1) return 'secondary';
+      if (v.indexOf('offplan') !== -1 || v.indexOf('off-plan') !== -1 || v.indexOf('off plan') !== -1) return 'offplan';
+      return p._source || 'offplan';
+    }
+
+    function getLocation(p) {
+      var district = (p.Location && p.Location.district) || '';
+      var city     = (p.Location && p.Location.city && p.Location.city.name) || '';
+      if (district && city) return district + ', ' + city;
+      return district || city || '';
+    }
+
+    function getCity(p) {
+      return (p.Location && p.Location.city && p.Location.city.name) || '';
+    }
+
+    function getDeveloper(p) {
+      return (p.Organisation && p.Organisation.organizationName) || '';
+    }
+
+    function getType(p) {
+      return (p.Type && p.Type.name) || '';
+    }
+
+    function getBedrooms(p) {
+      var v = p.Bedrooms != null ? p.Bedrooms
+            : p.BedroomsMin != null ? p.BedroomsMin
+            : p.bedrooms != null ? p.bedrooms
+            : p.bedroom_count != null ? p.bedroom_count
+            : p.rooms != null ? p.rooms
+            : null;
+      return v;
+    }
+
+    function extractItems(data, source) {
+      var items = [];
+      if (Array.isArray(data))           items = data;
+      else if (Array.isArray(data && data.response)) items = data.response;
+      else if (Array.isArray(data && data.objects)) items = data.objects;
+      else if (Array.isArray(data && data.data))    items = data.data;
+      else if (Array.isArray(data && data.items))   items = data.items;
+      else if (Array.isArray(data && data.results)) items = data.results;
+      return items.map(function (p) {
+        return Object.assign({}, p, { _source: source });
+      });
+    }
+
+    /* ── Supabase Config ─────────────────── */
+    var SUPA_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
+    var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhbWtuZWtkYnRybXhvcHl3Z3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NjMxOTksImV4cCI6MjA4OTAzOTE5OX0.HCmQ_4cyuImr3S1wQ-V6oW2G2U4a1rzMUlLPqHC-OeA';
+    var supaClient = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+
+    function fetchSupabaseSecondary() {
+      return supaClient
+        .from('secondary_listings')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .then(function (res) {
+          if (res.error) { console.error('Supabase error:', res.error); return []; }
+          return (res.data || []).filter(function (s) {
+            return s.published !== false;
+          }).map(function (s) {
+            var lt = s.listing_type || 'ready_secondary';
+            var marketType = lt === 'commercial' ? 'commercial' : 'secondary';
+            var badgeText = lt === 'secondary_offplan' ? 'Off-Plan Resale'
+                         : lt === 'commercial' ? 'Commercial'
+                         : 'Secondary';
+            return {
+              _source: marketType,
+              _listingType: lt,
+              _supabaseRaw: s,
+              project_id: s.id,
+              ShortName: s.name,
+              LayoutPriceMin: s.price,
+              Bedrooms: s.bedrooms,
+              Avatar: s.image_main || '',
+              Location: { district: s.location || '', city: { name: s.city || 'Dubai' } },
+              OffplanOrSecondary: marketType,
+              Type: { name: s.property_type || s.commercial_type || '' },
+              Organisation: { organizationName: lt === 'secondary_offplan' ? (s.developer || '') : '' },
+              _supabaseStatus: s.status,
+              _offeringType: s.offering_type || 'sale',
+              _supabaseLinkType: 'secondary',
+              _supabaseBadge: badgeText,
+              _buildingName: s.building_name || '',
+              _furnished: s.furnished || '',
+              _handoverDate: s.handover_date || '',
+              _paymentPlan: s.payment_plan || '',
+              _originalPrice: s.original_price,
+              _completionPct: s.completion_percentage,
+              _commercialType: s.commercial_type || '',
+              _fitted: s.fitted || '',
+              _parkingSpaces: s.parking_spaces || 0,
+              _rentalYield: s.rental_yield || '',
+              _areaSqft: s.area_sqft || 0,
+              _featured: s.featured
+            };
+          });
+        })
+        .catch(function (err) { console.error('Supabase fetch error:', err); return []; });
+    }
+
+    /* ── API Fetch ─────────────────────── */
+    var WHITELISTED_DEVS = ['emaar', 'damac', 'nakheel', 'sobha', 'binghatti', 'samana', 'danube'];
+
+    function getDevKey(p) {
+      var org = ((p.Organisation || {}).organizationName || '').toLowerCase();
+      for (var i = 0; i < WHITELISTED_DEVS.length; i++) {
+        if (org.indexOf(WHITELISTED_DEVS[i]) !== -1) return WHITELISTED_DEVS[i];
+      }
+      return '';
+    }
+
+    function fetchOffplanFromSupabase() {
+      return fetch(SUPA_URL + '/rest/v1/offplan_listings?order=created_date.desc&limit=1000', {
+        headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+      })
+        .then(function (r) { return r.ok ? r.json() : []; })
+        .then(function (rows) {
+          return rows.map(function (row) {
+            return {
+              _source: 'offplan',
+              project_id: row.project_id,
+              ShortName: row.short_name,
+              OffplanOrSecondary: row.offplan_or_secondary,
+              LayoutPriceMin: row.price_min,
+              LayoutPriceMax: row.price_max,
+              LayoutAreaTotalMin: row.area_min,
+              LayoutAreaTotalMax: row.area_max,
+              DeliveryDate: row.delivery_date,
+              CreatedDate: row.created_date,
+              Avatar: row.avatar,
+              Type: row.type_name ? { name: row.type_name } : null,
+              Location: {
+                address: row.location_address,
+                district: row.location_district,
+                city: row.location_city ? { name: row.location_city } : null,
+                lat: row.location_lat,
+                lng: row.location_lng
+              },
+              Organisation: { organizationName: row.org_name, organizationLogo: row.org_logo },
+              Currency: { currencySymbol: row.currency_symbol, currencyValueUSD: row.currency_usd },
+              Bedrooms: row.bedrooms,
+              Recomended: row.recommended
+            };
+          });
+        })
+        .catch(function () { return []; });
+    }
+
+    function fetchAllListings() {
+      return Promise.all([fetchOffplanFromSupabase(), fetchSupabaseSecondary()])
+        .then(function (results) {
+          return results[0].concat(results[1]);
+        });
+    }
+
+    /* ── Dropdowns ─────────────────────── */
+    function rebuildDropdowns() {
+      var savedType = typeFilter.value;
+      var savedCity = cityFilter.value;
+
+      var types  = [];
+      var cities = [];
+      var seenT  = {};
+      var seenC  = {};
+
+      allProperties.forEach(function (p) {
+        var t = getType(p);
+        var c = getCity(p);
+        if (t && !seenT[t]) { seenT[t] = 1; types.push(t); }
+        if (c && !seenC[c]) { seenC[c] = 1; cities.push(c); }
+      });
+
+      types.sort();
+      cities.sort();
+
+      while (typeFilter.options.length > 1) typeFilter.remove(1);
+      types.forEach(function (t) {
+        typeFilter.add(new Option(t, t));
+      });
+      typeFilter.value = savedType;
+
+      while (cityFilter.options.length > 1) cityFilter.remove(1);
+      cities.forEach(function (c) {
+        cityFilter.add(new Option(c, c));
+      });
+      cityFilter.value = savedCity;
+    }
+
+    /* ── Filter + Sort ─────────────────── */
+    function applyFilters() {
+      var result = allProperties.slice();
+
+      if (activeMarket === 'offplan') {
+        result = result.filter(function (p) { return getMarketType(p) === 'offplan'; });
+      } else if (activeMarket === 'sale') {
+        result = result.filter(function (p) {
+          var mt = getMarketType(p);
+          if (mt === 'offplan') return false;
+          return (p._offeringType || 'sale') === 'sale';
+        });
+      } else if (activeMarket === 'rent') {
+        result = result.filter(function (p) {
+          var mt = getMarketType(p);
+          if (mt === 'offplan') return false;
+          return p._offeringType === 'rent';
+        });
+      }
+
+      if (activeType) {
+        result = result.filter(function (p) { return getType(p) === activeType; });
+      }
+
+      if (activeCity) {
+        result = result.filter(function (p) { return getCity(p) === activeCity; });
+      }
+
+      if (activeBeds !== 'any') {
+        var n = parseInt(activeBeds, 10);
+        result = result.filter(function (p) {
+          var b = getBedrooms(p);
+          if (b === null || b === undefined) return false;
+          var nb = Number(b);
+          return n === 5 ? nb >= 5 : nb === n;
+        });
+      }
+
+      if (activeDev) {
+        result = result.filter(function (p) { return getDevKey(p) === activeDev; });
+      }
+
+      if (searchQuery) {
+        var q = searchQuery.toLowerCase();
+        result = result.filter(function (p) {
+          return (p.ShortName || '').toLowerCase().indexOf(q) !== -1
+              || getDeveloper(p).toLowerCase().indexOf(q) !== -1
+              || getLocation(p).toLowerCase().indexOf(q) !== -1;
+        });
+      }
+
+      if (activeSort === 'price-asc') {
+        result.sort(function (a, b) { return (a.LayoutPriceMin || 0) - (b.LayoutPriceMin || 0); });
+      } else if (activeSort === 'price-desc') {
+        result.sort(function (a, b) { return (b.LayoutPriceMin || 0) - (a.LayoutPriceMin || 0); });
+      } else {
+        /* Default: featured first, then newest */
+        result.sort(function (a, b) {
+          if (a._featured && !b._featured) return -1;
+          if (!a._featured && b._featured) return 1;
+          return (b.CreatedDate || 0) - (a.CreatedDate || 0);
+        });
+      }
+
+      filteredProperties = result;
+    }
+
+    function hasActiveFilters() {
+      return activeMarket !== 'all' || activeType || activeCity || activeBeds !== 'any' || activeSort || searchQuery || activeDev;
+    }
+
+    /* ── Card Builder ──────────────────── */
+    function createCard(p, idx) {
+      var a = document.createElement('a');
+      a.className = 'prop-card-v2';
+      a.href = p._supabaseLinkType === 'secondary'
+        ? 'property-detail.html?id=' + esc(p.project_id || '') + '&type=secondary'
+        : 'property-detail.html?id=' + esc(p.project_id || '');
+      a.tabIndex = 0;
+      a.style.setProperty('--card-delay', (idx % 12) * 0.042 + 's');
+
+      var market    = getMarketType(p);
+      var lt        = p._listingType || '';
+      var isRent    = p._offeringType === 'rent';
+      var badgeText, badgeCls;
+      if (market === 'secondary' || market === 'commercial') {
+        badgeText = isRent ? 'For Rent' : 'For Sale';
+        badgeCls  = isRent ? 'rent' : 'sale';
+      } else {
+        badgeText = p._supabaseBadge || 'Off-Plan';
+        badgeCls  = 'offplan';
+      }
+      var price     = formatPrice(p.LayoutPriceMin);
+      var year      = formatYear(p.DeliveryDate);
+      var location  = getLocation(p);
+      var developer = getDeveloper(p);
+      var type      = getType(p);
+      var imgSrc    = p.Avatar || '';
+
+      var imgHtml = imgSrc
+        ? '<img src="' + esc(imgSrc) + '" alt="' + esc(p.ShortName || '') + '" loading="lazy" onerror="this.parentNode.querySelector(\'.pc-no-img\').style.display=\'flex\';this.style.display=\'none\'"/>'
+        : '';
+
+      /* Build type-specific meta line */
+      var metaHtml = '';
+      if (lt === 'ready_secondary') {
+        var beds = p.Bedrooms ? (p.Bedrooms + 'BR ') : '';
+        var propLabel = beds + (type || '');
+        if (propLabel) metaHtml += '<div class="pc-type">' + esc(propLabel) + '</div>';
+        var statusRaw = p._supabaseStatus || '';
+        if (statusRaw) {
+          var sCls = statusRaw.toLowerCase() === 'rented' ? 'color:rgba(255,152,0,0.9)' : 'color:rgba(76,175,80,0.9)';
+          metaHtml += '<div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;' + sCls + ';margin-top:2px;">' + esc(statusRaw) + '</div>';
+        }
+        if (p._rentalYield) metaHtml += '<div style="font-size:10px;color:rgba(201,169,110,0.8);margin-top:2px;">Yield: ' + esc(p._rentalYield) + '</div>';
+      } else if (lt === 'secondary_offplan') {
+        var beds2 = p.Bedrooms ? (p.Bedrooms + 'BR ') : '';
+        if (beds2 || type) metaHtml += '<div class="pc-type">' + esc(beds2 + (type || '')) + '</div>';
+        if (p._handoverDate) metaHtml += '<div style="font-size:10px;color:var(--white-50);margin-top:2px;">Handover: ' + esc(p._handoverDate) + '</div>';
+        if (p._paymentPlan) metaHtml += '<div style="font-size:10px;color:var(--white-50);margin-top:1px;">Plan: ' + esc(p._paymentPlan) + '</div>';
+      } else if (lt === 'commercial') {
+        if (p._commercialType) metaHtml += '<div class="pc-type">' + esc(p._commercialType) + '</div>';
+        if (p._areaSqft) metaHtml += '<div style="font-size:10px;color:var(--white-50);margin-top:2px;">' + Number(p._areaSqft).toLocaleString() + ' sq ft</div>';
+        if (p._fitted) metaHtml += '<div style="font-size:10px;color:var(--white-50);margin-top:1px;">' + esc(p._fitted) + '</div>';
+        var statusRaw2 = p._supabaseStatus || '';
+        if (statusRaw2) {
+          var sCls2 = statusRaw2.toLowerCase() === 'rented' ? 'color:rgba(255,152,0,0.9)' : 'color:rgba(76,175,80,0.9)';
+          metaHtml += '<div style="font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;' + sCls2 + ';margin-top:2px;">' + esc(statusRaw2) + '</div>';
+        }
+      } else {
+        /* Off-plan from API — keep original display */
+        if (type) metaHtml += '<div class="pc-type">' + esc(type) + '</div>';
+      }
+
+      /* Price display — off-plan resale with original price comparison */
+      var priceHtml = '';
+      if (price) {
+        if (lt === 'secondary_offplan' && p._originalPrice && p._originalPrice > 0) {
+          var origFmt = formatPrice(p._originalPrice);
+          priceHtml = '<div class="pc-price">' + price + '</div>' +
+            (origFmt ? '<div style="font-size:10px;color:var(--white-35);margin-top:1px;">Originally ' + origFmt + '</div>' : '');
+        } else {
+          priceHtml = '<div class="pc-price">' + price + '</div>';
+        }
+      } else {
+        priceHtml = '<div class="pc-price no-price">Price on Request</div>';
+      }
+
+      /* Completion bar for off-plan resale */
+      var completionHtml = '';
+      if (lt === 'secondary_offplan' && p._completionPct != null && p._completionPct > 0) {
+        completionHtml = '<div style="margin-top:6px;"><div style="display:flex;justify-content:space-between;font-size:9px;color:var(--white-35);margin-bottom:3px;"><span>Completion</span><span>' + p._completionPct + '%</span></div><div style="height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;"><div style="width:' + p._completionPct + '%;height:100%;background:linear-gradient(90deg,rgba(201,169,110,0.6),rgba(201,169,110,0.9));border-radius:2px;"></div></div></div>';
+      }
+
+      a.innerHTML =
+        '<div class="pc-img">' +
+          '<div class="pc-no-img"' + (imgSrc ? ' style="display:none"' : '') + '>' +
+            '<svg width="48" height="48" viewBox="0 0 48 48" fill="none">' +
+              '<rect x="8" y="14" width="32" height="24" rx="2" stroke="white" stroke-width="1"/>' +
+              '<circle cx="18" cy="22" r="3" stroke="white" stroke-width="1"/>' +
+              '<path d="M8 32l9-7 7 6 5-4 9 7" stroke="white" stroke-width="1"/>' +
+            '</svg>' +
+          '</div>' +
+          imgHtml +
+          '<div class="pc-img-overlay"></div>' +
+          '<div class="pc-img-color"></div>' +
+          '<span class="pc-badge ' + badgeCls + '">' + badgeText + '</span>' +
+          (year ? '<span class="pc-year">Delivery ' + year + '</span>' : '') +
+        '</div>' +
+        '<div class="pc-body">' +
+          metaHtml +
+          '<div class="pc-name">' + esc(p.ShortName || 'Unnamed Property') + '</div>' +
+          (developer ? '<div class="pc-developer">by ' + esc(developer) + '</div>' : '') +
+          (location  ? '<div class="pc-location">' + esc(location) + '</div>' : '') +
+          completionHtml +
+          '<div class="pc-footer">' +
+            '<div>' +
+              (market === 'secondary' || market === 'commercial' ? '' : '<div class="pc-price-label">Starting from</div>') +
+              priceHtml +
+            '</div>' +
+            '<div class="pc-arrow">' +
+              '<svg width="12" height="12" viewBox="0 0 12 12" fill="none">' +
+                '<path d="M2 6h8M7 3l3 3-3 3" stroke="rgba(201,169,110,0.8)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>' +
+              '</svg>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      return a;
+    }
+
+    /* ── Render ────────────────────────── */
+    function renderCards() {
+      applyFilters();
+
+      var showing = filteredProperties.slice(0, visibleCount);
+      var total   = filteredProperties.length;
+
+      resultCountEl.textContent = total.toLocaleString();
+      clearBtn.classList.toggle('visible', hasActiveFilters());
+
+      grid.innerHTML = '';
+
+      if (showing.length === 0) {
+        grid.innerHTML =
+          '<div class="no-results">' +
+            '<div class="no-results-icon">' +
+              '<svg width="20" height="20" viewBox="0 0 20 20" fill="none">' +
+                '<circle cx="9" cy="9" r="7" stroke="rgba(201,169,110,0.5)" stroke-width="1"/>' +
+                '<path d="M15 15l3 3" stroke="rgba(201,169,110,0.5)" stroke-width="1" stroke-linecap="round"/>' +
+              '</svg>' +
+            '</div>' +
+            '<div class="no-results-title">No properties found</div>' +
+            '<p class="no-results-sub">Try adjusting your filters</p>' +
+            (hasActiveFilters()
+              ? '<button class="btn-primary" onclick="document.getElementById(\'clearFilters\').click()" style="margin-top:8px;">Clear Filters</button>'
+              : '') +
+          '</div>';
+        loadMoreWrap.style.display = 'none';
+        return;
+      }
+
+      showing.forEach(function (prop, i) {
+        grid.appendChild(createCard(prop, i));
+      });
+
+      /* Staggered reveal */
+      var cards = grid.querySelectorAll('.prop-card-v2');
+      requestAnimationFrame(function () {
+        cards.forEach(function (card, i) {
+          setTimeout(function () { card.classList.add('card-visible'); }, i * 42);
+        });
+      });
+
+      /* Load More visibility */
+      var canLoadMore = visibleCount < total || hasMorePages;
+      loadMoreWrap.style.display = canLoadMore ? 'block' : 'none';
+      setLoadMoreIdle();
+    }
+
+    function setLoadMoreIdle() {
+      loadMoreBtn.disabled = false;
+      loadMoreBtn.classList.remove('loading');
+      loadSpinner.style.display = 'none';
+      loadMoreText.textContent = 'Load More Properties';
+    }
+
+    function setLoadMoreBusy() {
+      loadMoreBtn.disabled = true;
+      loadMoreBtn.classList.add('loading');
+      loadSpinner.style.display = 'block';
+      loadMoreText.textContent = 'Loading…';
+    }
+
+    /* ── Apply URL params from hero search ── */
+    function applyURLParams() {
+      var params = new URLSearchParams(window.location.search);
+      var pType = params.get('type');
+      var pBeds = params.get('beds');
+      var pPrice = params.get('price');
+      var pLoc = params.get('location');
+
+      if (pType) {
+        /* Match against type dropdown options */
+        var opts = typeFilter.options;
+        for (var i = 0; i < opts.length; i++) {
+          if (opts[i].value === pType) { typeFilter.value = pType; activeType = pType; break; }
+        }
+      }
+
+      if (pBeds) {
+        var bedVal = pBeds === 'Studio' ? '1' : pBeds;
+        var bedBtn = document.querySelector('[data-beds="' + bedVal + '"]');
+        if (bedBtn) {
+          document.querySelectorAll('.fb-bed-btn').forEach(function (b) { b.classList.remove('active'); });
+          bedBtn.classList.add('active');
+          activeBeds = bedVal;
+        }
+      }
+
+      if (pPrice) {
+        /* Price range filter — set sort by price and use search as proxy */
+        var parts = pPrice.split('-');
+        var lo = parseInt(parts[0], 10) || 0;
+        var hi = parseInt(parts[1], 10) || Infinity;
+        allProperties = allProperties.filter(function (p) {
+          var pr = p.LayoutPriceMin || 0;
+          return pr >= lo && pr <= hi;
+        });
+      }
+
+      if (pLoc) {
+        searchInput.value = pLoc;
+        searchQuery = pLoc;
+      }
+    }
+
+    /* ── Events ────────────────────────── */
+
+    /* Developer logo toggle */
+    document.querySelectorAll('.dev-logo-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.dev-logo-btn').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        activeDev = btn.dataset.dev === 'all' ? '' : btn.dataset.dev;
+        visibleCount = 12;
+        renderCards();
+      });
+    });
+
+    /* Market toggle */
+    document.querySelectorAll('.fb-toggle-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.fb-toggle-btn').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        activeMarket = btn.dataset.market;
+        visibleCount = 12;
+        renderCards();
+      });
+    });
+
+    typeFilter.addEventListener('change', function () {
+      activeType = typeFilter.value;
+      visibleCount = 12;
+      renderCards();
+    });
+
+    cityFilter.addEventListener('change', function () {
+      activeCity = cityFilter.value;
+      visibleCount = 12;
+      renderCards();
+    });
+
+    document.querySelectorAll('.fb-bed-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.fb-bed-btn').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        activeBeds = btn.dataset.beds;
+        visibleCount = 12;
+        renderCards();
+      });
+    });
+
+    sortFilter.addEventListener('change', function () {
+      activeSort = sortFilter.value;
+      visibleCount = 12;
+      renderCards();
+    });
+
+    /* Search (debounced 280ms) */
+    var searchTimer;
+    searchInput.addEventListener('input', function () {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(function () {
+        searchQuery = searchInput.value.trim();
+        visibleCount = 12;
+        renderCards();
+      }, 280);
+    });
+
+    /* Clear all */
+    clearBtn.addEventListener('click', function () {
+      searchInput.value = '';
+      typeFilter.value  = '';
+      cityFilter.value  = '';
+      sortFilter.value  = '';
+      searchQuery  = '';
+      activeType   = '';
+      activeCity   = '';
+      activeSort   = '';
+      activeBeds   = 'any';
+      activeMarket = 'offplan';
+      activeDev    = '';
+      document.querySelectorAll('.fb-toggle-btn').forEach(function (b) { b.classList.remove('active'); });
+      document.querySelector('[data-market="offplan"]').classList.add('active');
+      document.querySelectorAll('.fb-bed-btn').forEach(function (b) { b.classList.remove('active'); });
+      document.querySelector('[data-beds="any"]').classList.add('active');
+      document.querySelectorAll('.dev-logo-btn').forEach(function (b) { b.classList.remove('active'); });
+      document.querySelector('[data-dev="all"]').classList.add('active');
+      visibleCount = 12;
+      renderCards();
+    });
+
+    /* Load More — all data is already fetched, just reveal more cards */
+    loadMoreBtn.addEventListener('click', function () {
+      if (visibleCount < filteredProperties.length) {
+        visibleCount += 12;
+        renderCards();
+      } else {
+        loadMoreWrap.style.display = 'none';
+      }
+    });
+
+    /* ── Error State HTML ──────────────── */
+    var errorStateHTML =
+      '<div class="error-state">' +
+        '<div class="error-state-icon">' +
+          '<svg width="24" height="24" viewBox="0 0 24 24" fill="none">' +
+            '<path d="M12 9v4m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke="rgba(201,169,110,0.6)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>' +
+          '</svg>' +
+        '</div>' +
+        '<div class="error-state-title">Properties are being updated</div>' +
+        '<p class="error-state-sub">Contact us directly for current availability. Our team is ready to help you find the perfect property.</p>' +
+        '<div class="error-state-links">' +
+          '<a href="https://wa.me/971506508799" target="_blank" rel="noopener" class="error-state-link error-state-link--wa">' +
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>' +
+            'WhatsApp' +
+          '</a>' +
+          '<a href="mailto:info@fore.ae?subject=Property%20Inquiry" class="error-state-link error-state-link--email">' +
+            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>' +
+            'Email Us' +
+          '</a>' +
+        '</div>' +
+      '</div>';
+
+    /* ── Init ──────────────────────────── */
+    function init() {
+      fetchAllListings().then(function (props) {
+        if (!props || props.length === 0) {
+          grid.innerHTML = errorStateHTML;
+          return;
+        }
+        allProperties = props;
+        rebuildDropdowns();
+        applyURLParams();
+
+        heroCount.textContent = props.length + '+ opportunities listed';
+        heroCount.classList.add('visible');
+
+        renderCards();
+      }).catch(function () {
+        grid.innerHTML = errorStateHTML;
+      });
+    }
+
+    /* Run after components are loaded (nav/footer), or immediately */
+    document.addEventListener('fore:ready', init);
+
+    /* Fallback if components.js fires before this script */
+    if (document.readyState !== 'loading') {
+      var alreadyFired = false;
+      document.addEventListener('fore:ready', function () { alreadyFired = true; });
+      setTimeout(function () {
+        if (!alreadyFired && allProperties.length === 0) init();
+      }, 800);
+    }
+
+  })();
+  </script>
+  <script src="js/particle-wave.js"></script>
+
+</body>
+</html>
