@@ -413,6 +413,24 @@ const TABLE = 'secondary_listings';
 const LOGS_TABLE = 'poster_logs';
 const ADMIN_PASSWORD = 'FORE2024';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const LOGO_URL = window.location.origin + '/brand_assets/logo.png';
+
+// ══ IMAGE PROXY (fixes Chrome CORS for html2canvas) ══
+const imgCache = {};
+async function toDataURL(url) {
+  if (!url) return '';
+  if (url.startsWith('data:')) return url;
+  if (imgCache[url]) return imgCache[url];
+  try {
+    const resp = await fetch(url);
+    const blob = await resp.blob();
+    return await new Promise(resolve => {
+      const r = new FileReader();
+      r.onloadend = () => { imgCache[url] = r.result; resolve(r.result); };
+      r.readAsDataURL(blob);
+    });
+  } catch { return url; }
+}
 
 // ══ FORMATS ══
 // Each format: canonical W×H, preview scale, preview display W×H
@@ -776,7 +794,7 @@ function getPosterHTML(fmt, data) {
   }
 
   // Property name shown under hero (building / unit label)
-  const propLabel = title ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:${Math.round(52*u)}px;color:rgba(255,255,255,0.5);margin-top:${Math.round(8*u)}px;line-height:1;">${esc(title)}</div>` : '';
+  const propLabel = title ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:${Math.round(48*u)}px;color:rgba(255,255,255,0.55);margin-top:${Math.round(12*u)}px;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:${Math.round(960*u)}px;margin-left:auto;margin-right:auto;text-shadow:0 2px 16px rgba(0,0,0,0.7),0 0 40px rgba(0,0,0,0.4);">${esc(title)}</div>` : '';
 
   // ── Amenities ──
   const amHTML = amenities.length ? `
@@ -841,14 +859,14 @@ function getPosterHTML(fmt, data) {
 
       <!-- Top bar -->
       <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:${Math.round(44*u)}px ${pad}px 0;">
-        <img src="brand_assets/logo.png" style="width:${Math.round(280*u)}px;height:auto;display:block;" />
+        <img src="${data.logoSrc || LOGO_URL}" crossorigin="anonymous" style="width:${Math.round(280*u)}px;height:auto;display:block;" />
         <div style="padding:${badgePad};border:1.5px solid rgba(201,169,110,0.65);font-family:'Montserrat',sans-serif;font-size:${badgeSz}px;font-weight:600;letter-spacing:0.22em;color:#C9A96A;text-transform:uppercase;background:rgba(201,169,110,0.07);">${esc(badge)}</div>
       </div>
 
       <!-- Hero location text -->
       <div style="text-align:center;padding:0 ${pad}px;position:absolute;top:${heroTop}px;left:0;right:0;">
         <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${eyebrowSz}px;color:rgba(255,255,255,0.4);letter-spacing:0.4em;text-transform:uppercase;margin-bottom:${Math.round(14*u)}px;">Dubai · UAE</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;font-size:${titleSz}px;color:#fff;line-height:0.92;letter-spacing:-0.02em;text-shadow:0 2px 40px rgba(0,0,0,0.5);">${esc(heroMain)}${heroGold ? `<span style="color:#C9A96A;"> ${esc(heroGold)}</span>` : ''}</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;font-size:${titleSz}px;color:#fff;line-height:0.92;letter-spacing:-0.02em;text-shadow:0 2px 20px rgba(0,0,0,0.8),0 4px 60px rgba(0,0,0,0.5),0 0 120px rgba(0,0,0,0.3);">${esc(heroMain)}${heroGold ? `<span style="color:#C9A96A;"> ${esc(heroGold)}</span>` : ''}</div>
         ${subRaw ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:${Math.round(58*u)}px;color:rgba(255,255,255,0.45);margin-top:${Math.round(8*u)}px;">${esc(subRaw)}</div>` : ''}
         ${propLabel}
       </div>
@@ -908,7 +926,16 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   btn.innerHTML = '<span class="spinner"></span> Generating...';
   try {
     const fmt = FORMATS[S.fmt];
-    const data = { badge: S.badge, title: S.title, location: S.location, price: S.price, beds: S.beds, baths: S.baths, sqft: S.sqft, image: S.image, amenities: S.amenities, ...getAgentData() };
+    const agentData = getAgentData();
+
+    // Convert all images to data URLs to avoid Chrome CORS issues with html2canvas
+    const [imageSrc, logoSrc, agentPhotoSrc] = await Promise.all([
+      toDataURL(S.image),
+      toDataURL(LOGO_URL),
+      toDataURL(agentData.agentPhoto),
+    ]);
+
+    const data = { badge: S.badge, title: S.title, location: S.location, price: S.price, beds: S.beds, baths: S.baths, sqft: S.sqft, image: imageSrc, amenities: S.amenities, ...agentData, agentPhoto: agentPhotoSrc, logoSrc };
     const cap = document.getElementById('posterCapture');
     cap.style.width  = fmt.w + 'px';
     cap.style.height = fmt.h + 'px';
@@ -918,7 +945,7 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
     await document.fonts.ready;
     await new Promise(r => setTimeout(r, 700));
 
-    const canvas = await html2canvas(cap, { width: fmt.w, height: fmt.h, scale: 1, useCORS: true, allowTaint: false, backgroundColor: '#060e17', logging: false });
+    const canvas = await html2canvas(cap, { width: fmt.w, height: fmt.h, scale: 1, useCORS: false, allowTaint: true, backgroundColor: '#060e17', logging: false });
     const a = document.createElement('a');
     a.download = `FORE-${S.badge.replace(/\s/g,'-')}-${Date.now()}.png`;
     a.href = canvas.toDataURL('image/png');
