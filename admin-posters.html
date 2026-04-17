@@ -794,7 +794,7 @@ function getPosterHTML(fmt, data) {
   }
 
   // Property name shown under hero (building / unit label)
-  const propLabel = title ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:${Math.round(48*u)}px;color:rgba(255,255,255,0.55);margin-top:${Math.round(12*u)}px;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:${Math.round(960*u)}px;margin-left:auto;margin-right:auto;text-shadow:0 2px 16px rgba(0,0,0,0.7),0 0 40px rgba(0,0,0,0.4);">${esc(title)}</div>` : '';
+  const propLabel = title ? `<div style="display:inline-block;margin-top:${Math.round(18*u)}px;padding:${Math.round(10*u)}px ${Math.round(32*u)}px;background:rgba(255,255,255,0.92);border-radius:${Math.round(8*u)}px;max-width:${Math.round(960*u)}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span style="font-family:'Montserrat',sans-serif;font-weight:500;font-size:${Math.round(28*u)}px;color:#1a1a1a;letter-spacing:0.04em;line-height:1.2;">${esc(title)}</span></div>` : '';
 
   // ── Amenities ──
   const amHTML = amenities.length ? `
