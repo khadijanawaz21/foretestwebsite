@@ -8,7 +8,7 @@ const ALLOWED_HOSTS = [
 ];
 
 function isAllowed(hostname) {
-  return ALLOWED_HOSTS.includes(hostname) || hostname.endsWith('.supabase.co');
+  return ALLOWED_HOSTS.includes(hostname) || hostname.endsWith('.supabase.co') || hostname.endsWith('.propertyfinder.ae');
 }
 
 module.exports = async (req, res) => {
