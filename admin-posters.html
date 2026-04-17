@@ -345,6 +345,15 @@
             <input type="file" id="manualImageFile" accept="image/jpeg,image/png,image/webp" />
           </div>
         </div>
+        <div class="form-group" style="margin-top:12px;">
+          <label class="form-label">Property Video <span style="color:var(--white-20);">(optional)</span></label>
+          <div class="upload-zone" id="manualVideoZone">
+            <svg style="display:block;margin:0 auto 8px;opacity:0.3;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+            <div class="upload-zone-text">Drop video here or click to browse</div>
+            <div class="upload-zone-hint">MP4 · max 50MB</div>
+            <input type="file" id="manualVideoFile" accept="video/mp4" />
+          </div>
+        </div>
       </div>
 
       <!-- Amenities -->
@@ -491,7 +500,7 @@ let S = {
   badge: 'FOR SALE',
   title: '', location: '', price: '',
   beds: '', baths: '', sqft: '',
-  image: '', amenities: [], agent: '',
+  image: '', video: '', amenities: [], agent: '',
 };
 
 // ══════════════════════════════════
@@ -698,6 +707,70 @@ document.querySelectorAll('[data-badge]').forEach(b => {
       <div class="upload-zone-hint">JPG · PNG · WEBP · max 10MB</div>
       <input type="file" id="manualImageFile" accept="image/jpeg,image/png,image/webp" />`;
     zone.querySelector('#manualImageFile').addEventListener('change', e => { if (e.target.files[0]) handlePhotoFile(e.target.files[0]); });
+    zone.addEventListener('click', () => zone.querySelector('input').click());
+    input.value = '';
+  }
+})();
+
+// ── Manual video upload zone ──
+(function initVideoZone() {
+  const zone  = document.getElementById('manualVideoZone');
+  const input = document.getElementById('manualVideoFile');
+
+  zone.addEventListener('click', () => input.click());
+  zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('dragover'); });
+  zone.addEventListener('dragleave', ()  => zone.classList.remove('dragover'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('dragover');
+    if (e.dataTransfer.files[0]) handleVideoFile(e.dataTransfer.files[0]);
+  });
+  input.addEventListener('change', () => { if (input.files[0]) handleVideoFile(input.files[0]); });
+
+  async function handleVideoFile(file) {
+    if (file.type !== 'video/mp4') { showToast('Only MP4 files allowed', true); return; }
+    if (file.size > 50 * 1024 * 1024) { showToast('File too large — max 50MB', true); return; }
+
+    zone.innerHTML = `<div class="upload-preview">
+      <video src="${URL.createObjectURL(file)}" style="width:72px;height:52px;object-fit:cover;border-radius:2px;border:0.5px solid var(--subtle-border);flex-shrink:0;" muted></video>
+      <div class="upload-preview-info">
+        <div class="upload-preview-name">${esc(file.name)}</div>
+        <div class="upload-preview-status"><span class="upload-spinner"></span> Uploading…</div>
+      </div>
+    </div>`;
+
+    try {
+      const path = `posters/videos/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
+      const { error } = await db.storage.from('media').upload(path, file);
+      if (error) throw error;
+      const url = `${SUPABASE_URL}/storage/v1/object/public/media/${path}`;
+      S.video = url;
+
+      zone.innerHTML = `<div class="upload-preview">
+        <video src="${esc(url)}" style="width:72px;height:52px;object-fit:cover;border-radius:2px;border:0.5px solid var(--subtle-border);flex-shrink:0;" muted></video>
+        <div class="upload-preview-info">
+          <div class="upload-preview-name">${esc(file.name)}</div>
+          <div class="upload-preview-status" style="color:var(--success);">Uploaded</div>
+        </div>
+        <button type="button" class="upload-remove" id="videoRemoveBtn">&times;</button>
+      </div>`;
+      document.getElementById('videoRemoveBtn').addEventListener('click', e => {
+        e.stopPropagation(); S.video = ''; resetVideoZone();
+      });
+      showToast('Video uploaded ✓');
+    } catch (err) {
+      showToast('Video upload failed', true);
+      console.error(err);
+      resetVideoZone();
+    }
+  }
+
+  function resetVideoZone() {
+    zone.innerHTML = `
+      <svg style="display:block;margin:0 auto 8px;opacity:0.3;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      <div class="upload-zone-text">Drop video here or click to browse</div>
+      <div class="upload-zone-hint">MP4 · max 50MB</div>
+      <input type="file" id="manualVideoFile" accept="video/mp4" />`;
+    zone.querySelector('#manualVideoFile').addEventListener('change', e => { if (e.target.files[0]) handleVideoFile(e.target.files[0]); });
     zone.addEventListener('click', () => zone.querySelector('input').click());
     input.value = '';
   }
