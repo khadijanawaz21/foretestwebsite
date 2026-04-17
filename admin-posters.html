@@ -558,7 +558,7 @@ function renderListingGrid() {
     const bt = lt === 'offplan' ? 'OFF-PLAN' : lt === 'rent' ? 'FOR RENT' : 'FOR SALE';
     const sel = S.selectedId === l.id ? ' selected' : '';
     const img = l.image_main
-      ? `<img class="listing-thumb" src="${esc(l.image_main)}" crossorigin="anonymous" onerror="this.style.background='#1c1c1c'" />`
+      ? `<img class="listing-thumb" src="${esc(l.image_main)}" onerror="this.style.background='#1c1c1c'" />`
       : `<div class="listing-thumb" style="display:flex;align-items:center;justify-content:center;font-size:9px;color:#333;"></div>`;
     return `<div class="listing-card${sel}" onclick="selectListing('${l.id}')">
       ${img}
@@ -670,7 +670,7 @@ document.querySelectorAll('[data-badge]').forEach(b => {
       renderPoster();
 
       zone.innerHTML = `<div class="upload-preview">
-        <img src="${esc(url)}" crossorigin="anonymous" />
+        <img src="${esc(url)}" />
         <div class="upload-preview-info">
           <div class="upload-preview-name">${esc(file.name)}</div>
           <div class="upload-preview-status" style="color:var(--success);">Uploaded</div>
@@ -847,7 +847,7 @@ function getPosterHTML(fmt, data) {
   const agentHTML = agentName ? `
     <div style="display:flex;align-items:center;gap:${Math.round(22*u)}px;padding:${Math.round(22*u)}px 0 0;border-top:0.5px solid rgba(255,255,255,0.1);margin-top:${Math.round(4*u)}px;">
       ${agentPhoto
-        ? `<img src="${esc(agentPhoto)}" crossorigin="anonymous" style="width:${avSz}px;height:${avSz}px;border-radius:50%;border:1.5px solid rgba(201,169,110,0.45);object-fit:cover;flex-shrink:0;" />`
+        ? `<img src="${esc(agentPhoto)}" style="width:${avSz}px;height:${avSz}px;border-radius:50%;border:1.5px solid rgba(201,169,110,0.45);object-fit:cover;flex-shrink:0;" />`
         : `<div style="width:${avSz}px;height:${avSz}px;border-radius:50%;border:1.5px solid rgba(201,169,110,0.45);background:rgba(201,169,110,0.1);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:${Math.round(28*u)}px;color:#C9A96A;flex-shrink:0;">${esc(agentInitials||'')}</div>`}
       <div>
         <div style="font-family:'Montserrat',sans-serif;font-weight:600;font-size:${agentNmSz}px;color:#fff;letter-spacing:0.02em;">${esc(agentName)}</div>
@@ -861,7 +861,7 @@ function getPosterHTML(fmt, data) {
   const panelPad   = Math.round(52*u);
 
   return `
-    ${image ? `<img class="p-bg-img" src="${esc(image)}" crossorigin="anonymous" />` : `<div class="p-bg-grad"></div>`}
+    ${image ? `<img class="p-bg-img" src="${esc(image)}" />` : `<div class="p-bg-grad"></div>`}
     <div style="position:absolute;bottom:0;left:0;right:0;height:${bottomFade}px;background:linear-gradient(to top,rgba(4,8,14,0.98) 0%,rgba(4,8,14,0.9) 15%,rgba(4,8,14,0.65) 35%,rgba(4,8,14,0.25) 60%,transparent 100%);z-index:1;"></div>
     <div style="position:absolute;top:0;left:0;right:0;height:${Math.round(220*u)}px;background:linear-gradient(to bottom,rgba(4,8,14,0.75) 0%,transparent 100%);z-index:1;"></div>
 
@@ -869,7 +869,7 @@ function getPosterHTML(fmt, data) {
 
       <!-- Top bar -->
       <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:${Math.round(44*u)}px ${pad}px 0;">
-        <img src="${data.logoSrc || LOGO_URL}" crossorigin="anonymous" style="width:${Math.round(280*u)}px;height:auto;display:block;" />
+        <img src="${data.logoSrc || LOGO_URL}" style="width:${Math.round(280*u)}px;height:auto;display:block;" />
         <div style="padding:${badgePad};border:1.5px solid rgba(201,169,110,0.65);font-family:'Montserrat',sans-serif;font-size:${badgeSz}px;font-weight:600;letter-spacing:0.22em;color:#C9A96A;text-transform:uppercase;background:rgba(201,169,110,0.07);">${esc(badge)}</div>
       </div>
 
