@@ -56,6 +56,37 @@
     .sidebar-section:last-child { border-bottom: none; }
     .section-label { font-size: 8.5px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--white-35); margin-bottom: 12px; }
 
+    /* ══ TEMPLATE STRIP ══ */
+    .tmpl-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .tmpl-item { border: 0.5px solid rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; cursor: pointer; transition: border-color 0.2s; }
+    .tmpl-item:hover { border-color: rgba(201,169,110,0.3); }
+    .tmpl-item.active { border: 1.5px solid var(--gold); }
+    .tmpl-thumb { height: 48px; position: relative; overflow: hidden; }
+    /* Cinematic thumb */
+    .tt-cinematic { background: #0d0d0d; }
+    .tt-cinematic::before { content: ''; position: absolute; top: 6px; right: 6px; width: 22px; height: 7px; border: 0.5px solid rgba(201,169,110,0.5); border-radius: 1px; }
+    .tt-cinematic::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 60%; background: linear-gradient(to top, rgba(4,8,14,0.95), transparent); }
+    .tt-cin-bar { position: absolute; bottom: 10px; left: 7px; width: 38%; height: 2px; background: #C9A96E; border-radius: 1px; z-index: 1; }
+    .tt-cin-txt { position: absolute; bottom: 6px; left: 7px; width: 60%; height: 1.5px; background: rgba(255,255,255,0.25); border-radius: 1px; z-index: 1; }
+    /* Ivory thumb */
+    .tt-ivory { background: #f0ebe0; }
+    .tt-ivory::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 58%; background: linear-gradient(135deg, #c8b890, #a89870); opacity: 0.55; }
+    .tt-ivory::after { content: ''; position: absolute; bottom: 9px; left: 7px; width: 36%; height: 2px; background: #8B6914; border-radius: 1px; }
+    .tt-iv-txt { position: absolute; bottom: 5px; left: 7px; width: 55%; height: 1.5px; background: rgba(0,0,0,0.2); border-radius: 1px; }
+    /* Editorial thumb */
+    .tt-editorial { background: #0a0510; }
+    .tt-editorial::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -60%); width: 70%; height: 5px; background: rgba(255,255,255,0.85); border-radius: 1px; }
+    .tt-editorial::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, 40%); width: 42%; height: 3.5px; background: #C9A96E; border-radius: 1px; }
+    .tt-ed-dot { position: absolute; top: 7px; left: 7px; width: 5px; height: 5px; border-radius: 50%; background: #C9A96E; }
+    /* Minimal thumb */
+    .tt-minimal { background: #141414; }
+    .tt-minimal::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2.5px; background: #C9A96E; }
+    .tt-minimal::after { content: ''; position: absolute; top: 13px; left: 10px; right: 8px; height: 2px; background: rgba(255,255,255,0.12); border-radius: 1px; }
+    .tt-min-txt { position: absolute; top: 21px; left: 10px; width: 48%; height: 1.5px; background: rgba(255,255,255,0.07); border-radius: 1px; }
+    .tt-min-price { position: absolute; bottom: 7px; left: 10px; font-size: 8px; font-weight: 500; color: rgba(201,169,110,0.6); font-family: var(--font-ui); }
+    .tmpl-name { font-size: 8.5px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--white-35); padding: 5px 6px 6px; text-align: center; }
+    .tmpl-item.active .tmpl-name { color: var(--gold); }
+
     /* Controls */
     .mode-toggle { display: flex; background: var(--bg-dark); border: 0.5px solid var(--subtle-border); border-radius: 2px; overflow: hidden; }
     .mode-btn { flex: 1; background: none; border: none; color: var(--white-35); font-family: var(--font-ui); font-size: 8.5px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; padding: 10px; cursor: pointer; transition: all 0.2s; }
@@ -129,72 +160,26 @@
     .poster-preview-wrap { overflow: hidden; border-radius: 12px; box-shadow: 0 16px 80px rgba(0,0,0,0.7); flex-shrink: 0; }
 
     /* ════════════════════════
-       POSTER CANVAS — 4:5 default
-       Canonical: 1080 × 1350
-       Preview scale: 0.44 → 475 × 594
+       POSTER CANVAS
     ════════════════════════ */
-    .poster-canvas {
-      position: relative; overflow: hidden;
-      font-family: 'Cormorant Garamond', Georgia, serif;
-    }
+    .poster-canvas { position: relative; overflow: hidden; font-family: 'Cormorant Garamond', Georgia, serif; }
     .poster-canvas * { box-sizing: border-box; }
-
-    /* BG */
     .p-bg-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
     .p-bg-grad { position: absolute; inset: 0; background: #000; z-index: 0; }
-
-    /* Overlays — tuned for readability */
-    .p-overlay-bottom { position: absolute; bottom: 0; left: 0; right: 0; z-index: 1; }
-    .p-overlay-top    { position: absolute; top: 0; left: 0; right: 0; z-index: 1; }
-
-    /* Content layer */
     .p-content { position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; justify-content: space-between; }
-
-    /* Top bar */
     .p-topbar { display: flex; align-items: flex-start; justify-content: space-between; }
     .p-logo { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 700; color: #fff; line-height: 1; letter-spacing: 0.08em; }
-    .p-logo-sub { font-family: 'Montserrat', sans-serif; font-weight: 300; color: rgba(255,255,255,0.4); letter-spacing: 0.3em; text-transform: uppercase; }
     .p-badge { border: 1.5px solid rgba(201,169,110,0.65); font-family: 'Montserrat', sans-serif; font-weight: 600; letter-spacing: 0.22em; color: #C9A96A; text-transform: uppercase; background: rgba(201,169,110,0.08); }
-
-    /* Hero */
-    .p-hero { text-align: center; }
-    .p-eyebrow { font-family: 'Montserrat', sans-serif; font-weight: 300; color: rgba(255,255,255,0.45); letter-spacing: 0.4em; text-transform: uppercase; }
-    .p-title { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 700; color: #fff; line-height: 1; letter-spacing: -0.02em; text-shadow: 0 2px 40px rgba(0,0,0,0.6); }
-    .p-title .gold { color: #C9A96A; }
-    .p-building { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-weight: 400; color: rgba(255,255,255,0.55); }
-
-    /* Amenities */
     .p-amenities { display: flex; gap: 0; }
     .p-am { flex: 1; background: rgba(20,20,20,0.65); border: 0.5px solid rgba(255,255,255,0.12); display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .p-am + .p-am { border-left: none; }
     .p-am svg { stroke: rgba(201,169,110,0.9); fill: none; stroke-linecap: round; stroke-linejoin: round; }
     .p-am-lbl { font-family: 'Montserrat', sans-serif; font-weight: 400; color: rgba(255,255,255,0.65); text-align: center; line-height: 1.3; }
-
-    /* Price panel */
     .p-price-panel { background: rgba(12,12,12,0.82); border-top: 1px solid rgba(255,255,255,0.08); }
-    .p-specs-row { display: flex; align-items: center; }
-    .p-spec { display: flex; flex-direction: column; align-items: center; flex: 1; }
-    .p-spec + .p-spec { border-left: 0.5px solid rgba(255,255,255,0.1); }
     .p-spec-val { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; color: #fff; line-height: 1; }
     .p-spec-lbl { font-family: 'Montserrat', sans-serif; font-weight: 300; color: rgba(255,255,255,0.35); letter-spacing: 0.2em; text-transform: uppercase; }
-    .p-price-divider { background: rgba(255,255,255,0.08); }
-    .p-price-row { display: flex; align-items: flex-end; justify-content: space-between; }
-    .p-price-lbl { font-family: 'Montserrat', sans-serif; font-weight: 300; color: rgba(255,255,255,0.35); letter-spacing: 0.22em; text-transform: uppercase; }
-    .p-price-num { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; color: #fff; line-height: 1; letter-spacing: -0.02em; }
-    .p-aed { font-family: 'Montserrat', sans-serif; font-weight: 300; color: rgba(201,169,110,0.7); vertical-align: baseline; }
-
-    /* Agent */
-    .p-agent-row { display: flex; align-items: center; border-top: 0.5px solid rgba(255,255,255,0.08); }
     .p-agent-av { border-radius: 50%; border: 1.5px solid rgba(201,169,110,0.45); object-fit: cover; flex-shrink: 0; }
     .p-agent-av-text { border-radius: 50%; border: 1.5px solid rgba(201,169,110,0.45); background: rgba(201,169,110,0.1); display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', Georgia, serif; color: #C9A96A; flex-shrink: 0; }
-    .p-agent-name { font-family: 'Montserrat', sans-serif; font-weight: 600; color: #fff; }
-    .p-agent-phone { font-family: 'Montserrat', sans-serif; font-weight: 300; color: #C9A96A; }
-
-    /* Footer */
-    .p-footer { display: flex; align-items: center; justify-content: center; border-top: 0.5px solid rgba(255,255,255,0.06); }
-    .p-footer-txt { font-family: 'Montserrat', sans-serif; font-weight: 300; color: rgba(255,255,255,0.22); letter-spacing: 0.12em; }
-
-    /* Capture */
     .poster-capture { position: absolute; top: -9999px; left: -9999px; z-index: -1; }
 
     /* Toast */
@@ -223,59 +208,33 @@
     @keyframes spin2 { to { transform: rotate(360deg); } }
     .upload-spinner { display: inline-block; width: 13px; height: 13px; border: 2px solid var(--subtle-border); border-top-color: var(--gold); border-radius: 50%; animation: spin2 0.6s linear infinite; }
 
-    /* ══ MOBILE RESPONSIVE ══ */
     @media (max-width: 860px) {
-      /* Header */
       .dash-header { padding: 0 16px; height: 54px; }
       .header-left { gap: 12px; }
       .dash-logo { font-size: 18px; letter-spacing: 4px; }
       .back-link { font-size: 8px; }
       .header-label { display: none; }
-
-      /* Stack layout vertically: preview on top, controls below */
       .main-layout { flex-direction: column; }
       .sidebar { width: 100%; border-right: none; border-top: 0.5px solid var(--subtle-border); order: 2; }
       .preview-panel { order: 1; padding: 20px 16px 24px; min-height: auto; }
-
-      /* Listing grid */
       .listing-grid { max-height: 260px; }
-
-      /* Poster preview scales to fit screen */
       .poster-preview-wrap { max-width: 100%; }
     }
-
     @media (max-width: 480px) {
-      /* Login */
       .login-card { padding: 32px 24px; }
       .login-logo { font-size: 28px; }
-
-      /* Header */
       .dash-header { padding: 0 12px; height: 48px; }
       .dash-logo { font-size: 16px; }
       .back-link span { display: none; }
-
-      /* Sidebar sections */
       .sidebar-section { padding: 16px; }
       .section-label { font-size: 8px; margin-bottom: 10px; }
-
-      /* Format toggle */
       .format-toggle { gap: 6px; }
       .fmt-btn { padding: 8px 4px; }
-
-      /* Form */
       .form-row { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
       .form-input, .form-select { font-size: 12px; padding: 8px 10px; }
-
-      /* Amenity chips */
       .am-chip { font-size: 9px; padding: 4px 7px; }
-
-      /* Preview */
       .preview-panel { padding: 16px 8px 20px; }
-
-      /* Download */
       .btn-download { padding: 12px; font-size: 9px; }
-
-      /* Toast */
       .toast { bottom: 16px; right: 16px; left: 16px; text-align: center; }
     }
   </style>
@@ -310,10 +269,42 @@
   </header>
 
   <div class="main-layout">
-
-    <!-- SIDEBAR -->
     <div class="sidebar">
 
+      <!-- ══ TEMPLATE ══ -->
+      <div class="sidebar-section">
+        <div class="section-label">Template</div>
+        <div class="tmpl-strip" id="tmplStrip">
+          <div class="tmpl-item active" data-tmpl="cinematic">
+            <div class="tmpl-thumb tt-cinematic">
+              <div class="tt-cin-bar"></div>
+              <div class="tt-cin-txt"></div>
+            </div>
+            <div class="tmpl-name">Cinematic</div>
+          </div>
+          <div class="tmpl-item" data-tmpl="ivory">
+            <div class="tmpl-thumb tt-ivory">
+              <div class="tt-iv-txt"></div>
+            </div>
+            <div class="tmpl-name">Ivory</div>
+          </div>
+          <div class="tmpl-item" data-tmpl="editorial">
+            <div class="tmpl-thumb tt-editorial">
+              <div class="tt-ed-dot"></div>
+            </div>
+            <div class="tmpl-name">Editorial</div>
+          </div>
+          <div class="tmpl-item" data-tmpl="minimal">
+            <div class="tmpl-thumb tt-minimal">
+              <div class="tt-min-txt"></div>
+              <div class="tt-min-price">AED</div>
+            </div>
+            <div class="tmpl-name">Minimal</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ FORMAT ══ -->
       <div class="sidebar-section">
         <div class="section-label">Format</div>
         <div class="format-toggle" id="fmtToggle">
@@ -335,6 +326,7 @@
         </div>
       </div>
 
+      <!-- ══ SOURCE ══ -->
       <div class="sidebar-section">
         <div class="section-label">Source</div>
         <div class="mode-toggle">
@@ -445,7 +437,7 @@
       </div>
     </div>
 
-    <!-- PREVIEW PANEL -->
+    <!-- PREVIEW -->
     <div class="preview-panel">
       <div class="preview-label">Live Preview</div>
       <div class="poster-preview-wrap" id="previewWrap">
@@ -455,7 +447,6 @@
   </div>
 </div>
 
-<!-- Hidden capture -->
 <div class="poster-capture">
   <div class="poster-canvas" id="posterCapture"></div>
 </div>
@@ -472,7 +463,7 @@ const ADMIN_PASSWORD = 'FORE2024';
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const LOGO_URL = window.location.origin + '/brand_assets/logo.png';
 
-// ══ IMAGE PROXY (fixes Chrome CORS for download) ══
+// ══ IMAGE PROXY ══
 const imgCache = {};
 async function toDataURL(url) {
   if (!url) return '';
@@ -493,7 +484,6 @@ async function toDataURL(url) {
 }
 
 // ══ FORMATS ══
-// Each format: canonical W×H, preview scale, preview display W×H
 const FORMATS = {
   '45':  { w: 1080, h: 1350, scale: 0.44,  label: '1080 × 1350 px · Instagram / WhatsApp' },
   'sq':  { w: 1080, h: 1080, scale: 0.44,  label: '1080 × 1080 px · Square' },
@@ -541,6 +531,7 @@ const ALL_AMENITIES = Object.keys(ICONS).filter(k => k !== 'default');
 // ══ STATE ══
 let S = {
   fmt: '45',
+  template: 'cinematic',
   mode: 'browse',
   listings: [],
   selectedId: null,
@@ -548,11 +539,10 @@ let S = {
   title: '', location: '', price: '',
   beds: '', baths: '', sqft: '',
   image: '', amenities: [], agent: '',
+  video: '', videoFile: null,
 };
 
-// ══════════════════════════════════
-// AUTH
-// ══════════════════════════════════
+// ══ AUTH ══
 document.getElementById('loginBtn').addEventListener('click', doLogin);
 document.getElementById('loginPw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
 function doLogin() {
@@ -568,9 +558,17 @@ document.getElementById('logoutBtn').addEventListener('click', () => { sessionSt
 if (sessionStorage.getItem('fore_admin') === '1') { document.getElementById('loginScreen').style.display = 'none'; document.getElementById('app').style.display = 'flex'; loadListings(); buildAmenityPicker(); renderPoster(); }
 function showApp() { document.getElementById('loginScreen').style.display = 'none'; document.getElementById('app').style.display = 'flex'; loadListings(); buildAmenityPicker(); renderPoster(); }
 
-// ══════════════════════════════════
-// FORMAT SELECTOR
-// ══════════════════════════════════
+// ══ TEMPLATE SELECTOR ══
+document.getElementById('tmplStrip').addEventListener('click', e => {
+  const item = e.target.closest('[data-tmpl]');
+  if (!item) return;
+  document.querySelectorAll('[data-tmpl]').forEach(i => i.classList.remove('active'));
+  item.classList.add('active');
+  S.template = item.dataset.tmpl;
+  renderPoster();
+});
+
+// ══ FORMAT SELECTOR ══
 document.getElementById('fmtToggle').addEventListener('click', e => {
   const btn = e.target.closest('[data-fmt]');
   if (!btn) return;
@@ -583,9 +581,7 @@ function updateFmtHint() {
   document.getElementById('fmtHint').textContent = FORMATS[S.fmt].label;
 }
 
-// ══════════════════════════════════
-// LISTINGS
-// ══════════════════════════════════
+// ══ LISTINGS ══
 async function loadListings() {
   try {
     const { data, error } = await db.from(TABLE)
@@ -619,7 +615,7 @@ function renderListingGrid() {
     const sel = S.selectedId === l.id ? ' selected' : '';
     const img = l.image_main
       ? `<img class="listing-thumb" src="${esc(l.image_main)}" onerror="this.style.background='#1c1c1c'" />`
-      : `<div class="listing-thumb" style="display:flex;align-items:center;justify-content:center;font-size:9px;color:#333;"></div>`;
+      : `<div class="listing-thumb"></div>`;
     return `<div class="listing-card${sel}" onclick="selectListing('${l.id}')">
       ${img}
       <div class="listing-info">
@@ -657,9 +653,7 @@ document.querySelectorAll('[data-lf]').forEach(p => {
 });
 document.getElementById('listingSearch').addEventListener('input', renderListingGrid);
 
-// ══════════════════════════════════
-// MODE
-// ══════════════════════════════════
+// ══ MODE ══
 document.querySelectorAll('.mode-btn').forEach(b => {
   b.addEventListener('click', () => {
     document.querySelectorAll('.mode-btn').forEach(x => x.classList.remove('active'));
@@ -671,7 +665,6 @@ document.querySelectorAll('.mode-btn').forEach(b => {
   });
 });
 
-// Badge selector (manual)
 document.querySelectorAll('[data-badge]').forEach(b => {
   b.addEventListener('click', () => {
     document.querySelectorAll('[data-badge]').forEach(x => x.classList.remove('active'));
@@ -681,7 +674,6 @@ document.querySelectorAll('[data-badge]').forEach(b => {
   });
 });
 
-// Manual inputs (without image — handled by upload zone)
 ['mTitle','mLocation','mPrice','mBeds','mBaths','mSqft'].forEach(id => {
   document.getElementById(id).addEventListener('input', () => {
     S.title    = document.getElementById('mTitle').value;
@@ -694,33 +686,20 @@ document.querySelectorAll('[data-badge]').forEach(b => {
   });
 });
 
-// ── Manual photo upload zone ──
+// ── Upload zone ──
 (function initUploadZone() {
   const zone  = document.getElementById('manualUploadZone');
   const input = document.getElementById('manualImageFile');
-
   zone.addEventListener('click', () => input.click());
   zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('dragover'); });
   zone.addEventListener('dragleave', ()  => zone.classList.remove('dragover'));
-  zone.addEventListener('drop', e => {
-    e.preventDefault(); zone.classList.remove('dragover');
-    if (e.dataTransfer.files[0]) handlePhotoFile(e.dataTransfer.files[0]);
-  });
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('dragover'); if (e.dataTransfer.files[0]) handlePhotoFile(e.dataTransfer.files[0]); });
   input.addEventListener('change', () => { if (input.files[0]) handlePhotoFile(input.files[0]); });
 
   async function handlePhotoFile(file) {
     if (!['image/jpeg','image/png','image/webp'].includes(file.type)) { showToast('Use JPG, PNG or WebP', true); return; }
     if (file.size > 10 * 1024 * 1024) { showToast('File too large — max 10MB', true); return; }
-
-    // Show uploading state
-    zone.innerHTML = `<div class="upload-preview">
-      <img src="${URL.createObjectURL(file)}" />
-      <div class="upload-preview-info">
-        <div class="upload-preview-name">${esc(file.name)}</div>
-        <div class="upload-preview-status"><span class="upload-spinner"></span> Uploading…</div>
-      </div>
-    </div>`;
-
+    zone.innerHTML = `<div class="upload-preview"><img src="${URL.createObjectURL(file)}" /><div class="upload-preview-info"><div class="upload-preview-name">${esc(file.name)}</div><div class="upload-preview-status"><span class="upload-spinner"></span> Uploading…</div></div></div>`;
     try {
       const path = `posters/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
       const { error } = await db.storage.from('media').upload(path, file);
@@ -728,40 +707,19 @@ document.querySelectorAll('[data-badge]').forEach(b => {
       const url = `${SUPABASE_URL}/storage/v1/object/public/media/${path}`;
       S.image = url;
       renderPoster();
-
-      zone.innerHTML = `<div class="upload-preview">
-        <img src="${esc(url)}" />
-        <div class="upload-preview-info">
-          <div class="upload-preview-name">${esc(file.name)}</div>
-          <div class="upload-preview-status" style="color:var(--success);">Uploaded</div>
-        </div>
-        <button type="button" class="upload-remove" id="uploadRemoveBtn">&times;</button>
-      </div>`;
-      document.getElementById('uploadRemoveBtn').addEventListener('click', e => {
-        e.stopPropagation(); S.image = ''; renderPoster(); resetUploadZone();
-      });
-    } catch (err) {
-      showToast('Upload failed — check storage permissions', true);
-      console.error(err);
-      resetUploadZone();
-    }
+      zone.innerHTML = `<div class="upload-preview"><img src="${esc(url)}" /><div class="upload-preview-info"><div class="upload-preview-name">${esc(file.name)}</div><div class="upload-preview-status" style="color:var(--success);">Uploaded</div></div><button type="button" class="upload-remove" id="uploadRemoveBtn">&times;</button></div>`;
+      document.getElementById('uploadRemoveBtn').addEventListener('click', e => { e.stopPropagation(); S.image = ''; renderPoster(); resetUploadZone(); });
+    } catch (err) { showToast('Upload failed', true); console.error(err); resetUploadZone(); }
   }
 
   function resetUploadZone() {
-    zone.innerHTML = `
-      <svg style="display:block;margin:0 auto 8px;opacity:0.3;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      <div class="upload-zone-text">Drop photo here or click to browse</div>
-      <div class="upload-zone-hint">JPG · PNG · WEBP · max 10MB</div>
-      <input type="file" id="manualImageFile" accept="image/jpeg,image/png,image/webp" />`;
+    zone.innerHTML = `<svg style="display:block;margin:0 auto 8px;opacity:0.3;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg><div class="upload-zone-text">Drop photo here or click to browse</div><div class="upload-zone-hint">JPG · PNG · WEBP · max 10MB</div><input type="file" id="manualImageFile" accept="image/jpeg,image/png,image/webp" />`;
     zone.querySelector('#manualImageFile').addEventListener('change', e => { if (e.target.files[0]) handlePhotoFile(e.target.files[0]); });
-    zone.addEventListener('click', () => zone.querySelector('input').click());
     input.value = '';
   }
 })();
 
-// ══════════════════════════════════
-// AMENITIES
-// ══════════════════════════════════
+// ══ AMENITIES ══
 function buildAmenityPicker() {
   const p = document.getElementById('amenityPicker');
   p.innerHTML = ALL_AMENITIES.map(a => `<div class="am-chip" data-am="${esc(a)}">${esc(a)}</div>`).join('');
@@ -780,9 +738,7 @@ function syncAmenityUI() {
   document.getElementById('amLimit').textContent = `${S.amenities.length}/4 selected`;
 }
 
-// ══════════════════════════════════
-// AGENT
-// ══════════════════════════════════
+// ══ AGENT ══
 document.getElementById('agentSelect').addEventListener('change', e => setAgent(e.target.value));
 function setAgent(name) {
   S.agent = name;
@@ -801,35 +757,71 @@ function setAgent(name) {
   renderPoster();
 }
 
-// ══════════════════════════════════
-// POSTER RENDER ENGINE
-// ══════════════════════════════════
-function getPosterHTML(fmt, data) {
+// ══════════════════════════════════════════════════
+// POSTER HTML GENERATORS
+// ══════════════════════════════════════════════════
+
+// ── Shared helpers ──
+function buildSpecsHTML(beds, baths, sqft, specValSz, specLblSz, specPad, u, dark) {
+  const specs = [
+    beds  ? { val: esc(String(beds)),  lbl: beds === 'Studio' ? 'Studio' : 'Beds'  } : null,
+    baths ? { val: esc(String(baths)), lbl: 'Baths' } : null,
+    sqft  ? { val: esc(String(sqft)),  lbl: 'Sqft'  } : null,
+  ].filter(Boolean);
+  if (!specs.length) return '';
+  const borderCol = dark ? 'rgba(255,255,255,0.08)' : 'rgba(26,18,8,0.12)';
+  const valCol    = dark ? '#fff' : '#1a1208';
+  const lblCol    = dark ? 'rgba(255,255,255,0.35)' : 'rgba(26,18,8,0.45)';
+  return `<div style="display:flex;align-items:center;padding:${specPad}px 0;border-bottom:1px solid ${borderCol};">
+    ${specs.map((s,i) => `<div style="flex:1;text-align:center;${i>0?`border-left:0.5px solid ${borderCol};`:''}">
+      <div style="font-family:'Cormorant Garamond',serif;font-weight:400;font-size:${specValSz}px;color:${valCol};line-height:1;">${s.val}</div>
+      <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${specLblSz}px;color:${lblCol};letter-spacing:0.2em;text-transform:uppercase;margin-top:${Math.round(5*u)}px;">${s.lbl}</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function buildAmenitiesHTML(amenities, amH, amIconSz, amLblSz, amStroke, u) {
+  if (!amenities.length) return '';
+  return `<div style="display:flex;gap:0;">
+    ${amenities.map(a => `<div style="flex:1;background:rgba(16,16,16,0.72);border:0.5px solid rgba(255,255,255,0.12);display:flex;flex-direction:column;align-items:center;justify-content:center;height:${amH}px;gap:${Math.round(10*u)}px;">
+      <svg viewBox="0 0 24 24" style="width:${amIconSz}px;height:${amIconSz}px;stroke:rgba(201,169,110,0.9);fill:none;stroke-width:${amStroke};stroke-linecap:round;stroke-linejoin:round;">${ICONS[a]||ICONS.default}</svg>
+      <div style="font-family:'Montserrat',sans-serif;font-weight:400;font-size:${amLblSz}px;color:rgba(255,255,255,0.6);text-align:center;line-height:1.3;padding:0 ${Math.round(8*u)}px;">${esc(a)}</div>
+    </div>`).join('')}
+  </div>`;
+}
+
+function buildAgentHTML(agentName, agentPhone, agentPhoto, agentInitials, avSz, agentNmSz, agentPhSz, u) {
+  if (!agentName) return '';
+  return `<div style="display:flex;align-items:center;gap:${Math.round(22*u)}px;padding:${Math.round(22*u)}px 0 0;border-top:0.5px solid rgba(255,255,255,0.1);margin-top:${Math.round(4*u)}px;">
+    ${agentPhoto
+      ? `<img src="${esc(agentPhoto)}" style="width:${avSz}px;height:${avSz}px;border-radius:50%;border:1.5px solid rgba(201,169,110,0.45);object-fit:cover;flex-shrink:0;" />`
+      : `<div style="width:${avSz}px;height:${avSz}px;border-radius:50%;border:1.5px solid rgba(201,169,110,0.45);background:rgba(201,169,110,0.1);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:${Math.round(28*u)}px;color:#C9A96A;flex-shrink:0;">${esc(agentInitials||'')}</div>`}
+    <div>
+      <div style="font-family:'Montserrat',sans-serif;font-weight:600;font-size:${agentNmSz}px;color:#fff;letter-spacing:0.02em;">${esc(agentName)}</div>
+      <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${agentPhSz}px;color:#C9A96A;margin-top:${Math.round(6*u)}px;letter-spacing:0.04em;">${esc(agentPhone||'')}</div>
+    </div>
+  </div>`;
+}
+
+// ════════════════════════
+// TEMPLATE 1: CINEMATIC (original)
+// ════════════════════════
+function getPosterHTML_cinematic(fmt, data) {
   const { w, h } = FORMATS[fmt];
   const { badge, title, location, price, beds, baths, sqft, image, video, videoMode, amenities, agentName, agentPhone, agentPhoto, agentInitials } = data;
-
-  // ── Scale all sizes relative to 1080px wide canonical ──
-  const u = w / 1080; // unit multiplier (always 1 since all fmts are 1080 wide)
-  const vr = h / w;   // aspect ratio
-
-  // Responsive sizing
+  const u = w / 1080;
   const isSquare = fmt === 'sq';
   const isTall   = fmt === '916';
-
   const pad        = Math.round(60 * u);
-  const logoSize   = Math.round(52 * u);
-  const logoSubSz  = Math.round(12 * u);
   const badgeSz    = Math.round(18 * u);
   const badgePad   = `${Math.round(10 * u)}px ${Math.round(28 * u)}px`;
   const eyebrowSz  = Math.round(20 * u);
   const titleSzBase = isSquare ? 120 * u : isTall ? 168 * u : 148 * u;
-  // Auto-shrink hero text so community name always fits on one line
   const heroText = (location || 'Dubai').split(',')[0].trim();
   const heroLen = heroText.length;
   const availW = w - (pad * 2);
   const estWidth = heroLen * titleSzBase * 0.55;
   const titleSz = Math.round(estWidth > availW ? titleSzBase * (availW / estWidth) * 0.92 : titleSzBase);
-  const amGap      = Math.round(0 * u);
   const amH        = isSquare ? Math.round(90 * u) : Math.round(110 * u);
   const amIconSz   = Math.round(36 * u);
   const amLblSz    = Math.round(15 * u);
@@ -845,12 +837,78 @@ function getPosterHTML(fmt, data) {
   const agentPhSz  = Math.round(20 * u);
   const footerH    = Math.round(64 * u);
   const footerSz   = Math.round(16 * u);
-  const topH       = Math.round(110 * u);
+  const heroTop    = isTall ? Math.round(560*u) : isSquare ? Math.round(200*u) : Math.round(340*u);
+  const panelPad   = Math.round(52*u);
+  const bottomFade = isTall ? Math.round(900*u) : isSquare ? Math.round(620*u) : Math.round(760*u);
+  const heroRaw    = (location || 'Dubai').split(',')[0].trim();
+  const subRaw     = (location || '').split(',').slice(1).join(',').trim();
+  const heroWords  = heroRaw.split(' ');
+  let heroMain = heroRaw, heroGold = '';
+  if (heroWords.length >= 2) {
+    const split = Math.ceil(heroWords.length / 2);
+    heroMain = heroWords.slice(0, split).join(' ');
+    heroGold = heroWords.slice(split).join(' ');
+  }
+  const titleBaseSz = 28 * u;
+  const titleFontSz = Math.round(title.length > 40 ? titleBaseSz * (40 / title.length) : title.length > 28 ? titleBaseSz * 0.85 : titleBaseSz);
+  const propLabel = title ? `<div style="display:inline-block;margin-top:${Math.round(18*u)}px;padding:${Math.round(10*u)}px ${Math.round(32*u)}px;background:rgba(255,255,255,0.92);border-radius:${Math.round(8*u)}px;max-width:${Math.round(960*u)}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span style="font-family:'Montserrat',sans-serif;font-weight:500;font-size:${titleFontSz}px;color:#1a1a1a;letter-spacing:0.04em;line-height:1.2;">${esc(title)}</span></div>` : '';
 
-  // ── Parse hero text (location is the hero) ──
-  // title = property name (shown small below hero), location = community (hero)
-  const heroRaw  = (location || 'Dubai').split(',')[0].trim();
-  const subRaw   = (location || '').split(',').slice(1).join(',').trim();
+  return `
+    ${video ? `<video class="p-bg-img" src="${esc(video)}" autoplay loop muted playsinline></video>` : image ? `<img class="p-bg-img" src="${esc(image)}" />` : `<div class="p-bg-grad"></div>`}
+    <div style="position:absolute;bottom:0;left:0;right:0;height:${bottomFade}px;background:linear-gradient(to top,rgba(4,8,14,0.98) 0%,rgba(4,8,14,0.9) 15%,rgba(4,8,14,0.65) 35%,rgba(4,8,14,0.25) 60%,transparent 100%);z-index:1;"></div>
+    <div style="position:absolute;top:0;left:0;right:0;height:${Math.round(220*u)}px;background:linear-gradient(to bottom,rgba(4,8,14,0.75) 0%,transparent 100%);z-index:1;"></div>
+    <div style="position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;justify-content:space-between;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:${Math.round(44*u)}px ${pad}px 0;">
+        <img src="${data.logoSrc || LOGO_URL}" style="width:${Math.round(280*u)}px;height:auto;display:block;" />
+        <div style="padding:${badgePad};border:1.5px solid rgba(201,169,110,0.65);font-family:'Montserrat',sans-serif;font-size:${badgeSz}px;font-weight:600;letter-spacing:0.22em;color:#C9A96A;text-transform:uppercase;background:rgba(201,169,110,0.07);">${esc(badge)}</div>
+      </div>
+      <div style="text-align:center;padding:0 ${pad}px;position:absolute;top:${heroTop}px;left:0;right:0;">
+        <div style="display:inline-block;font-family:'Montserrat',sans-serif;font-weight:500;font-size:${eyebrowSz}px;color:rgba(201,169,110,0.85);letter-spacing:0.4em;text-transform:uppercase;margin-bottom:${Math.round(14*u)}px;padding:${Math.round(6*u)}px ${Math.round(20*u)}px;border:1px solid rgba(201,169,110,0.3);border-radius:${Math.round(4*u)}px;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);">Dubai · UAE</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;font-size:${titleSz}px;color:#fff;line-height:0.92;letter-spacing:-0.02em;white-space:nowrap;text-shadow:0 2px 20px rgba(0,0,0,0.8),0 4px 60px rgba(0,0,0,0.5);">${esc(heroMain)}${heroGold ? `<span style="color:#C9A96A;"> ${esc(heroGold)}</span>` : ''}</div>
+        ${subRaw ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:${Math.round(58*u)}px;color:rgba(255,255,255,0.45);margin-top:${Math.round(8*u)}px;">${esc(subRaw)}</div>` : ''}
+        ${propLabel}
+      </div>
+      <div style="margin-top:auto;">
+        ${buildAmenitiesHTML(amenities, amH, amIconSz, amLblSz, amStroke, u)}
+        <div style="background:rgba(10,10,10,0.86);border-top:1px solid rgba(255,255,255,0.07);padding:0 ${panelPad}px ${panelPad}px;">
+          ${buildSpecsHTML(beds, baths, sqft, specValSz, specLblSz, specPad, u, true)}
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:${Math.round(28*u)}px 0 ${Math.round(6*u)}px;">
+            <div>
+              <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${priceLblSz}px;color:rgba(255,255,255,0.3);letter-spacing:0.22em;text-transform:uppercase;margin-bottom:${Math.round(6*u)}px;">Asking Price</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:${priceNumSz}px;color:#fff;line-height:0.9;letter-spacing:-0.02em;">
+                <span style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${aedSz}px;color:rgba(201,169,110,0.7);margin-right:${Math.round(4*u)}px;vertical-align:baseline;">AED</span>${price || '<span style="font-size:0.5em;color:rgba(255,255,255,0.3);">On Request</span>'}
+              </div>
+            </div>
+          </div>
+          ${buildAgentHTML(agentName, agentPhone, agentPhoto, agentInitials, avSz, agentNmSz, agentPhSz, u)}
+        </div>
+        <div style="height:${footerH}px;border-top:0.5px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;background:rgba(10,10,10,0.86);">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${footerSz}px;color:rgba(255,255,255,0.2);letter-spacing:0.12em;">fairopportunityrealestate.com</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ════════════════════════
+// TEMPLATE 2: IVORY
+// Clean cream/white — photo top, cream panel bottom
+// ════════════════════════
+function getPosterHTML_ivory(fmt, data) {
+  const { w, h } = FORMATS[fmt];
+  const { badge, title, location, price, beds, baths, sqft, image, amenities, agentName, agentPhone, agentPhoto, agentInitials } = data;
+  const u = w / 1080;
+  const isSquare = fmt === 'sq';
+  const isTall   = fmt === '916';
+
+  const pad      = Math.round(64 * u);
+  const photoH   = isTall ? Math.round(820*u) : isSquare ? Math.round(500*u) : Math.round(640*u);
+  const cream    = '#F2EBE0';
+  const inkDark  = '#1a1208';
+  const inkMid   = '#6B5A3A';
+  const gold     = '#B8902A';
+
+  const heroRaw   = (location || 'Dubai').split(',')[0].trim();
+  const subRaw    = (location || '').split(',').slice(1).join(',').trim();
   const heroWords = heroRaw.split(' ');
   let heroMain = heroRaw, heroGold = '';
   if (heroWords.length >= 2) {
@@ -859,110 +917,303 @@ function getPosterHTML(fmt, data) {
     heroGold = heroWords.slice(split).join(' ');
   }
 
-  // Property name shown under hero (building / unit label)
-  // Scale font down for long titles so it always stays on one line
-  const titleBaseSz = 28 * u;
-  const titleFontSz = Math.round(title.length > 40 ? titleBaseSz * (40 / title.length) : title.length > 28 ? titleBaseSz * 0.85 : titleBaseSz);
-  const propLabel = title ? `<div style="display:inline-block;margin-top:${Math.round(18*u)}px;padding:${Math.round(10*u)}px ${Math.round(32*u)}px;background:rgba(255,255,255,0.92);border-radius:${Math.round(8*u)}px;max-width:${Math.round(960*u)}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><span style="font-family:'Montserrat',sans-serif;font-weight:500;font-size:${titleFontSz}px;color:#1a1a1a;letter-spacing:0.04em;line-height:1.2;">${esc(title)}</span></div>` : '';
+  const titleSzBase = isSquare ? 100*u : isTall ? 148*u : 128*u;
+  const heroLen   = heroRaw.length;
+  const availW    = w - pad * 2;
+  const titleSz   = Math.round(heroLen * titleSzBase * 0.52 > availW ? titleSzBase * (availW / (heroLen * titleSzBase * 0.52)) * 0.95 : titleSzBase);
 
-  // ── Amenities ──
-  const amHTML = amenities.length ? `
-    <div style="display:flex;gap:0;margin:0 0 0 0;">
-      ${amenities.map(a => `
-        <div style="flex:1;background:rgba(16,16,16,0.72);border:0.5px solid rgba(255,255,255,0.12);display:flex;flex-direction:column;align-items:center;justify-content:center;height:${amH}px;gap:${Math.round(10*u)}px;">
-          <svg viewBox="0 0 24 24" style="width:${amIconSz}px;height:${amIconSz}px;stroke:rgba(201,169,110,0.9);fill:none;stroke-width:${amStroke};stroke-linecap:round;stroke-linejoin:round;">${ICONS[a]||ICONS.default}</svg>
-          <div style="font-family:'Montserrat',sans-serif;font-weight:400;font-size:${amLblSz}px;color:rgba(255,255,255,0.6);text-align:center;line-height:1.3;padding:0 ${Math.round(8*u)}px;">${esc(a)}</div>
-        </div>`).join('')}
-    </div>` : '';
+  const specValSz = isSquare ? Math.round(48*u) : Math.round(60*u);
+  const specLblSz = Math.round(13*u);
+  const specPad   = Math.round(22*u);
+  const priceNumSz= isSquare ? Math.round(80*u) : Math.round(96*u);
+  const aedSz     = Math.round(30*u);
+  const avSz      = Math.round(80*u);
+  const agentNmSz = Math.round(24*u);
+  const agentPhSz = Math.round(18*u);
+  const footerSz  = Math.round(15*u);
+  const footerH   = Math.round(58*u);
+  const panelPad  = Math.round(52*u);
+  const badgeSz   = Math.round(16*u);
 
-  // ── Specs row ──
-  const specs = [
-    beds   ? { val: esc(String(beds)),  lbl: beds === 'Studio' ? 'Studio' : 'Beds'  } : null,
-    baths  ? { val: esc(String(baths)), lbl: 'Baths' } : null,
-    sqft   ? { val: esc(String(sqft)),  lbl: 'Sqft'  } : null,
-  ].filter(Boolean);
+  // Property label sizing
+  const titleFontSz = Math.round(title.length > 40 ? 22*u * (40/title.length) : title.length > 28 ? 22*u * 0.85 : 22*u);
 
-  const specsHTML = specs.length ? `
-    <div style="display:flex;align-items:center;padding:${specPad}px 0;border-bottom:1px solid rgba(255,255,255,0.08);">
-      ${specs.map((s, i) => `
-        <div style="flex:1;text-align:center;${i > 0 ? 'border-left:0.5px solid rgba(255,255,255,0.1);' : ''}">
-          <div style="font-family:'Cormorant Garamond',serif;font-weight:400;font-size:${specValSz}px;color:#fff;line-height:1;">${s.val}</div>
-          <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${specLblSz}px;color:rgba(255,255,255,0.35);letter-spacing:0.2em;text-transform:uppercase;margin-top:${Math.round(5*u)}px;">${s.lbl}</div>
-        </div>`).join('')}
-    </div>` : '';
+  const specsHTML = buildSpecsHTML(beds, baths, sqft, specValSz, specLblSz, specPad, u, false);
 
-  // ── Price ──
-  const priceHTML = `
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:${Math.round(28*u)}px 0 ${Math.round(6*u)}px;">
+  const agentHTML = agentName ? `
+    <div style="display:flex;align-items:center;gap:${Math.round(20*u)}px;padding-top:${Math.round(24*u)}px;border-top:0.5px solid rgba(26,18,8,0.12);margin-top:${Math.round(8*u)}px;">
+      ${agentPhoto
+        ? `<img src="${esc(agentPhoto)}" style="width:${avSz}px;height:${avSz}px;border-radius:50%;border:1.5px solid rgba(184,144,42,0.4);object-fit:cover;flex-shrink:0;" />`
+        : `<div style="width:${avSz}px;height:${avSz}px;border-radius:50%;border:1.5px solid rgba(184,144,42,0.35);background:rgba(184,144,42,0.08);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:${Math.round(26*u)}px;color:${gold};flex-shrink:0;">${esc(agentInitials||'')}</div>`}
       <div>
-        <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${priceLblSz}px;color:rgba(255,255,255,0.3);letter-spacing:0.22em;text-transform:uppercase;margin-bottom:${Math.round(6*u)}px;">Asking Price</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:${priceNumSz}px;color:#fff;line-height:0.9;letter-spacing:-0.02em;">
-          <span style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${aedSz}px;color:rgba(201,169,110,0.7);margin-right:${Math.round(4*u)}px;vertical-align:baseline;">AED</span>${price || '<span style="font-size:0.5em;color:rgba(255,255,255,0.3);">On Request</span>'}
+        <div style="font-family:'Montserrat',sans-serif;font-weight:600;font-size:${agentNmSz}px;color:${inkDark};letter-spacing:0.02em;">${esc(agentName)}</div>
+        <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${agentPhSz}px;color:${gold};margin-top:${Math.round(5*u)}px;">${esc(agentPhone||'')}</div>
+      </div>
+    </div>` : '';
+
+  return `
+    <div style="position:absolute;inset:0;background:${cream};"></div>
+    ${image
+      ? `<div style="position:absolute;top:0;left:0;right:0;height:${photoH}px;overflow:hidden;">
+           <img src="${esc(image)}" style="width:100%;height:100%;object-fit:cover;display:block;" />
+           <div style="position:absolute;bottom:0;left:0;right:0;height:${Math.round(photoH*0.45)}px;background:linear-gradient(to top,${cream},transparent);"></div>
+         </div>`
+      : `<div style="position:absolute;top:0;left:0;right:0;height:${photoH}px;background:linear-gradient(135deg,#d4c8b0,#b8a070);"></div>`}
+
+    <div style="position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;justify-content:space-between;">
+
+      <!-- Top bar on photo -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:${Math.round(44*u)}px ${pad}px 0;">
+        <img src="${data.logoSrc || LOGO_URL}" style="width:${Math.round(260*u)}px;height:auto;display:block;" />
+        <div style="padding:${Math.round(10*u)}px ${Math.round(26*u)}px;background:${inkDark};font-family:'Montserrat',sans-serif;font-size:${badgeSz}px;font-weight:600;letter-spacing:0.22em;color:#C9A96A;text-transform:uppercase;">${esc(badge)}</div>
+      </div>
+
+      <!-- Bottom panel -->
+      <div style="margin-top:auto;">
+        <div style="padding:${Math.round(48*u)}px ${pad}px 0;background:${cream};">
+
+          <!-- Gold rule -->
+          <div style="width:${Math.round(72*u)}px;height:${Math.round(3*u)}px;background:${gold};margin-bottom:${Math.round(24*u)}px;border-radius:2px;"></div>
+
+          <!-- Hero location -->
+          <div style="font-family:'Cormorant Garamond',serif;font-weight:700;font-size:${titleSz}px;color:${inkDark};line-height:0.9;letter-spacing:-0.01em;margin-bottom:${Math.round(10*u)}px;">
+            ${esc(heroMain)}${heroGold ? `<span style="color:${gold};"> ${esc(heroGold)}</span>` : ''}
+          </div>
+          ${subRaw ? `<div style="font-family:'Cormorant Garamond',serif;font-weight:300;font-size:${Math.round(48*u)}px;color:${inkMid};margin-bottom:${Math.round(8*u)}px;">${esc(subRaw)}</div>` : ''}
+
+          <!-- Property title pill -->
+          ${title ? `<div style="display:inline-block;margin-bottom:${Math.round(32*u)}px;padding:${Math.round(8*u)}px ${Math.round(28*u)}px;border:0.5px solid rgba(26,18,8,0.2);border-radius:${Math.round(4*u)}px;">
+            <span style="font-family:'Montserrat',sans-serif;font-weight:400;font-size:${titleFontSz}px;color:${inkMid};letter-spacing:0.04em;">${esc(title)}</span>
+          </div>` : ''}
+
+          ${specsHTML}
+
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;padding:${Math.round(24*u)}px 0 ${Math.round(6*u)}px;">
+            <div>
+              <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${Math.round(14*u)}px;color:${inkMid};letter-spacing:0.22em;text-transform:uppercase;margin-bottom:${Math.round(6*u)}px;">Asking Price</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:${priceNumSz}px;color:${inkDark};line-height:0.9;letter-spacing:-0.02em;">
+                <span style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${aedSz}px;color:${inkMid};margin-right:${Math.round(4*u)}px;">AED</span>${price || '—'}
+              </div>
+            </div>
+          </div>
+          ${agentHTML}
+        </div>
+        <div style="height:${footerH}px;border-top:0.5px solid rgba(26,18,8,0.1);display:flex;align-items:center;justify-content:center;background:${cream};">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${footerSz}px;color:rgba(26,18,8,0.3);letter-spacing:0.12em;">fairopportunityrealestate.com</div>
         </div>
       </div>
     </div>`;
+}
 
-  // ── Agent ──
-  const agentHTML = agentName ? `
-    <div style="display:flex;align-items:center;gap:${Math.round(22*u)}px;padding:${Math.round(22*u)}px 0 0;border-top:0.5px solid rgba(255,255,255,0.1);margin-top:${Math.round(4*u)}px;">
-      ${agentPhoto
-        ? `<img src="${esc(agentPhoto)}" style="width:${avSz}px;height:${avSz}px;border-radius:50%;border:1.5px solid rgba(201,169,110,0.45);object-fit:cover;flex-shrink:0;" />`
-        : `<div style="width:${avSz}px;height:${avSz}px;border-radius:50%;border:1.5px solid rgba(201,169,110,0.45);background:rgba(201,169,110,0.1);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:${Math.round(28*u)}px;color:#C9A96A;flex-shrink:0;">${esc(agentInitials||'')}</div>`}
-      <div>
-        <div style="font-family:'Montserrat',sans-serif;font-weight:600;font-size:${agentNmSz}px;color:#fff;letter-spacing:0.02em;">${esc(agentName)}</div>
-        <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${agentPhSz}px;color:#C9A96A;margin-top:${Math.round(6*u)}px;letter-spacing:0.04em;">${esc(agentPhone||'')}</div>
-      </div>
-    </div>` : '';
+// ════════════════════════
+// TEMPLATE 3: EDITORIAL
+// Dark, typographic — large bold type, magazine feel
+// ════════════════════════
+function getPosterHTML_editorial(fmt, data) {
+  const { w, h } = FORMATS[fmt];
+  const { badge, title, location, price, beds, baths, sqft, image, amenities, agentName, agentPhone, agentPhoto, agentInitials } = data;
+  const u = w / 1080;
+  const isSquare = fmt === 'sq';
+  const isTall   = fmt === '916';
 
-  // ── Overlay heights adjust for format ──
-  const bottomFade = isTall ? Math.round(900*u) : isSquare ? Math.round(620*u) : Math.round(760*u);
-  const heroTop    = isTall ? Math.round(560*u) : isSquare ? Math.round(200*u) : Math.round(340*u);
+  const pad = Math.round(64 * u);
+
+  const heroRaw   = (location || 'Dubai').split(',')[0].trim().toUpperCase();
+  const subRaw    = (location || '').split(',').slice(1).join(',').trim();
+
+  // Large bold display text — Montserrat not serif
+  const dispSzBase = isSquare ? 130*u : isTall ? 160*u : 148*u;
+  const heroLen    = heroRaw.length;
+  const availW     = w - pad * 2;
+  const dispSz     = Math.round(heroLen * dispSzBase * 0.58 > availW ? dispSzBase * (availW / (heroLen * dispSzBase * 0.58)) * 0.95 : dispSzBase);
+
+  const specValSz  = isSquare ? Math.round(52*u) : Math.round(64*u);
+  const specLblSz  = Math.round(13*u);
+  const specPad    = Math.round(20*u);
+  const priceNumSz = isSquare ? Math.round(84*u) : Math.round(100*u);
+  const aedSz      = Math.round(32*u);
+  const avSz       = Math.round(82*u);
+  const agentNmSz  = Math.round(24*u);
+  const agentPhSz  = Math.round(18*u);
+  const footerH    = Math.round(58*u);
+  const footerSz   = Math.round(15*u);
   const panelPad   = Math.round(52*u);
+  const badgeSz    = Math.round(16*u);
+  const heroTop    = isTall ? Math.round(500*u) : isSquare ? Math.round(180*u) : Math.round(280*u);
+
+  const titleFontSz = Math.round(title.length > 40 ? 22*u*(40/title.length) : title.length > 28 ? 22*u*0.85 : 22*u);
+
+  const amH      = isSquare ? Math.round(88*u) : Math.round(106*u);
+  const amIconSz = Math.round(34*u);
+  const amLblSz  = Math.round(14*u);
+  const amStroke = Math.round(1.5*u);
 
   return `
-    ${video ? `<video class="p-bg-img" src="${esc(video)}" autoplay loop muted playsinline style="object-fit:cover;"></video>` : image ? `<img class="p-bg-img" src="${esc(image)}" />` : videoMode ? `` : `<div class="p-bg-grad"></div>`}
-    <div style="position:absolute;bottom:0;left:0;right:0;height:${bottomFade}px;background:linear-gradient(to top,rgba(4,8,14,0.98) 0%,rgba(4,8,14,0.9) 15%,rgba(4,8,14,0.65) 35%,rgba(4,8,14,0.25) 60%,transparent 100%);z-index:1;"></div>
-    <div style="position:absolute;top:0;left:0;right:0;height:${Math.round(220*u)}px;background:linear-gradient(to bottom,rgba(4,8,14,0.75) 0%,transparent 100%);z-index:1;"></div>
+    ${image ? `<img class="p-bg-img" src="${esc(image)}" style="filter:brightness(0.22) saturate(0.6);" />` : `<div style="position:absolute;inset:0;background:#05050A;"></div>`}
+    <div style="position:absolute;inset:0;background:rgba(5,5,10,0.55);z-index:1;"></div>
+    <div style="position:absolute;bottom:0;left:0;right:0;height:70%;background:linear-gradient(to top,rgba(5,5,10,1) 0%,rgba(5,5,10,0.92) 30%,transparent 100%);z-index:1;"></div>
 
     <div style="position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;justify-content:space-between;">
 
       <!-- Top bar -->
       <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:${Math.round(44*u)}px ${pad}px 0;">
-        <img src="${data.logoSrc || LOGO_URL}" style="width:${Math.round(280*u)}px;height:auto;display:block;" />
-        <div style="padding:${badgePad};border:1.5px solid rgba(201,169,110,0.65);font-family:'Montserrat',sans-serif;font-size:${badgeSz}px;font-weight:600;letter-spacing:0.22em;color:#C9A96A;text-transform:uppercase;background:rgba(201,169,110,0.07);">${esc(badge)}</div>
+        <img src="${data.logoSrc || LOGO_URL}" style="width:${Math.round(260*u)}px;height:auto;display:block;" />
+        <div style="padding:${Math.round(10*u)}px ${Math.round(26*u)}px;border:1.5px solid rgba(201,169,110,0.55);font-family:'Montserrat',sans-serif;font-size:${badgeSz}px;font-weight:600;letter-spacing:0.22em;color:#C9A96A;text-transform:uppercase;background:rgba(201,169,110,0.07);">${esc(badge)}</div>
       </div>
 
-      <!-- Hero location text -->
-      <div style="text-align:center;padding:0 ${pad}px;position:absolute;top:${heroTop}px;left:0;right:0;">
-        <div style="display:inline-block;font-family:'Montserrat',sans-serif;font-weight:500;font-size:${eyebrowSz}px;color:rgba(201,169,110,0.85);letter-spacing:0.4em;text-transform:uppercase;margin-bottom:${Math.round(14*u)}px;padding:${Math.round(6*u)}px ${Math.round(20*u)}px;border:1px solid rgba(201,169,110,0.3);border-radius:${Math.round(4*u)}px;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);">Dubai · UAE</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;font-size:${titleSz}px;color:#fff;line-height:0.92;letter-spacing:-0.02em;white-space:nowrap;text-shadow:0 2px 20px rgba(0,0,0,0.8),0 4px 60px rgba(0,0,0,0.5),0 0 120px rgba(0,0,0,0.3);">${esc(heroMain)}${heroGold ? `<span style="color:#C9A96A;"> ${esc(heroGold)}</span>` : ''}</div>
-        ${subRaw ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:${Math.round(58*u)}px;color:rgba(255,255,255,0.45);margin-top:${Math.round(8*u)}px;">${esc(subRaw)}</div>` : ''}
-        ${propLabel}
+      <!-- Hero large display text -->
+      <div style="padding:0 ${pad}px;position:absolute;top:${heroTop}px;left:0;right:0;">
+        <!-- Gold accent line -->
+        <div style="width:${Math.round(80*u)}px;height:${Math.round(4*u)}px;background:#C9A96E;border-radius:2px;margin-bottom:${Math.round(28*u)}px;"></div>
+
+        <!-- Big bold location -->
+        <div style="font-family:'Montserrat',sans-serif;font-weight:600;font-size:${dispSz}px;color:#fff;line-height:0.88;letter-spacing:-0.03em;white-space:nowrap;">${esc(heroRaw)}</div>
+        ${subRaw ? `<div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${Math.round(44*u)}px;color:rgba(255,255,255,0.4);margin-top:${Math.round(12*u)}px;letter-spacing:0.04em;">${esc(subRaw.toUpperCase())}</div>` : ''}
+
+        <!-- Property name -->
+        ${title ? `<div style="margin-top:${Math.round(24*u)}px;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:${Math.round(titleFontSz * 1.4)}px;color:rgba(201,169,110,0.75);letter-spacing:0.02em;">${esc(title)}</div>` : ''}
       </div>
 
       <!-- Bottom panel -->
       <div style="margin-top:auto;">
-        ${amHTML}
-        <div style="background:rgba(10,10,10,0.86);border-top:1px solid rgba(255,255,255,0.07);padding:0 ${panelPad}px ${panelPad}px;">
-          ${specsHTML}
-          ${priceHTML}
-          ${agentHTML}
+        ${buildAmenitiesHTML(amenities, amH, amIconSz, amLblSz, amStroke, u)}
+        <div style="background:rgba(5,5,10,0.95);border-top:1px solid rgba(255,255,255,0.07);padding:0 ${panelPad}px ${panelPad}px;">
+          ${buildSpecsHTML(beds, baths, sqft, specValSz, specLblSz, specPad, u, true)}
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:${Math.round(28*u)}px 0 ${Math.round(6*u)}px;">
+            <div>
+              <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${Math.round(14*u)}px;color:rgba(255,255,255,0.25);letter-spacing:0.25em;text-transform:uppercase;margin-bottom:${Math.round(6*u)}px;">Asking Price</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:${priceNumSz}px;color:#fff;line-height:0.9;letter-spacing:-0.02em;">
+                <span style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${aedSz}px;color:rgba(201,169,110,0.65);margin-right:${Math.round(4*u)}px;">AED</span>${price || '<span style="font-size:0.5em;color:rgba(255,255,255,0.3);">On Request</span>'}
+              </div>
+            </div>
+          </div>
+          ${buildAgentHTML(agentName, agentPhone, agentPhoto, agentInitials, avSz, agentNmSz, agentPhSz, u)}
         </div>
-        <!-- Footer -->
-        <div style="height:${footerH}px;border-top:0.5px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;background:rgba(10,10,10,0.86);">
-          <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${footerSz}px;color:rgba(255,255,255,0.2);letter-spacing:0.12em;">fairopportunityrealestate.com</div>
+        <div style="height:${footerH}px;border-top:0.5px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;background:rgba(5,5,10,0.95);">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${footerSz}px;color:rgba(255,255,255,0.18);letter-spacing:0.12em;">fairopportunityrealestate.com</div>
         </div>
       </div>
-
     </div>`;
 }
 
-// ══════════════════════════════════
-// VIDEO STATE
-// ══════════════════════════════════
-S.video     = '';   // object URL for preview
-S.videoFile = null; // raw File for export
+// ════════════════════════
+// TEMPLATE 4: MINIMAL
+// Dark, structured, left-aligned — information forward
+// ════════════════════════
+function getPosterHTML_minimal(fmt, data) {
+  const { w, h } = FORMATS[fmt];
+  const { badge, title, location, price, beds, baths, sqft, image, amenities, agentName, agentPhone, agentPhoto, agentInitials } = data;
+  const u = w / 1080;
+  const isSquare = fmt === 'sq';
+  const isTall   = fmt === '916';
 
+  const pad      = Math.round(72 * u);
+  const padL     = Math.round(88 * u); // extra left padding to clear gold bar
+  const barW     = Math.round(6 * u);
+
+  const heroRaw   = (location || 'Dubai').split(',')[0].trim();
+  const subRaw    = (location || '').split(',').slice(1).join(',').trim();
+  const heroWords = heroRaw.split(' ');
+  let heroMain = heroRaw, heroGold = '';
+  if (heroWords.length >= 2) {
+    const split = Math.ceil(heroWords.length / 2);
+    heroMain = heroWords.slice(0, split).join(' ');
+    heroGold = heroWords.slice(split).join(' ');
+  }
+
+  const titleSzBase = isSquare ? 110*u : isTall ? 152*u : 136*u;
+  const heroLen     = heroRaw.length;
+  const availW      = w - padL - pad;
+  const titleSz     = Math.round(heroLen * titleSzBase * 0.52 > availW ? titleSzBase * (availW / (heroLen * titleSzBase * 0.52)) * 0.95 : titleSzBase);
+
+  const specValSz  = isSquare ? Math.round(50*u) : Math.round(62*u);
+  const specLblSz  = Math.round(13*u);
+  const priceNumSz = isSquare ? Math.round(82*u) : Math.round(98*u);
+  const aedSz      = Math.round(30*u);
+  const avSz       = Math.round(80*u);
+  const agentNmSz  = Math.round(24*u);
+  const agentPhSz  = Math.round(18*u);
+  const footerH    = Math.round(58*u);
+  const footerSz   = Math.round(15*u);
+  const badgeSz    = Math.round(16*u);
+  const heroTop    = isTall ? Math.round(520*u) : isSquare ? Math.round(180*u) : Math.round(280*u);
+  const panelPad   = Math.round(52*u);
+
+  const titleFontSz = Math.round(title.length > 40 ? 22*u*(40/title.length) : title.length > 28 ? 22*u*0.85 : 22*u);
+  const amH      = isSquare ? Math.round(86*u) : Math.round(104*u);
+  const amIconSz = Math.round(32*u);
+  const amLblSz  = Math.round(14*u);
+  const amStroke = Math.round(1.5*u);
+
+  // Specs horizontal list with dividers — left aligned
+  const specs = [
+    beds  ? { val: esc(String(beds)),  lbl: beds === 'Studio' ? 'Studio' : 'Beds'  } : null,
+    baths ? { val: esc(String(baths)), lbl: 'Baths' } : null,
+    sqft  ? { val: esc(String(sqft)),  lbl: 'Sqft'  } : null,
+  ].filter(Boolean);
+
+  const specsRow = specs.length ? `<div style="display:flex;gap:${Math.round(40*u)}px;padding:${Math.round(22*u)}px 0;border-bottom:0.5px solid rgba(255,255,255,0.07);">
+    ${specs.map(s => `<div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:${specValSz}px;color:#fff;line-height:1;">${s.val}</div>
+      <div style="font-family:'Montserrat',sans-serif;font-size:${specLblSz}px;color:rgba(255,255,255,0.3);letter-spacing:0.2em;text-transform:uppercase;margin-top:${Math.round(4*u)}px;">${s.lbl}</div>
+    </div>`).join('')}
+  </div>` : '';
+
+  return `
+    ${image ? `<img class="p-bg-img" src="${esc(image)}" style="filter:brightness(0.18) saturate(0.5);" />` : `<div style="position:absolute;inset:0;background:#0d0d0d;"></div>`}
+    <div style="position:absolute;inset:0;background:rgba(10,10,10,0.5);z-index:1;"></div>
+    <!-- Gold vertical bar -->
+    <div style="position:absolute;top:0;bottom:0;left:0;width:${barW}px;background:#C9A96E;z-index:11;"></div>
+
+    <div style="position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;justify-content:space-between;">
+
+      <!-- Top bar -->
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:${Math.round(44*u)}px ${pad}px 0 ${padL}px;">
+        <img src="${data.logoSrc || LOGO_URL}" style="width:${Math.round(240*u)}px;height:auto;display:block;" />
+        <div style="padding:${Math.round(10*u)}px ${Math.round(26*u)}px;border:0.5px solid rgba(201,169,110,0.5);font-family:'Montserrat',sans-serif;font-size:${badgeSz}px;font-weight:600;letter-spacing:0.22em;color:#C9A96A;text-transform:uppercase;">${esc(badge)}</div>
+      </div>
+
+      <!-- Hero text block — left aligned -->
+      <div style="padding:0 ${pad}px 0 ${padL}px;position:absolute;top:${heroTop}px;left:0;right:0;">
+        <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${Math.round(18*u)}px;color:rgba(201,169,110,0.7);letter-spacing:0.35em;text-transform:uppercase;margin-bottom:${Math.round(16*u)}px;">Dubai · UAE</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:700;font-size:${titleSz}px;color:#fff;line-height:0.9;letter-spacing:-0.01em;">
+          ${esc(heroMain)}${heroGold ? `<span style="color:#C9A96A;"> ${esc(heroGold)}</span>` : ''}
+        </div>
+        ${subRaw ? `<div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:${Math.round(50*u)}px;color:rgba(255,255,255,0.35);margin-top:${Math.round(8*u)}px;">${esc(subRaw)}</div>` : ''}
+        ${title ? `<div style="margin-top:${Math.round(20*u)}px;font-family:'Montserrat',sans-serif;font-weight:300;font-size:${titleFontSz}px;color:rgba(255,255,255,0.4);letter-spacing:0.05em;">${esc(title)}</div>` : ''}
+      </div>
+
+      <!-- Bottom panel -->
+      <div style="margin-top:auto;">
+        ${buildAmenitiesHTML(amenities, amH, amIconSz, amLblSz, amStroke, u)}
+        <div style="background:rgba(10,10,10,0.92);border-top:1px solid rgba(255,255,255,0.06);padding:0 ${panelPad}px ${panelPad}px 0;padding-left:${padL}px;">
+          ${specsRow}
+          <div style="padding:${Math.round(26*u)}px 0 ${Math.round(6*u)}px;">
+            <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${Math.round(14*u)}px;color:rgba(255,255,255,0.25);letter-spacing:0.25em;text-transform:uppercase;margin-bottom:${Math.round(6*u)}px;">Asking Price</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:${priceNumSz}px;color:#fff;line-height:0.9;letter-spacing:-0.02em;">
+              <span style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${aedSz}px;color:rgba(201,169,110,0.65);margin-right:${Math.round(4*u)}px;">AED</span>${price || '<span style="font-size:0.5em;color:rgba(255,255,255,0.3);">On Request</span>'}
+            </div>
+          </div>
+          ${buildAgentHTML(agentName, agentPhone, agentPhoto, agentInitials, avSz, agentNmSz, agentPhSz, u)}
+        </div>
+        <div style="height:${footerH}px;border-top:0.5px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;background:rgba(10,10,10,0.92);">
+          <div style="font-family:'Montserrat',sans-serif;font-weight:300;font-size:${footerSz}px;color:rgba(255,255,255,0.18);letter-spacing:0.12em;">fairopportunityrealestate.com</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ══ TEMPLATE ROUTER ══
+function getPosterHTML(fmt, data) {
+  switch (S.template) {
+    case 'ivory':     return getPosterHTML_ivory(fmt, data);
+    case 'editorial': return getPosterHTML_editorial(fmt, data);
+    case 'minimal':   return getPosterHTML_minimal(fmt, data);
+    default:          return getPosterHTML_cinematic(fmt, data);
+  }
+}
+
+// ══ VIDEO STATE ══
 function updateDownloadBtn() {
   const btn = document.getElementById('downloadBtn');
   btn.innerHTML = S.videoFile
@@ -970,22 +1221,16 @@ function updateDownloadBtn() {
     : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PNG`;
 }
 
-// ══════════════════════════════════
-// VIDEO UPLOAD ZONE (manual mode)
-// ══════════════════════════════════
-// injected into DOM after manualSection is created
+// ══ VIDEO UPLOAD ZONE ══
 (function injectVideoZone() {
-  // Wait for DOM then append to manualSection
   const tryInject = setInterval(() => {
     const sec = document.getElementById('manualSection');
     if (!sec) return;
     clearInterval(tryInject);
-
     const wrap = document.createElement('div');
     wrap.className = 'form-group';
     wrap.style.marginTop = '12px';
-    wrap.innerHTML = `
-      <label class="form-label">Property Video <span style="color:var(--white-20);">(optional — exports as MP4)</span></label>
+    wrap.innerHTML = `<label class="form-label">Property Video <span style="color:var(--white-20);">(optional — exports as MP4)</span></label>
       <div class="upload-zone" id="videoZone">
         <svg style="display:block;margin:0 auto 8px;opacity:0.3;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
         <div class="upload-zone-text">Drop MP4 here or click to browse</div>
@@ -1001,7 +1246,6 @@ function initVideoZone() {
   const zone  = document.getElementById('videoZone');
   const input = document.getElementById('videoFile');
   if (!zone || !input) return;
-
   zone.addEventListener('click', () => input.click());
   zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('dragover'); });
   zone.addEventListener('dragleave', ()  => zone.classList.remove('dragover'));
@@ -1018,23 +1262,17 @@ function initVideoZone() {
     renderPoster();
     zone.innerHTML = `<div class="upload-preview">
       <video src="${S.video}" style="width:72px;height:52px;object-fit:cover;border-radius:2px;border:0.5px solid var(--subtle-border);flex-shrink:0;" muted></video>
-      <div class="upload-preview-info">
-        <div class="upload-preview-name">${esc(file.name)}</div>
-        <div class="upload-preview-status" style="color:var(--success);">Ready · exports as MP4</div>
-      </div>
+      <div class="upload-preview-info"><div class="upload-preview-name">${esc(file.name)}</div><div class="upload-preview-status" style="color:var(--success);">Ready · exports as MP4</div></div>
       <button type="button" class="upload-remove" id="videoRemoveBtn">&times;</button>
     </div>`;
     document.getElementById('videoRemoveBtn').addEventListener('click', e => {
-      e.stopPropagation();
-      URL.revokeObjectURL(S.video);
-      S.video = ''; S.videoFile = null;
+      e.stopPropagation(); URL.revokeObjectURL(S.video); S.video = ''; S.videoFile = null;
       updateDownloadBtn(); renderPoster(); resetVideoZone();
     });
   }
 
   function resetVideoZone() {
-    zone.innerHTML = `
-      <svg style="display:block;margin:0 auto 8px;opacity:0.3;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+    zone.innerHTML = `<svg style="display:block;margin:0 auto 8px;opacity:0.3;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
       <div class="upload-zone-text">Drop MP4 here or click to browse</div>
       <div class="upload-zone-hint">MP4 · max 100MB · poster overlaid on export</div>
       <input type="file" id="videoFile" accept="video/mp4,video/quicktime" />`;
@@ -1042,9 +1280,7 @@ function initVideoZone() {
   }
 }
 
-// ══════════════════════════════════
-// RENDER POSTER
-// ══════════════════════════════════
+// ══ RENDER ══
 function getAgentData() {
   const n = S.agent;
   if (!n || !AGENTS[n]) return { agentName:'', agentPhone:'', agentPhoto:'', agentInitials:'' };
@@ -1062,7 +1298,6 @@ function renderPoster() {
   updateFmtHint();
   const fmt = FORMATS[S.fmt];
   const data = { badge: S.badge, title: S.title, location: S.location, price: S.price, beds: S.beds, baths: S.baths, sqft: S.sqft, image: S.image, video: S.video, videoMode: false, amenities: S.amenities, ...getAgentData() };
-
   const scale = getPreviewScale(fmt.w);
   const pw = document.getElementById('posterPreview');
   pw.style.width  = fmt.w + 'px';
@@ -1070,74 +1305,46 @@ function renderPoster() {
   pw.style.transform = `scale(${scale})`;
   pw.style.transformOrigin = 'top left';
   pw.innerHTML = getPosterHTML(S.fmt, data);
-
   const wrap = document.getElementById('previewWrap');
   wrap.style.width  = Math.round(fmt.w * scale) + 'px';
   wrap.style.height = Math.round(fmt.h * scale) + 'px';
 }
 
-// Re-render on resize for responsive preview scaling
 window.addEventListener('resize', () => { clearTimeout(window._rrt); window._rrt = setTimeout(renderPoster, 150); });
 
-// ══════════════════════════════════
-// DOWNLOAD
-// ══════════════════════════════════
+// ══ DOWNLOAD ══
 document.getElementById('downloadBtn').addEventListener('click', async () => {
   const btn = document.getElementById('downloadBtn');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Generating...';
-
   try {
     const fmt  = FORMATS[S.fmt];
     const isVideo = !!(S.video && S.videoFile);
     const agentData = getAgentData();
-
-    // Convert images to data URLs via proxy (fixes Chrome CORS)
     const [imageSrc, logoSrc, agentPhotoSrc] = await Promise.all([
       isVideo ? Promise.resolve('') : toDataURL(S.image),
       toDataURL(LOGO_URL),
       toDataURL(agentData.agentPhoto),
     ]);
-
-    const data = {
-      badge: S.badge, title: S.title, location: S.location,
-      price: S.price, beds: S.beds, baths: S.baths, sqft: S.sqft,
-      image: imageSrc,
-      video: '',
-      videoMode: isVideo,
-      amenities: S.amenities,
-      ...agentData, agentPhoto: agentPhotoSrc, logoSrc
-    };
-
+    const data = { badge: S.badge, title: S.title, location: S.location, price: S.price, beds: S.beds, baths: S.baths, sqft: S.sqft, image: imageSrc, video: '', videoMode: isVideo, amenities: S.amenities, ...agentData, agentPhoto: agentPhotoSrc, logoSrc };
     const cap = document.getElementById('posterCapture');
     cap.style.width  = fmt.w + 'px';
     cap.style.height = fmt.h + 'px';
     cap.style.transform = 'none';
     cap.innerHTML = getPosterHTML(S.fmt, data);
-
     await document.fonts.ready;
     await new Promise(r => setTimeout(r, 600));
-
-    const posterCanvas = await html2canvas(cap, {
-      width: fmt.w, height: fmt.h, scale: 1,
-      useCORS: false, allowTaint: false,
-      backgroundColor: isVideo ? null : '#060e17',
-      logging: false
-    });
-
+    const posterCanvas = await html2canvas(cap, { width: fmt.w, height: fmt.h, scale: 1, useCORS: false, allowTaint: false, backgroundColor: isVideo ? null : '#060e17', logging: false });
     if (isVideo) {
       btn.innerHTML = '<span class="spinner"></span> Rendering video...';
       await exportVideoWithOverlay(posterCanvas, S.videoFile, fmt);
     } else {
       const a = document.createElement('a');
-      a.download = `FORE-${S.badge.replace(/\s/g,'-')}-${Date.now()}.png`;
+      a.download = `FORE-${S.template}-${S.badge.replace(/\s/g,'-')}-${Date.now()}.png`;
       a.href = posterCanvas.toDataURL('image/png');
       a.click();
     }
-
-    // Log
     try { await db.from(LOGS_TABLE).insert([{ listing_id: S.listings.find(l=>l.id===S.selectedId)?.id||null, agent_name: S.agent||null, property_title: S.title||null, listing_type: S.badge||null, price: S.price ? Number(S.price.replace(/,/g,'')) : null, location: S.location||null }]); } catch(_) {}
-
     showToast('Downloaded ✓');
   } catch (err) {
     showToast('Download failed — see console', true);
@@ -1148,111 +1355,56 @@ document.getElementById('downloadBtn').addEventListener('click', async () => {
   }
 });
 
-// ══════════════════════════════════
-// VIDEO EXPORT — MP4 via WebCodecs + mp4-muxer
-// ══════════════════════════════════
+// ══ VIDEO EXPORT ══
 async function exportVideoWithOverlay(posterCanvas, videoFile, fmt) {
   const video = document.createElement('video');
-  video.muted = true;
-  video.playsInline = true;
-  video.preload = 'auto';
+  video.muted = true; video.playsInline = true; video.preload = 'auto';
   video.src = URL.createObjectURL(videoFile);
-
-  // Wait for video to be fully ready
   await new Promise((res, rej) => { video.onloadeddata = res; video.onerror = rej; });
-
-  const W = fmt.w, H = fmt.h;
-  const fps = 30;
+  const W = fmt.w, H = fmt.h, fps = 30;
   const duration = video.duration;
   const totalFrames = Math.ceil(duration * fps);
-
-  // Compositing canvas
   const comp = document.createElement('canvas');
   comp.width = W; comp.height = H;
   const ctx = comp.getContext('2d', { willReadFrequently: true });
-
-  // Collect encoded chunks
-  const chunks = [];
-  let encoderDone;
-  const flushPromise = new Promise(r => { encoderDone = r; });
-
-  // Set up MP4 muxer
-  const muxer = new Mp4Muxer.Muxer({
-    target: new Mp4Muxer.ArrayBufferTarget(),
-    video: { codec: 'avc', width: W, height: H },
-    fastStart: 'in-memory',
-  });
-
-  // Set up VideoEncoder
+  const muxer = new Mp4Muxer.Muxer({ target: new Mp4Muxer.ArrayBufferTarget(), video: { codec: 'avc', width: W, height: H }, fastStart: 'in-memory' });
   const encoder = new VideoEncoder({
-    output: (chunk, meta) => {
-      muxer.addVideoChunk(chunk, meta);
-    },
+    output: (chunk, meta) => { muxer.addVideoChunk(chunk, meta); },
     error: e => { console.error('Encoder error:', e); },
   });
-
-  // Use Baseline profile for maximum compatibility
-  encoder.configure({
-    codec: 'avc1.42001f',
-    width: W,
-    height: H,
-    bitrate: 5_000_000,
-    framerate: fps,
-    latencyMode: 'quality',
-    avc: { format: 'avc' },
-  });
-
-  // Seek frame-by-frame and encode
+  encoder.configure({ codec: 'avc1.42001f', width: W, height: H, bitrate: 5_000_000, framerate: fps, latencyMode: 'quality', avc: { format: 'avc' } });
   for (let i = 0; i < totalFrames; i++) {
     const targetTime = Math.min(i / fps, duration - 0.001);
     video.currentTime = targetTime;
     await new Promise(r => { video.onseeked = r; });
-    // Small delay to ensure frame is decoded and painted
     await new Promise(r => setTimeout(r, 30));
-
-    // Draw video frame scaled to cover poster
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
     const vw = video.videoWidth || W, vh = video.videoHeight || H;
     const sc = Math.max(W / vw, H / vh);
     const sw = vw * sc, sh = vh * sc;
     ctx.drawImage(video, (W - sw) / 2, (H - sh) / 2, sw, sh);
-    // Poster overlay
     ctx.drawImage(posterCanvas, 0, 0, W, H);
-
     const timestamp = Math.round(i * (1_000_000 / fps));
     const frame = new VideoFrame(comp, { timestamp });
-    const keyFrame = i % (fps * 2) === 0;
-    encoder.encode(frame, { keyFrame });
+    encoder.encode(frame, { keyFrame: i % (fps * 2) === 0 });
     frame.close();
-
-    // Avoid backpressure — wait for encoder queue to drain periodically
-    if (encoder.encodeQueueSize > 5) {
-      await new Promise(r => setTimeout(r, 10));
-    }
+    if (encoder.encodeQueueSize > 5) await new Promise(r => setTimeout(r, 10));
   }
-
   await encoder.flush();
   encoder.close();
   muxer.finalize();
-
   const buf = muxer.target.buffer;
-  if (!buf || buf.byteLength === 0) {
-    throw new Error('MP4 encoding produced empty file');
-  }
-
+  if (!buf || buf.byteLength === 0) throw new Error('MP4 encoding produced empty file');
   const blob = new Blob([buf], { type: 'video/mp4' });
   const a = document.createElement('a');
-  a.download = `FORE-${S.badge.replace(/\s/g,'-')}-${Date.now()}.mp4`;
+  a.download = `FORE-${S.template}-${S.badge.replace(/\s/g,'-')}-${Date.now()}.mp4`;
   a.href = URL.createObjectURL(blob);
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 5000);
   URL.revokeObjectURL(video.src);
 }
 
-// ══════════════════════════════════
-// UTILS
-// ══════════════════════════════════
+// ══ UTILS ══
 function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 function showToast(msg, isError = false) {
   const t = document.getElementById('toast');
