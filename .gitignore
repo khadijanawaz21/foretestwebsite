@@ -4,3 +4,14 @@ temporary screenshots/
 .claude/
 .vercel
 property-photos/
+
+# Static page generator — local env and build cache/output (Static Page
+# Generator Spec §9, §14). Regenerated on every build; never commit.
+.env
+generator/.cache/
+/properties/
+/areas/
+/developers/
+/blog/
+/sitemap.xml
+/redirects-map.json

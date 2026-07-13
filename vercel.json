@@ -1,5 +1,5 @@
 {
-  "buildCommand": "",
+  "buildCommand": "node generator/build.mjs",
   "outputDirectory": "",
   "functions": {
     "api/sync-listings.js": {
@@ -7,12 +7,22 @@
     },
     "api/sync-pf-listings.js": {
       "maxDuration": 60
+    },
+    "api/generate-blog.js": {
+      "maxDuration": 120
+    },
+    "api/auto-blog-cron.js": {
+      "maxDuration": 120
     }
   },
   "crons": [
     {
       "path": "/api/sync-listings",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/auto-blog-cron",
+      "schedule": "0 9 * * 1,4"
     }
   ]
 }
