@@ -49,7 +49,7 @@ export function runBatch(rows, { writePage = writePageToDisk } = {}) {
 
   for (const row of rows) {
     try {
-      const result = buildPropertyPage(row);
+      const result = buildPropertyPage(row, rows);
       writePage(result);
       succeeded.push(result);
     } catch (err) {

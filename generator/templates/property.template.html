@@ -18,42 +18,436 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" crossorigin />
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/mobile.css" />
-  <!--SSG:PAGE_STYLES-->
   <!--SSG:JSONLD-->
+  <style>
+    /* ════════════════════════════════════════════════════════
+       UNIT DETAIL PAGE V2 (Release 1.0.1)
+       Independent stylesheet — shares FORE's design tokens
+       (colors/type from /style.css) but no CSS or markup is
+       extracted from property-detail.html. The off-plan Project
+       Detail Page is frozen and untouched by this file.
+       ════════════════════════════════════════════════════════ */
+
+    .pd2 { max-width: 1360px; margin: 0 auto; }
+
+    /* ── Breadcrumb ─────────────────────── */
+    .pd2-breadcrumb {
+      padding: 28px 10% 0;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .pd2-breadcrumb a, .pd2-bc-current {
+      font-size: 8.5px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--white-35); text-decoration: none; transition: color 0.2s;
+    }
+    .pd2-breadcrumb a:hover, .pd2-breadcrumb a:focus-visible { color: var(--gold); }
+    .pd2-bc-sep { color: var(--white-20); font-size: 11px; }
+    .pd2-bc-current { color: var(--white-50); max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* ── Gallery ────────────────────────── */
+    .pd2-gallery { margin-top: 22px; padding: 0 10%; }
+    .pd2-gallery-main {
+      position: relative; width: 100%; height: 62vh; min-height: 380px; max-height: 640px;
+      overflow: hidden; border-radius: 4px; background: #111; cursor: zoom-in;
+    }
+    .pd2-gallery-main img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform 0.7s cubic-bezier(0.22,1,0.36,1);
+    }
+    .pd2-gallery-main:hover img { transform: scale(1.035); }
+    .pd2-gallery-overlay {
+      position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 42%),
+                  linear-gradient(135deg, rgba(201,169,110,0.10) 0%, transparent 55%);
+    }
+    .pd2-badge {
+      position: absolute; top: 18px; left: 18px; z-index: 2;
+      font-size: 7.5px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase;
+      padding: 6px 12px; border-radius: 2px; color: var(--gold);
+      background: rgba(10,10,10,0.6); border: 0.5px solid var(--gold-border);
+      backdrop-filter: blur(6px);
+    }
+    .pd2-gallery-nav {
+      position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+      width: 44px; height: 44px; border-radius: 2px; border: 0.5px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.45); color: rgba(255,255,255,0.8); font-size: 22px; line-height: 1;
+      cursor: pointer; backdrop-filter: blur(8px);
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+    }
+    .pd2-gallery-nav:hover { background: rgba(201,169,110,0.16); border-color: var(--gold-border); }
+    .pd2-gallery-nav:active { transform: translateY(-50%) scale(0.94); }
+    .pd2-gallery-nav.prev { left: 16px; } .pd2-gallery-nav.next { right: 16px; }
+    .pd2-gallery-thumbs {
+      display: flex; gap: 8px; padding-top: 10px; overflow-x: auto; scrollbar-width: none;
+    }
+    .pd2-gallery-thumbs::-webkit-scrollbar { display: none; }
+    .pd2-thumb {
+      flex-shrink: 0; width: 108px; height: 72px; border-radius: 3px; overflow: hidden;
+      cursor: pointer; opacity: 0.5; border: 1.5px solid transparent;
+      transition: opacity 0.2s, border-color 0.2s;
+    }
+    .pd2-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .pd2-thumb.active { opacity: 1; border-color: var(--gold); }
+    .pd2-thumb:hover { opacity: 0.85; }
+
+    /* ── Layout ─────────────────────────── */
+    .pd2-layout {
+      display: grid; grid-template-columns: 1fr 360px; gap: 56px;
+      padding: 40px 10% 0; align-items: start;
+    }
+
+    /* ── Title block ────────────────────── */
+    .pd2-title {
+      font-family: var(--font-display); font-size: clamp(34px, 4.4vw, 58px);
+      font-weight: 300; line-height: 1.02; letter-spacing: -0.03em; color: var(--white);
+      margin-bottom: 10px;
+    }
+    .pd2-location { font-size: 12px; font-weight: 300; color: var(--white-50); }
+
+    /* ── Stats row ──────────────────────── */
+    .pd2-stats {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      border: 0.5px solid var(--subtle-border); border-radius: 4px; overflow: hidden;
+      margin: 28px 0; background: var(--bg-dark2);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    }
+    .pd2-stat { padding: 18px 16px; border-right: 0.5px solid var(--subtle-border); }
+    .pd2-stat:last-child { border-right: none; }
+    .pd2-stat-label {
+      font-size: 7.5px; font-weight: 600; letter-spacing: 2.2px; text-transform: uppercase;
+      color: var(--white-35); margin-bottom: 7px;
+    }
+    .pd2-stat-value { font-family: var(--font-display); font-size: 19px; font-weight: 300; color: var(--white); letter-spacing: -0.01em; }
+    .pd2-stat-value.gold { color: var(--gold); }
+
+    /* ── Section pattern ────────────────── */
+    .pd2-section { margin-bottom: 36px; }
+    .pd2-section-title {
+      font-family: var(--font-display); font-size: 23px; font-weight: 300;
+      letter-spacing: -0.02em; color: var(--white); margin-bottom: 16px;
+      padding-bottom: 10px; border-bottom: 0.5px solid var(--subtle-border);
+    }
+    .pd2-body-text { font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.65); line-height: 1.85; }
+
+    /* ── Trust strip ────────────────────── */
+    .pd2-trust {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      padding: 14px 18px; margin-bottom: 28px; border-radius: 3px;
+      background: rgba(201,169,110,0.06); border: 0.5px solid var(--gold-border);
+    }
+    .pd2-trust-icon { color: var(--gold); font-size: 14px; line-height: 1; }
+    .pd2-trust-text { font-size: 11.5px; font-weight: 400; color: var(--white-70); }
+    .pd2-trust-text strong { color: var(--gold); font-weight: 500; }
+
+    /* ── FORE Insight ───────────────────── */
+    .pd2-insight {
+      padding: 22px 24px; border-radius: 4px; margin-bottom: 36px;
+      background: linear-gradient(135deg, rgba(201,169,110,0.055) 0%, rgba(255,255,255,0.015) 100%);
+      border: 0.5px solid var(--gold-border);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+    }
+    .pd2-insight-label {
+      font-size: 7.5px; font-weight: 600; letter-spacing: 2.8px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 12px;
+    }
+    .pd2-insight-body .fi-line {
+      font-size: 13.5px; font-weight: 300; color: var(--white-85, rgba(255,255,255,0.85));
+      line-height: 1.75;
+    }
+    .pd2-insight-body .fi-line + .fi-line { margin-top: 6px; }
+
+    /* ── Amenities ──────────────────────── */
+    .pd2-amenities-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 28px; }
+    .pd2-amenity {
+      display: flex; align-items: center; gap: 11px; font-size: 12px; font-weight: 300;
+      color: var(--white-70); padding: 3px 0;
+    }
+    .pd2-amenity::before {
+      content: ''; width: 5px; height: 5px; border: 1px solid var(--gold);
+      transform: rotate(45deg); flex-shrink: 0; opacity: 0.75;
+    }
+
+    /* ── Agent (in-flow) ────────────────── */
+    .pd2-agent-card {
+      display: flex; align-items: center; gap: 22px; padding: 26px;
+      background: var(--bg-dark2); border: 0.5px solid var(--subtle-border); border-radius: 4px;
+    }
+    .pd2-agent-photo { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--gold-border); flex-shrink: 0; }
+    .pd2-agent-name { font-family: var(--font-display); font-size: 21px; font-weight: 300; color: var(--white); margin-bottom: 3px; }
+    .pd2-agent-role { font-size: 7.5px; font-weight: 600; letter-spacing: 2.2px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+    .pd2-agent-langs { font-size: 11px; font-weight: 300; color: var(--white-50); margin-bottom: 14px; }
+    .pd2-agent-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+    .pd2-agent-btn {
+      display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px;
+      font-size: 10px; font-weight: 500; letter-spacing: 1.4px; text-transform: uppercase;
+      text-decoration: none; border-radius: 2px; transition: opacity 0.2s, transform 0.2s;
+    }
+    .pd2-agent-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .pd2-agent-btn:active { transform: translateY(0); }
+    .pd2-agent-btn.whatsapp { background: #25D366; color: #fff; }
+    .pd2-agent-btn.call { background: transparent; color: #4FC3F7; border: 0.5px solid rgba(79,195,247,0.4); }
+    .pd2-agent-btn.email { background: transparent; color: var(--gold); border: 0.5px solid var(--gold-border); }
+
+    /* ── Sidebar ────────────────────────── */
+    .pd2-sidebar-inner { position: sticky; top: 100px; }
+    .pd2-sidebar-card {
+      background: var(--bg-dark2); border: 0.5px solid var(--gold-border); border-radius: 4px; overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 1px 4px rgba(201,169,110,0.08);
+    }
+    .pd2-sb-top {
+      padding: 22px 24px 18px; border-bottom: 0.5px solid var(--gold-border);
+      background: linear-gradient(135deg, rgba(201,169,110,0.07) 0%, transparent 65%);
+    }
+    .pd2-sb-price-label { font-size: 7.5px; font-weight: 600; letter-spacing: 2.2px; text-transform: uppercase; color: var(--gold); margin-bottom: 7px; }
+    .pd2-sb-price { font-family: var(--font-display); font-size: 27px; font-weight: 300; color: var(--white); letter-spacing: -0.02em; }
+    .pd2-sb-form { padding: 20px 24px 22px; }
+    .pd2-field { margin-bottom: 12px; }
+    .pd2-field label {
+      display: block; font-size: 7.5px; font-weight: 600; letter-spacing: 1.8px; text-transform: uppercase;
+      color: var(--white-35); margin-bottom: 6px;
+    }
+    .pd2-field input, .pd2-field textarea {
+      width: 100%; background: var(--bg-dark3, #1C1C1C); border: 0.5px solid var(--subtle-border);
+      border-radius: 2px; color: var(--white); font-family: var(--font-ui); font-size: 12px;
+      font-weight: 300; padding: 10px 13px; outline: none; resize: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .pd2-field input:focus, .pd2-field textarea:focus { border-color: var(--gold-border); background: rgba(201,169,110,0.03); }
+    .pd2-field textarea { height: 74px; }
+    .pd2-submit { width: 100%; margin-top: 4px; }
+    .pd2-form-note { font-size: 9px; color: var(--white-20); text-align: center; margin: 10px 0 0; line-height: 1.6; }
+
+    /* ── Similar Properties ─────────────── */
+    .pd2-similar { margin: 60px 10% 0; padding-top: 44px; border-top: 0.5px solid var(--subtle-border); }
+    .pd2-similar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .pd2-similar-card {
+      display: block; text-decoration: none; color: inherit; background: var(--bg-dark2);
+      border: 0.5px solid var(--subtle-border); border-radius: 4px; overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s cubic-bezier(0.22,1,0.36,1);
+    }
+    .pd2-similar-card:hover { border-color: rgba(201,169,110,0.35); transform: translateY(-3px); }
+    .pd2-similar-card:focus-visible { outline: 1.5px solid var(--gold); outline-offset: 2px; }
+    .pd2-similar-img { aspect-ratio: 16/10; overflow: hidden; background: #111; }
+    .pd2-similar-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.55s cubic-bezier(0.22,1,0.36,1); }
+    .pd2-similar-card:hover .pd2-similar-img img { transform: scale(1.06); }
+    .pd2-similar-body { padding: 16px 18px; }
+    .pd2-similar-area { font-size: 7.5px; font-weight: 600; letter-spacing: 1.8px; text-transform: uppercase; color: var(--white-35); margin-bottom: 6px; }
+    .pd2-similar-name { font-family: var(--font-display); font-size: 18px; font-weight: 300; color: var(--white); margin-bottom: 8px; }
+    .pd2-similar-price { font-family: var(--font-display); font-size: 16px; color: var(--gold); font-weight: 300; }
+
+    /* ── Lightbox ───────────────────────── */
+    .pd2-lightbox {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9000;
+      display: none; align-items: center; justify-content: center;
+    }
+    .pd2-lightbox.open { display: flex; }
+    .pd2-lb-img-wrap { max-width: 90vw; max-height: 90vh; }
+    .pd2-lb-img-wrap img { max-width: 90vw; max-height: 85vh; object-fit: contain; display: block; }
+    .pd2-lb-close, .pd2-lb-prev, .pd2-lb-next {
+      position: fixed; background: rgba(255,255,255,0.06); border: 0.5px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.7); cursor: pointer; transition: background 0.2s;
+    }
+    .pd2-lb-close { top: 18px; right: 22px; font-size: 26px; border-radius: 2px; width: 40px; height: 40px; }
+    .pd2-lb-prev, .pd2-lb-next { top: 50%; transform: translateY(-50%); width: 46px; height: 46px; border-radius: 2px; font-size: 22px; }
+    .pd2-lb-prev { left: 18px; } .pd2-lb-next { right: 18px; }
+    .pd2-lb-close:hover, .pd2-lb-prev:hover, .pd2-lb-next:hover { background: rgba(201,169,110,0.16); }
+
+    /* ── Responsive ─────────────────────── */
+    @media (max-width: 1024px) {
+      .pd2-layout { grid-template-columns: 1fr; gap: 32px; }
+      .pd2-sidebar-inner { position: static; }
+      .pd2-similar-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 760px) {
+      .pd2-breadcrumb { padding: 20px 6% 0; }
+      .pd2-gallery { padding: 0 6%; }
+      .pd2-gallery-main { height: 46vh; min-height: 280px; }
+      .pd2-layout { padding: 32px 6% 0; }
+      .pd2-stats { grid-template-columns: repeat(2, 1fr); }
+      .pd2-stat:nth-child(2) { border-right: none; }
+      .pd2-stat:nth-child(1), .pd2-stat:nth-child(2) { border-bottom: 0.5px solid var(--subtle-border); }
+      .pd2-amenities-grid { grid-template-columns: 1fr; }
+      .pd2-agent-card { flex-direction: column; text-align: center; gap: 16px; }
+      .pd2-similar { margin: 44px 6% 0; padding-top: 36px; }
+      .pd2-similar-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
 <!--SSG:NAV-->
-<main class="pd-static">
-  <div class="pd-breadcrumb">
-    <a href="/properties.html">Properties</a> <span class="bc-sep">/</span>
-    <span class="bc-current"><!--SSG:LISTING_NAME--></span>
+<main class="pd2">
+  <div class="pd2-breadcrumb">
+    <a href="/properties.html">Properties</a> <span class="pd2-bc-sep">/</span>
+    <span class="pd2-bc-current"><!--SSG:LISTING_NAME--></span>
   </div>
 
-  <section class="pd-gallery">
-    <div class="pd-gallery-main">
-      <img src="<!--SSG:MAIN_IMAGE-->" alt="<!--SSG:LISTING_NAME-->" />
+  <section class="pd2-gallery">
+    <div class="pd2-gallery-main" id="pd2GalleryMain">
+      <img id="pd2MainImg" src="<!--SSG:MAIN_IMAGE-->" alt="<!--SSG:LISTING_NAME-->" />
+      <div class="pd2-gallery-overlay"></div>
+      <span class="pd2-badge"><!--SSG:BADGE_LABEL--></span>
+      <button class="pd2-gallery-nav prev" id="pd2Prev" aria-label="Previous image" type="button">‹</button>
+      <button class="pd2-gallery-nav next" id="pd2Next" aria-label="Next image" type="button">›</button>
     </div>
-    <div class="pd-gallery-thumbs">
+    <div class="pd2-gallery-thumbs" id="pd2Thumbs">
       <!--SSG:REPEAT:GALLERY_THUMB-->
-      <div class="pd-gallery-thumb"><img src="<!--SSG:ITEM.url-->" alt="<!--SSG:ITEM.alt-->" /></div>
+      <div class="pd2-thumb" data-idx="<!--SSG:ITEM.index-->"><img src="<!--SSG:ITEM.url-->" alt="<!--SSG:ITEM.alt-->" loading="lazy" /></div>
       <!--SSG:/REPEAT-->
     </div>
   </section>
 
-  <section class="pd-summary" style="padding:32px 10%;">
-    <h1 class="pd-title"><!--SSG:LISTING_NAME--></h1>
-    <p class="pd-location"><!--SSG:AREA_NAME-->, <!--SSG:CITY--></p>
-    <p class="pd-price"><!--SSG:PRICE_FORMATTED--></p>
-    <ul class="pd-facts">
-      <li><!--SSG:BEDROOMS_LABEL--></li>
-      <li><!--SSG:BATHROOMS_LABEL--></li>
-      <li><!--SSG:AREA_SQFT_LABEL--></li>
-    </ul>
-    <p class="pd-description"><!--SSG:DESCRIPTION--></p>
-  </section>
+  <div class="pd2-layout">
+    <article class="pd2-content">
+      <div class="pd2-title-block">
+        <h1 class="pd2-title"><!--SSG:LISTING_NAME--></h1>
+        <p class="pd2-location"><!--SSG:AREA_NAME-->, <!--SSG:CITY--></p>
+      </div>
+
+      <div class="pd2-stats">
+        <div class="pd2-stat">
+          <div class="pd2-stat-label">Price</div>
+          <div class="pd2-stat-value gold"><!--SSG:PRICE_FORMATTED--></div>
+        </div>
+        <div class="pd2-stat">
+          <div class="pd2-stat-label">Type</div>
+          <div class="pd2-stat-value"><!--SSG:PROPERTY_TYPE_LABEL--></div>
+        </div>
+        <div class="pd2-stat">
+          <div class="pd2-stat-label">Beds / Baths</div>
+          <div class="pd2-stat-value"><!--SSG:BEDROOMS_LABEL--> / <!--SSG:BATHROOMS_LABEL--></div>
+        </div>
+        <div class="pd2-stat">
+          <div class="pd2-stat-label">Size</div>
+          <div class="pd2-stat-value"><!--SSG:AREA_SQFT_LABEL--></div>
+        </div>
+      </div>
+
+      <!--SSG:TRUST_HTML-->
+      <!--SSG:INSIGHT_HTML-->
+
+      <section class="pd2-section pd2-description">
+        <h2 class="pd2-section-title">Description</h2>
+        <p class="pd2-body-text"><!--SSG:DESCRIPTION--></p>
+      </section>
+
+      <!--SSG:AMENITIES_HTML-->
+      <!--SSG:AGENT_HTML-->
+    </article>
+
+    <aside class="pd2-sidebar">
+      <div class="pd2-sidebar-inner">
+        <div class="pd2-sidebar-card">
+          <div class="pd2-sb-top">
+            <div class="pd2-sb-price-label">Price</div>
+            <div class="pd2-sb-price"><!--SSG:PRICE_FORMATTED--></div>
+          </div>
+          <form class="pd2-sb-form" id="pd2EnquiryForm">
+            <div class="pd2-field"><label>Full Name</label><input type="text" name="name" placeholder="Your name" required /></div>
+            <div class="pd2-field"><label>Phone</label><input type="tel" name="phone" placeholder="+971 5X XXX XXXX" required /></div>
+            <div class="pd2-field"><label>Email</label><input type="email" name="email" placeholder="you@example.com" required /></div>
+            <div class="pd2-field"><label>Message</label><textarea name="message" placeholder="I'm interested in this property and would like to schedule a viewing..."></textarea></div>
+            <button type="submit" class="btn-primary pd2-submit" id="pd2SubmitBtn">Request Viewing</button>
+          </form>
+          <p class="pd2-form-note">No commitment. Our team typically responds within 24 hours.</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!--SSG:SIMILAR_HTML-->
 </main>
 <!--SSG:FOOTER-->
 <!--SSG:WHATSAPP-->
+
+<div class="pd2-lightbox" id="pd2Lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+  <button class="pd2-lb-close" id="pd2LbClose" aria-label="Close" type="button">&#215;</button>
+  <button class="pd2-lb-prev" id="pd2LbPrev" aria-label="Previous" type="button">‹</button>
+  <div class="pd2-lb-img-wrap"><img id="pd2LbImg" src="" alt="" /></div>
+  <button class="pd2-lb-next" id="pd2LbNext" aria-label="Next" type="button">›</button>
+</div>
+
 <script>window.__LISTING_ID__ = "<!--SSG:LISTING_ID-->";</script>
+<script>
+(function () {
+  var IMAGES = <!--SSG:GALLERY_JSON-->;
+  var idx = 0;
+
+  var mainImg = document.getElementById('pd2MainImg');
+  var thumbs = document.querySelectorAll('#pd2Thumbs .pd2-thumb');
+  var lightbox = document.getElementById('pd2Lightbox');
+  var lbImg = document.getElementById('pd2LbImg');
+
+  function setIndex(i) {
+    if (!IMAGES.length) return;
+    idx = (i + IMAGES.length) % IMAGES.length;
+    mainImg.src = IMAGES[idx];
+    lbImg.src = IMAGES[idx];
+    thumbs.forEach(function (t) { t.classList.toggle('active', Number(t.getAttribute('data-idx')) === idx); });
+  }
+
+  thumbs.forEach(function (t) {
+    t.addEventListener('click', function () { setIndex(Number(t.getAttribute('data-idx'))); });
+  });
+  var prevBtn = document.getElementById('pd2Prev');
+  var nextBtn = document.getElementById('pd2Next');
+  if (prevBtn) prevBtn.addEventListener('click', function () { setIndex(idx - 1); });
+  if (nextBtn) nextBtn.addEventListener('click', function () { setIndex(idx + 1); });
+
+  var galleryMain = document.getElementById('pd2GalleryMain');
+  if (galleryMain) galleryMain.addEventListener('click', function (e) {
+    if (e.target.closest('.pd2-gallery-nav')) return;
+    lightbox.classList.add('open');
+  });
+  var lbClose = document.getElementById('pd2LbClose');
+  var lbPrev = document.getElementById('pd2LbPrev');
+  var lbNext = document.getElementById('pd2LbNext');
+  if (lbClose) lbClose.addEventListener('click', function () { lightbox.classList.remove('open'); });
+  if (lbPrev) lbPrev.addEventListener('click', function () { setIndex(idx - 1); });
+  if (lbNext) lbNext.addEventListener('click', function () { setIndex(idx + 1); });
+  lightbox.addEventListener('click', function (e) { if (e.target === lightbox) lightbox.classList.remove('open'); });
+  document.addEventListener('keydown', function (e) {
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') lightbox.classList.remove('open');
+    if (e.key === 'ArrowLeft') setIndex(idx - 1);
+    if (e.key === 'ArrowRight') setIndex(idx + 1);
+  });
+
+  setIndex(0);
+
+  var form = document.getElementById('pd2EnquiryForm');
+  if (form) form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var fd = new FormData(form);
+    var name = fd.get('name') || '';
+    var phone = fd.get('phone') || '';
+    var email = fd.get('email') || '';
+    var message = fd.get('message') || '';
+    var prop = document.querySelector('.pd2-title') ? document.querySelector('.pd2-title').textContent : 'Property';
+    var propId = window.__LISTING_ID__ || '';
+
+    fetch('https://script.google.com/macros/s/AKfycbyPlR3JmYi8pJTm3zBUadHNMtNUvGpNhFMKb-4jH6UlArBsaUh8w6zIPvSz1XdiKxAQ0Q/exec', {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ Name: name, Phone: phone, Email: email, Property: prop, PropertyID: propId, Message: message })
+    }).catch(function () {});
+
+    var subject = encodeURIComponent('Viewing Request — ' + prop);
+    var body = encodeURIComponent(
+      'Name: ' + name + '\n' + 'Phone: ' + phone + '\n' + 'Email: ' + email + '\n' +
+      'Property: ' + prop + '\n' + 'Property ID: ' + propId + '\n\n' + 'Message:\n' + message
+    );
+    window.open('mailto:info@fairopportunityrealestate.com?subject=' + subject + '&body=' + body, '_blank');
+
+    var btn = document.getElementById('pd2SubmitBtn');
+    var orig = btn.textContent;
+    btn.textContent = 'Sent ✓';
+    btn.disabled = true;
+    setTimeout(function () {
+      btn.textContent = orig;
+      btn.disabled = false;
+      form.reset();
+    }, 5000);
+  });
+})();
+</script>
 </body>
 </html>

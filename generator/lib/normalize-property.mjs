@@ -35,6 +35,13 @@ function shortIdSuffix(id) {
   return str.length > 6 ? str.slice(-6) : str;
 }
 
+function parseAmenities(featuresCsv) {
+  return String(featuresCsv || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
 /**
  * @param {Record<string, unknown>} row Raw `secondary_listings` row.
  * @returns {object} Normalized Property model (see meta.mjs's PropertyMetaInput
@@ -81,5 +88,10 @@ export function normalizeSecondaryListing(row) {
     // accessing them on a plain row object safely yields undefined until they do.
     metaTitleOverride: row.meta_title_override || undefined,
     metaDescriptionOverride: row.meta_description_override || undefined,
+    // Release 1.0.1 (Unit Detail Page V2): already-existing DB columns not
+    // previously surfaced by this normalizer. No schema change.
+    amenities: parseAmenities(row.features),
+    permitNumber: row.dld_permit || row.rera_permit || undefined,
+    agentName: row.agent || undefined,
   };
 }
