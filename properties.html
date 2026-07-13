@@ -1088,6 +1088,13 @@
       return supaClient
         .from('secondary_listings')
         .select('*')
+        // Must match the generator's own publish criteria (see
+        // generator/lib/supabase.mjs's fetchPublishedProperties) — a row
+        // without a dld_permit never gets a generated page, so it must
+        // never be shown here now that there's no property-detail.html
+        // fallback to fall back on.
+        .not('dld_permit', 'is', null)
+        .neq('dld_permit', '')
         .order('created_at', { ascending: false })
         .then(function (res) {
           if (res.error) { console.error('Supabase error:', res.error); return []; }
@@ -1297,14 +1304,12 @@
     function createCard(p, idx) {
       var a = document.createElement('a');
       a.className = 'prop-card-v2';
-      var canonicalPath = (p._supabaseLinkType === 'secondary' && secondaryCanonicalPath)
+      // Secondary listings reaching createCard already resolved to a
+      // canonical path (filtered in init()) — the generator is the source
+      // of truth, no property-detail.html fallback. Off-plan is untouched.
+      a.href = p._supabaseLinkType === 'secondary'
         ? secondaryCanonicalPath(p._supabaseRaw)
-        : null;
-      a.href = canonicalPath
-        ? canonicalPath
-        : (p._supabaseLinkType === 'secondary'
-          ? 'property-detail.html?id=' + esc(p.project_id || '') + '&type=secondary'
-          : 'property-detail.html?id=' + esc(p.project_id || ''));
+        : 'property-detail.html?id=' + esc(p.project_id || '');
       a.tabIndex = 0;
       a.style.setProperty('--card-delay', (idx % 12) * 0.042 + 's');
 
@@ -1647,6 +1652,19 @@
       Promise.all([fetchAllListings(), canonicalUrlModuleReady]).then(function (results) {
         var props = results[0];
         if (!props || props.length === 0) {
+          grid.innerHTML = errorStateHTML;
+          return;
+        }
+        // Secondary listings must resolve to a generated canonical page —
+        // the generator is the source of truth, so anything it couldn't
+        // generate a page for is dropped (no property-detail.html
+        // fallback). Off-plan listings are untouched. Filtered here, once,
+        // before any sorting/pagination/dropdown logic sees the array.
+        props = props.filter(function (p) {
+          if (p._supabaseLinkType !== 'secondary') return true;
+          return !!(secondaryCanonicalPath && secondaryCanonicalPath(p._supabaseRaw));
+        });
+        if (!props.length) {
           grid.innerHTML = errorStateHTML;
           return;
         }

@@ -201,10 +201,13 @@ document.addEventListener('fore:ready', function () {
 
   // ── Canonical property URL (reuses the generator's slug/URL logic — see
   //    js/property-canonical-url.mjs) — loaded once, used by buildSecondaryCard.
+  // The generator is the source of truth for secondary listings: a listing
+  // that can't be resolved to a canonical URL is filtered out of the grid
+  // entirely (see renderCards) rather than falling back to property-detail.html.
   let secondaryCanonicalPath = null;
   const canonicalUrlModuleReady = import('/js/property-canonical-url.mjs')
     .then(function (mod) { secondaryCanonicalPath = mod.secondaryListingCanonicalPath; })
-    .catch(function () { /* module unavailable — cards fall back to the legacy link */ });
+    .catch(function () { /* module unavailable — secondary listings render as empty until it loads */ });
 
   // ── Helpers ──
 
@@ -305,8 +308,9 @@ document.addEventListener('fore:ready', function () {
       ? `<img src="${imgSrc}" alt="${name}" loading="lazy" onerror="this.style.display='none'" />`
       : '';
 
-    const canonicalPath = secondaryCanonicalPath ? secondaryCanonicalPath(s) : null;
-    const href = canonicalPath || `property-detail.html?id=${escHtml(s.id || '')}&type=secondary`;
+    // renderCards only ever passes secondary listings that already resolved
+    // to a canonical path (see renderCards' filter) — no legacy fallback.
+    const href = secondaryCanonicalPath(s);
 
     return `
       <a href="${href}" class="prop-card" style="--card-delay:${delay}">
@@ -355,6 +359,12 @@ document.addEventListener('fore:ready', function () {
       filtered = filtered.filter(s => (s.offering_type || 'sale') === 'sale');
     } else if (type === 'rent') {
       filtered = filtered.filter(s => s.offering_type === 'rent');
+    }
+    // Secondary listings must resolve to a generated canonical page — the
+    // generator is the source of truth, so anything it couldn't have
+    // generated a page for is not shown (no property-detail.html fallback).
+    if (type !== 'offplan') {
+      filtered = filtered.filter(s => !!(secondaryCanonicalPath && secondaryCanonicalPath(s)));
     }
     const items = filtered.slice(0, 6);
     if (!items.length) {
