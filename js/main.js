@@ -1,19 +1,3 @@
-// ── FORM HANDLER — global so inline onsubmit="handleForm(event)" can reach it ──
-function handleForm(e) {
-  e.preventDefault();
-  const btn = e.target.querySelector('button[type="submit"]');
-  const original = btn.textContent;
-  btn.textContent = 'Message Sent';
-  btn.style.background = '#4CAF50';
-  btn.style.cursor = 'default';
-  setTimeout(() => {
-    btn.textContent = original;
-    btn.style.background = '';
-    btn.style.cursor = '';
-    e.target.reset();
-  }, 4000);
-}
-
 // ── All other init runs after components are injected ──
 document.addEventListener('fore:ready', function () {
 
