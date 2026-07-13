@@ -1,12 +1,12 @@
 /**
  * generator/lib/redirects.mjs
- * Prepares (but does not apply) legacy-URL -> canonical-URL redirect
- * data for property pages. Maps each successfully generated listing's id
- * to its canonical URL, reusing runBatch's report (`report.succeededPages`,
+ * Builds (but does not apply) legacy-URL -> canonical-URL redirect data
+ * for property pages. Maps each successfully generated listing's id to
+ * its canonical URL, reusing runBatch's report (`report.succeededPages`,
  * which already carries `{id, canonicalUrl}`) rather than rediscovering
- * anything from the filesystem or re-normalizing rows. No routing,
- * middleware, or actual HTTP redirect is implemented here — see the
- * production-integration plan's later phases for that.
+ * anything from the filesystem or re-normalizing rows. The actual HTTP
+ * redirect is applied by middleware.js, which statically imports the
+ * manifest this module writes (see REDIRECT_MANIFEST_PATH in config.mjs).
  */
 import fs from 'node:fs';
 import path from 'node:path';

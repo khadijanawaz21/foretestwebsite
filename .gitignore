@@ -14,4 +14,5 @@ generator/.cache/
 /developers/
 /blog/
 /sitemap.xml
+/redirect-manifest.json
 /redirects-map.json
