@@ -50,6 +50,8 @@ export const MANIFEST_PATH = path.join(CACHE_DIR, 'manifest.json');
 export const BUILD_MANIFEST_PATH = path.join(CACHE_DIR, 'build-manifest.json');
 /** sitemap.xml is written to the repo root so it's served at /sitemap.xml. Gitignored — regenerated every build. */
 export const SITEMAP_PATH = path.join(REPO_ROOT, 'sitemap.xml');
+/** Legacy-URL -> canonical-URL redirect manifest, written each build (Phase 4 — no middleware/routing consumes it yet). */
+export const REDIRECT_MANIFEST_PATH = path.join(CACHE_DIR, 'redirect-manifest.json');
 
 /**
  * Environment-derived runtime settings, read live via getters (not

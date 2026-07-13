@@ -12,7 +12,9 @@
  * Individual listing failures remain non-fatal — see runBatch(). On a
  * successful generation pass (only), also (re)writes sitemap.xml from
  * the static page list plus every generated property's canonical URL —
- * see lib/sitemap.mjs. A failed build never writes or overwrites it.
+ * see lib/sitemap.mjs — and a redirect manifest mapping each legacy
+ * property-detail.html?id={id} URL to its new canonical URL — see
+ * lib/redirects.mjs. A failed build never writes or overwrites either.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -21,7 +23,8 @@ import { fetchPublishedProperties } from './lib/supabase.mjs';
 import { runBatch } from './generate-all-secondary-listings.mjs';
 import { cleanPropertiesOutputDir, PROPERTIES_OUTPUT_DIR } from './lib/output-cleanup.mjs';
 import { buildSitemapEntries, buildSitemapXml, writeSitemap } from './lib/sitemap.mjs';
-import { CACHE_DIR, BUILD_MANIFEST_PATH, SITEMAP_PATH } from './config.mjs';
+import { buildRedirectManifest, writeRedirectManifest } from './lib/redirects.mjs';
+import { CACHE_DIR, BUILD_MANIFEST_PATH, SITEMAP_PATH, REDIRECT_MANIFEST_PATH } from './config.mjs';
 
 const logger = createLogger('build');
 
@@ -111,6 +114,7 @@ export async function runProductionBuild({
   generate = runBatch,
   writeManifestFn = writeManifest,
   writeSitemapFn = writeSitemap,
+  writeRedirectManifestFn = writeRedirectManifest,
 } = {}) {
   const startedAt = Date.now();
   logger.info('FORE static page generator — production build starting');
@@ -151,6 +155,10 @@ export async function runProductionBuild({
   const sitemapXml = buildSitemapXml(buildSitemapEntries(report));
   writeSitemapFn(sitemapXml);
   logger.info(`Wrote sitemap: ${path.relative(process.cwd(), SITEMAP_PATH)}`);
+
+  const redirectManifest = buildRedirectManifest(report);
+  writeRedirectManifestFn(redirectManifest);
+  logger.info(`Wrote redirect manifest: ${path.relative(process.cwd(), REDIRECT_MANIFEST_PATH)}`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

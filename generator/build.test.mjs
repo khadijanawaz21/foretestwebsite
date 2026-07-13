@@ -12,6 +12,8 @@ import {
   runProductionBuild,
 } from './build.mjs';
 
+const noopRedirectManifestFn = () => {};
+
 test('evaluateBuildFailure: fails when zero listings were found', () => {
   const reason = evaluateBuildFailure({ totalFound: 0, succeeded: 0 });
   assert.match(reason, /zero published listings/);
@@ -179,7 +181,7 @@ test('runProductionBuild: happy path cleans, fetches, generates, and writes a su
     generate: () => ({
       totalFound: 1,
       succeeded: 1,
-      succeededPages: [{ canonicalUrl: 'https://fairopportunityrealestate.com/properties/a/unit-1/' }],
+      succeededPages: [{ id: 1, canonicalUrl: 'https://fairopportunityrealestate.com/properties/a/unit-1/' }],
       failed: 0,
       failures: [],
       validationWarnings: [],
@@ -190,6 +192,7 @@ test('runProductionBuild: happy path cleans, fetches, generates, and writes a su
       writtenManifest = manifest;
     },
     writeSitemapFn: () => {},
+    writeRedirectManifestFn: noopRedirectManifestFn,
   });
 
   assert.equal(cleanCalled, true);
@@ -206,7 +209,7 @@ test('runProductionBuild: successful generation writes a sitemap containing the 
     generate: () => ({
       totalFound: 1,
       succeeded: 1,
-      succeededPages: [{ canonicalUrl: 'https://fairopportunityrealestate.com/properties/a/unit-1/' }],
+      succeededPages: [{ id: 1, canonicalUrl: 'https://fairopportunityrealestate.com/properties/a/unit-1/' }],
       failed: 0,
       failures: [],
       validationWarnings: [],
@@ -217,14 +220,47 @@ test('runProductionBuild: successful generation writes a sitemap containing the 
     writeSitemapFn: (xml) => {
       writtenSitemap = xml;
     },
+    writeRedirectManifestFn: noopRedirectManifestFn,
   });
 
   assert.ok(writtenSitemap);
   assert.match(writtenSitemap, /<loc>https:\/\/fairopportunityrealestate\.com\/properties\/a\/unit-1\/<\/loc>/);
 });
 
-test('runProductionBuild: a hard generation failure (zero succeeded) does not write a sitemap', async () => {
+test('runProductionBuild: successful generation writes a redirect manifest mapping id to canonical URL', async () => {
+  let writtenRedirectManifest = null;
+
+  await runProductionBuild({
+    clean: () => {},
+    fetchProperties: async () => [{ id: 7 }],
+    generate: () => ({
+      totalFound: 1,
+      succeeded: 1,
+      succeededPages: [{ id: 7, canonicalUrl: 'https://fairopportunityrealestate.com/properties/marina/unit-7/' }],
+      failed: 0,
+      failures: [],
+      validationWarnings: [],
+      validationErrors: [],
+      durationMs: 5,
+    }),
+    writeManifestFn: () => {},
+    writeSitemapFn: () => {},
+    writeRedirectManifestFn: (manifest) => {
+      writtenRedirectManifest = manifest;
+    },
+  });
+
+  assert.equal(writtenRedirectManifest.total, 1);
+  assert.deepEqual(writtenRedirectManifest.redirects[0], {
+    id: 7,
+    legacy_url: '/property-detail.html?id=7&type=secondary',
+    canonical_url: 'https://fairopportunityrealestate.com/properties/marina/unit-7/',
+  });
+});
+
+test('runProductionBuild: a hard generation failure (zero succeeded) does not write a sitemap or redirect manifest', async () => {
   let sitemapWritten = false;
+  let redirectManifestWritten = false;
 
   await assert.rejects(
     () =>
@@ -245,15 +281,20 @@ test('runProductionBuild: a hard generation failure (zero succeeded) does not wr
         writeSitemapFn: () => {
           sitemapWritten = true;
         },
+        writeRedirectManifestFn: () => {
+          redirectManifestWritten = true;
+        },
       }),
     /zero pages were successfully generated/
   );
 
   assert.equal(sitemapWritten, false);
+  assert.equal(redirectManifestWritten, false);
 });
 
-test('runProductionBuild: a cleanup failure does not write a sitemap', async () => {
+test('runProductionBuild: a cleanup failure does not write a sitemap or redirect manifest', async () => {
   let sitemapWritten = false;
+  let redirectManifestWritten = false;
 
   await assert.rejects(
     () =>
@@ -267,9 +308,13 @@ test('runProductionBuild: a cleanup failure does not write a sitemap', async () 
         writeSitemapFn: () => {
           sitemapWritten = true;
         },
+        writeRedirectManifestFn: () => {
+          redirectManifestWritten = true;
+        },
       }),
     /Build aborted: could not clean output directory/
   );
 
   assert.equal(sitemapWritten, false);
+  assert.equal(redirectManifestWritten, false);
 });
