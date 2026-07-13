@@ -118,6 +118,61 @@ async function resolveLocationNames(listings, token) {
   return locationMap;
 }
 
+// ── Deduplicate PF listings that share the same real DLD/RERA permit ──
+// (compliance.listingAdvertisementNumber). This is a genuine Property
+// Finder data-quality issue (e.g. the same unit relisted under two ad
+// IDs) — see the PF sync ON CONFLICT investigation. Two listings with
+// the same permit both map to the same dld_permit, which violates the
+// partial unique index idx_secondary_listings_dld_permit and makes a
+// single upsert batch fail with "ON CONFLICT DO UPDATE command cannot
+// affect row a second time". Listings with no compliance permit at all
+// are left untouched here — they're unaffected by this collision and
+// still fall back to pf.reference in mapToRow() as before.
+//
+// Selection rule (deterministic, independent of fetch/pagination order):
+// keep the listing with the most recent createdAt; if two listings have
+// the exact same createdAt, break the tie by the greater PF listing id
+// (plain string comparison) so the outcome is always the same regardless
+// of how the API happened to order the page.
+function dedupeByCompliancePermit(pfListings) {
+  const groups = new Map();
+  for (const pf of pfListings) {
+    const permit = (pf.compliance || {}).listingAdvertisementNumber;
+    if (!permit) continue;
+    if (!groups.has(permit)) groups.set(permit, []);
+    groups.get(permit).push(pf);
+  }
+
+  const discardedIds = new Set();
+  const discarded = [];
+
+  for (const [permit, group] of groups) {
+    if (group.length < 2) continue;
+
+    const winner = group.slice().sort((a, b) => {
+      const byDate = new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+      if (byDate !== 0) return byDate;
+      return String(b.id).localeCompare(String(a.id));
+    })[0];
+
+    for (const pf of group) {
+      if (pf.id === winner.id) continue;
+      discardedIds.add(pf.id);
+      discarded.push({
+        permit,
+        discardedId: pf.id,
+        discardedReference: pf.reference || '',
+        keptId: winner.id,
+        keptReference: winner.reference || '',
+      });
+    }
+  }
+
+  const deduped = discardedIds.size === 0 ? pfListings : pfListings.filter(pf => !discardedIds.has(pf.id));
+
+  return { deduped, duplicatesRemoved: discarded.length, discarded };
+}
+
 // ── Map a PF listing to our secondary_listings schema ──
 // Based on PF "response-combined-flat" schema from OpenAPI spec
 function mapToRow(pf, locationMap) {
@@ -343,17 +398,29 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ success: true, count: 0, message: 'No listings found on Property Finder' });
     }
 
-    // Step 2b: Resolve location IDs to names
+    // Step 2b: Deduplicate listings that share the same real DLD/RERA permit
+    // before anything downstream touches them — see dedupeByCompliancePermit().
+    const { deduped: dedupedListings, duplicatesRemoved, discarded } = dedupeByCompliancePermit(pfListings);
+    for (const d of discarded) {
+      console.log(
+        `[PF-SYNC] Duplicate permit ${d.permit}: discarding PF listing ${d.discardedId} (ref: ${d.discardedReference || 'n/a'}) — keeping ${d.keptId} (ref: ${d.keptReference || 'n/a'})`
+      );
+    }
+    if (duplicatesRemoved > 0) {
+      console.log(`[PF-SYNC] Removed ${duplicatesRemoved} duplicate listing(s) sharing a permit with another listing.`);
+    }
+
+    // Step 2c: Resolve location IDs to names
     let locationMap = {};
     try {
-      locationMap = await resolveLocationNames(pfListings, pfToken);
+      locationMap = await resolveLocationNames(dedupedListings, pfToken);
     } catch (e) {
       console.error('[PF-SYNC] Location resolution failed, continuing without:', e.message);
     }
 
     // Step 3: Map and filter
-    const rows = pfListings.map(pf => mapToRow(pf, locationMap)).filter(r => r.dld_permit);
-    const skipped = pfListings.length - rows.length;
+    const rows = dedupedListings.map(pf => mapToRow(pf, locationMap)).filter(r => r.dld_permit);
+    const skipped = dedupedListings.length - rows.length;
 
     // Step 4: Upsert in batches
     let upserted = 0;
@@ -367,6 +434,7 @@ module.exports = async function handler(req, res) {
       success: true,
       count: upserted,
       total_fetched: pfListings.length,
+      duplicates_removed: duplicatesRemoved,
       skipped_no_permit: skipped,
     });
   } catch (err) {
