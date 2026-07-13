@@ -1,6 +1,6 @@
 {
   "buildCommand": "node generator/build.mjs",
-  "outputDirectory": "",
+  "outputDirectory": ".",
   "functions": {
     "api/sync-listings.js": {
       "maxDuration": 60
