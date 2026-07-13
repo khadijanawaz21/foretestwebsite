@@ -7,6 +7,7 @@
  */
 import { config } from '../config.mjs';
 import { SchemaBuildError } from './errors.mjs';
+import { propertyPagePath } from './canonical-url.mjs';
 
 const ORGANIZATION_FACTS = {
   name: 'Fair Opportunity Real Estate',
@@ -115,7 +116,7 @@ export function buildRealEstateListingSchema(listing) {
     '@type': listing.propertyType === 'Apartment' ? 'Apartment' : 'Residence',
     name: listing.name,
     description: listing.description,
-    url: `${siteUrl}/properties/${listing.areaSlug}/${listing.slug}/`,
+    url: `${siteUrl}${propertyPagePath(listing)}`,
     numberOfRooms: listing.bedrooms,
     numberOfBathroomsTotal: listing.bathrooms,
     floorSize: listing.areaSqft

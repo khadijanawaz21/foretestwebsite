@@ -997,6 +997,13 @@
     var sortFilter   = document.getElementById('sortFilter');
     var heroCount    = document.getElementById('heroCount');
 
+    /* Canonical property URL (reuses the generator's slug/URL logic — see
+       js/property-canonical-url.mjs) — loaded once, used by createCard. */
+    var secondaryCanonicalPath = null;
+    var canonicalUrlModuleReady = import('/js/property-canonical-url.mjs')
+      .then(function (mod) { secondaryCanonicalPath = mod.secondaryListingCanonicalPath; })
+      .catch(function () { /* module unavailable — cards fall back to the legacy link */ });
+
     /* ── Helpers ───────────────────────── */
     function esc(str) {
       return String(str == null ? '' : str)
@@ -1290,9 +1297,14 @@
     function createCard(p, idx) {
       var a = document.createElement('a');
       a.className = 'prop-card-v2';
-      a.href = p._supabaseLinkType === 'secondary'
-        ? 'property-detail.html?id=' + esc(p.project_id || '') + '&type=secondary'
-        : 'property-detail.html?id=' + esc(p.project_id || '');
+      var canonicalPath = (p._supabaseLinkType === 'secondary' && secondaryCanonicalPath)
+        ? secondaryCanonicalPath(p._supabaseRaw)
+        : null;
+      a.href = canonicalPath
+        ? canonicalPath
+        : (p._supabaseLinkType === 'secondary'
+          ? 'property-detail.html?id=' + esc(p.project_id || '') + '&type=secondary'
+          : 'property-detail.html?id=' + esc(p.project_id || ''));
       a.tabIndex = 0;
       a.style.setProperty('--card-delay', (idx % 12) * 0.042 + 's');
 
@@ -1632,7 +1644,8 @@
 
     /* ── Init ──────────────────────────── */
     function init() {
-      fetchAllListings().then(function (props) {
+      Promise.all([fetchAllListings(), canonicalUrlModuleReady]).then(function (results) {
+        var props = results[0];
         if (!props || props.length === 0) {
           grid.innerHTML = errorStateHTML;
           return;

@@ -199,6 +199,13 @@ document.addEventListener('fore:ready', function () {
   const propertyGrid = document.getElementById('propertyGrid');
   const propTabs     = document.querySelectorAll('.prop-tab');
 
+  // ── Canonical property URL (reuses the generator's slug/URL logic — see
+  //    js/property-canonical-url.mjs) — loaded once, used by buildSecondaryCard.
+  let secondaryCanonicalPath = null;
+  const canonicalUrlModuleReady = import('/js/property-canonical-url.mjs')
+    .then(function (mod) { secondaryCanonicalPath = mod.secondaryListingCanonicalPath; })
+    .catch(function () { /* module unavailable — cards fall back to the legacy link */ });
+
   // ── Helpers ──
 
   function formatPrice(raw) {
@@ -298,8 +305,11 @@ document.addEventListener('fore:ready', function () {
       ? `<img src="${imgSrc}" alt="${name}" loading="lazy" onerror="this.style.display='none'" />`
       : '';
 
+    const canonicalPath = secondaryCanonicalPath ? secondaryCanonicalPath(s) : null;
+    const href = canonicalPath || `property-detail.html?id=${escHtml(s.id || '')}&type=secondary`;
+
     return `
-      <a href="property-detail.html?id=${escHtml(s.id || '')}&type=secondary" class="prop-card" style="--card-delay:${delay}">
+      <a href="${href}" class="prop-card" style="--card-delay:${delay}">
         <div class="prop-card-img">
           ${imgHtml}
           <span class="prop-badge">${saleBadge}</span>
@@ -379,6 +389,7 @@ document.addEventListener('fore:ready', function () {
 
   async function loadProperties() {
     showSkeletons(6);
+    await canonicalUrlModuleReady;
     try {
       const supaSecondary = window.supabase
         ? window.supabase.createClient(SUPA_URL, SUPA_KEY)

@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fetchPublishedProperties } from './lib/supabase.mjs';
 import { normalizeSecondaryListing } from './lib/normalize-property.mjs';
+import { propertyPagePath } from './lib/canonical-url.mjs';
 import { renderTemplate, raw } from './lib/template-engine.mjs';
 import { generateTitle, generateDescription } from './lib/meta.mjs';
 import { buildRealEstateListingSchema, buildBreadcrumbSchema, toJsonLdScriptTag } from './lib/schema.mjs';
@@ -50,7 +51,7 @@ export function buildPropertyPage(row) {
 
   const title = generateTitle('property', property);
   const description = generateDescription('property', property);
-  const canonicalUrl = `${config.siteUrl}/properties/${property.areaSlug}/${property.slug}/`;
+  const canonicalUrl = `${config.siteUrl}${propertyPagePath(property)}`;
 
   const listingSchema = buildRealEstateListingSchema(property);
   const breadcrumbSchema = buildBreadcrumbSchema([
