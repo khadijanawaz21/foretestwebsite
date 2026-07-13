@@ -4,7 +4,13 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { evaluateBuildFailure, buildManifest, buildFetchFailureManifest } from './build.mjs';
+import {
+  evaluateBuildFailure,
+  buildManifest,
+  buildFetchFailureManifest,
+  buildCleanupFailureManifest,
+  runProductionBuild,
+} from './build.mjs';
 
 test('evaluateBuildFailure: fails when zero listings were found', () => {
   const reason = evaluateBuildFailure({ totalFound: 0, succeeded: 0 });
@@ -84,4 +90,107 @@ test('buildFetchFailureManifest: reflects an unknown total_found and zero-everyt
   assert.deepEqual(manifest.errors, []);
   assert.equal(manifest.build_duration_ms, 15);
   assert.equal(typeof manifest.generated_at, 'string');
+});
+
+test('buildCleanupFailureManifest: same zero-everything shape, tagged as the cleanup stage', () => {
+  const manifest = buildCleanupFailureManifest('EACCES: permission denied', 3);
+  assert.equal(manifest.status, 'failed');
+  assert.equal(manifest.failure_stage, 'cleanup');
+  assert.equal(manifest.error_message, 'EACCES: permission denied');
+  assert.equal(manifest.total_found, null);
+  assert.equal(manifest.succeeded, 0);
+  assert.equal(manifest.failed, 0);
+  assert.deepEqual(manifest.failures, []);
+});
+
+test('runProductionBuild: cleanup failure writes a cleanup-stage manifest and aborts before fetch/generate run', async () => {
+  let fetchCalled = false;
+  let generateCalled = false;
+  let writtenManifest = null;
+
+  await assert.rejects(
+    () =>
+      runProductionBuild({
+        clean: () => {
+          throw new Error('EACCES: permission denied');
+        },
+        fetchProperties: async () => {
+          fetchCalled = true;
+          return [];
+        },
+        generate: () => {
+          generateCalled = true;
+          return {};
+        },
+        writeManifestFn: (manifest) => {
+          writtenManifest = manifest;
+        },
+      }),
+    /Build aborted: could not clean output directory/
+  );
+
+  assert.equal(fetchCalled, false);
+  assert.equal(generateCalled, false);
+  assert.ok(writtenManifest);
+  assert.equal(writtenManifest.status, 'failed');
+  assert.equal(writtenManifest.failure_stage, 'cleanup');
+  assert.match(writtenManifest.error_message, /permission denied/);
+});
+
+test('runProductionBuild: fetch failure still aborts before generate runs (cleanup already succeeded)', async () => {
+  let cleanCalled = false;
+  let generateCalled = false;
+  let writtenManifest = null;
+
+  await assert.rejects(
+    () =>
+      runProductionBuild({
+        clean: () => {
+          cleanCalled = true;
+        },
+        fetchProperties: async () => {
+          throw new Error('network error');
+        },
+        generate: () => {
+          generateCalled = true;
+          return {};
+        },
+        writeManifestFn: (manifest) => {
+          writtenManifest = manifest;
+        },
+      }),
+    /Build aborted: could not fetch listings/
+  );
+
+  assert.equal(cleanCalled, true);
+  assert.equal(generateCalled, false);
+  assert.equal(writtenManifest.failure_stage, 'fetch');
+});
+
+test('runProductionBuild: happy path cleans, fetches, generates, and writes a success manifest', async () => {
+  let cleanCalled = false;
+  let writtenManifest = null;
+
+  await runProductionBuild({
+    clean: () => {
+      cleanCalled = true;
+    },
+    fetchProperties: async () => [{ id: 1 }],
+    generate: () => ({
+      totalFound: 1,
+      succeeded: 1,
+      failed: 0,
+      failures: [],
+      validationWarnings: [],
+      validationErrors: [],
+      durationMs: 5,
+    }),
+    writeManifestFn: (manifest) => {
+      writtenManifest = manifest;
+    },
+  });
+
+  assert.equal(cleanCalled, true);
+  assert.equal(writtenManifest.status, 'success');
+  assert.equal(writtenManifest.total_found, 1);
 });

@@ -1,19 +1,22 @@
 #!/usr/bin/env node
 /**
  * generator/build.mjs
- * Vercel buildCommand entry point. Generates every published
+ * Vercel buildCommand entry point. Wipes the properties output directory
+ * (see lib/output-cleanup.mjs) so removed/unpublished listings can't
+ * leave stale pages behind, then generates every published
  * secondary_listings property page by reusing runBatch() from
- * generate-all-secondary-listings.mjs (no duplicated generation logic),
- * always writes a build manifest — including when the Supabase fetch
- * itself fails — and hard-fails the build (non-zero exit) if zero
- * listings are found or zero pages succeed. Individual listing failures
- * remain non-fatal — see runBatch().
+ * generate-all-secondary-listings.mjs (no duplicated generation logic).
+ * Always writes a build manifest — including when cleanup or the
+ * Supabase fetch itself fails — and hard-fails the build (non-zero exit)
+ * if cleanup fails, zero listings are found, or zero pages succeed.
+ * Individual listing failures remain non-fatal — see runBatch().
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { createLogger } from './lib/logger.mjs';
 import { fetchPublishedProperties } from './lib/supabase.mjs';
 import { runBatch } from './generate-all-secondary-listings.mjs';
+import { cleanPropertiesOutputDir, PROPERTIES_OUTPUT_DIR } from './lib/output-cleanup.mjs';
 import { CACHE_DIR, BUILD_MANIFEST_PATH } from './config.mjs';
 
 const logger = createLogger('build');
@@ -54,15 +57,15 @@ export function buildManifest(report) {
 }
 
 /**
- * Manifest for the case where the Supabase fetch itself threw — no
- * report exists yet, so every generation-related field is its "nothing
+ * Manifest for a build that aborted before a report could be produced
+ * (cleanup or fetch) — every generation-related field is its "nothing
  * happened" value rather than omitted. Pure.
  */
-export function buildFetchFailureManifest(errorMessage, durationMs) {
+export function buildEarlyFailureManifest(stage, errorMessage, durationMs) {
   return {
     generated_at: new Date().toISOString(),
     status: 'failed',
-    failure_stage: 'fetch',
+    failure_stage: stage,
     error_message: errorMessage,
     total_found: null,
     succeeded: 0,
@@ -74,29 +77,61 @@ export function buildFetchFailureManifest(errorMessage, durationMs) {
   };
 }
 
+/** Manifest for a cleanup-stage failure. Pure. */
+export function buildCleanupFailureManifest(errorMessage, durationMs) {
+  return buildEarlyFailureManifest('cleanup', errorMessage, durationMs);
+}
+
+/** Manifest for the case where the Supabase fetch itself threw. Pure. */
+export function buildFetchFailureManifest(errorMessage, durationMs) {
+  return buildEarlyFailureManifest('fetch', errorMessage, durationMs);
+}
+
 function writeManifest(manifest) {
   fs.mkdirSync(CACHE_DIR, { recursive: true });
   fs.writeFileSync(BUILD_MANIFEST_PATH, JSON.stringify(manifest, null, 2), 'utf8');
   logger.info(`Wrote build manifest: ${path.relative(process.cwd(), BUILD_MANIFEST_PATH)}`);
 }
 
-async function main() {
+/**
+ * Full build orchestration with injectable steps — mirrors the
+ * pure-core/I-O-shell pattern runBatch() already uses for writePage.
+ * Injecting `clean`/`fetchProperties`/`generate`/`writeManifestFn` lets
+ * each stage-abort path (cleanup, fetch) be exercised in tests without
+ * touching the real filesystem or network. Default params wire it to the
+ * real implementations for production use via main().
+ */
+export async function runProductionBuild({
+  clean = cleanPropertiesOutputDir,
+  fetchProperties = fetchPublishedProperties,
+  generate = runBatch,
+  writeManifestFn = writeManifest,
+} = {}) {
   const startedAt = Date.now();
   logger.info('FORE static page generator — production build starting');
 
+  try {
+    clean();
+  } catch (err) {
+    logger.error(`Failed to clean properties output directory: ${err.message}`);
+    writeManifestFn(buildCleanupFailureManifest(err.message, Date.now() - startedAt));
+    throw new Error(`Build aborted: could not clean output directory (${err.message})`);
+  }
+  logger.info(`Cleaned ${path.relative(process.cwd(), PROPERTIES_OUTPUT_DIR)}`);
+
   let rows;
   try {
-    rows = await fetchPublishedProperties();
+    rows = await fetchProperties();
   } catch (err) {
     logger.error(`Failed to fetch published properties: ${err.message}`);
-    writeManifest(buildFetchFailureManifest(err.message, Date.now() - startedAt));
+    writeManifestFn(buildFetchFailureManifest(err.message, Date.now() - startedAt));
     throw new Error(`Build aborted: could not fetch listings (${err.message})`);
   }
   logger.info(`Fetched ${rows.length} published listing(s).`);
 
-  const report = runBatch(rows);
+  const report = generate(rows);
   const manifest = buildManifest(report);
-  writeManifest(manifest);
+  writeManifestFn(manifest);
 
   logger.info(
     `Generated ${report.succeeded}/${report.totalFound} page(s), ${report.failed} failed, ` +
@@ -110,7 +145,7 @@ async function main() {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  main()
+  runProductionBuild()
     .then(() => {
       process.exitCode = 0;
     })
