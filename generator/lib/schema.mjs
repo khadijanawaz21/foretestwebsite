@@ -56,6 +56,27 @@ function buildPublisherRef(siteUrl) {
   };
 }
 
+/**
+ * @param {{name: string, slug: string, city?: string}} area
+ * @returns {object} Place JSON-LD (Knowledge Architecture Part 6: Area/Community -> Place).
+ */
+export function buildPlaceSchema(area) {
+  requireFields(area, ['name', 'slug'], 'buildPlaceSchema');
+  const siteUrl = requireSiteUrl();
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Place',
+    name: area.name,
+    url: `${siteUrl}/areas/${area.slug}/`,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: area.name,
+      addressRegion: area.city || 'Dubai',
+      addressCountry: 'AE',
+    },
+  };
+}
+
 /** @returns {object} Organization + LocalBusiness JSON-LD for FORE itself (homepage). */
 export function buildOrganizationSchema() {
   const siteUrl = requireSiteUrl();

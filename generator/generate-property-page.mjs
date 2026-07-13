@@ -15,31 +15,11 @@ import { renderTemplate, raw } from './lib/template-engine.mjs';
 import { generateTitle, generateDescription } from './lib/meta.mjs';
 import { buildRealEstateListingSchema, buildBreadcrumbSchema, toJsonLdScriptTag } from './lib/schema.mjs';
 import { validateGeneratedPages } from './lib/validate.mjs';
+import { readRepoFile, extractStyleBlocks, rewriteRootRelativeUrls } from './lib/page-assets.mjs';
 import { createLogger } from './lib/logger.mjs';
 import { REPO_ROOT, GENERATOR_ROOT, config } from './config.mjs';
 
 const logger = createLogger('generate-property-page');
-
-function readRepoFile(relativePath) {
-  return fs.readFileSync(path.join(REPO_ROOT, relativePath), 'utf8');
-}
-
-/** Extracts every inline <style> block from an HTML file's source, concatenated in order. */
-function extractStyleBlocks(html) {
-  const matches = html.match(/<style[^>]*>[\s\S]*?<\/style>/g);
-  if (!matches || matches.length === 0) {
-    throw new Error('No <style> block found in property-detail.html');
-  }
-  return matches.join('\n');
-}
-
-/** Rewrites root-relative href/src values (as used by components/*.html) to absolute paths, since generated pages live 2 directories deep. */
-function rewriteRootRelativeUrls(html) {
-  return html.replace(/(href|src)="([^"]+)"/g, (full, attr, value) => {
-    if (/^(https?:|mailto:|tel:|#|\/)/.test(value)) return full;
-    return `${attr}="/${value}"`;
-  });
-}
 
 function formatPriceLabel(priceAed) {
   return priceAed ? `AED ${Math.round(priceAed).toLocaleString('en-US')}` : 'Price on request';

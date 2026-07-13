@@ -11,6 +11,7 @@ import { generateTitle, generateDescription } from './meta.mjs';
 import {
   buildOrganizationSchema,
   buildRealEstateListingSchema,
+  buildPlaceSchema,
   buildBreadcrumbSchema,
   buildFAQSchema,
 } from './schema.mjs';
@@ -161,6 +162,13 @@ test('schema: real estate listing requires core fields', () => {
   });
   assert.equal(schema.offers.price, 1850000);
   assert.equal(schema.url, 'https://fairopportunityrealestate.com/properties/dubai-marina/unit-a1512/');
+});
+
+test('schema: place schema for an area', () => {
+  assert.throws(() => buildPlaceSchema({}));
+  const schema = buildPlaceSchema({ name: 'Dubai Marina', slug: 'dubai-marina' });
+  assert.equal(schema['@type'], 'Place');
+  assert.equal(schema.url, 'https://fairopportunityrealestate.com/areas/dubai-marina/');
 });
 
 test('schema: breadcrumb and FAQ validation', () => {

@@ -1,20 +1,64 @@
-<!--
-  PLACEHOLDER — FORE Static Page Generator — Area template
-  Status: NOT YET IMPLEMENTED (scheduled for Sprint 4, SSG Spec Phase D)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><!--SSG:TITLE--></title>
+  <meta name="description" content="<!--SSG:META_DESCRIPTION-->" />
+  <link rel="canonical" href="<!--SSG:CANONICAL_URL-->" />
+  <meta property="og:title" content="<!--SSG:TITLE-->" />
+  <meta property="og:description" content="<!--SSG:META_DESCRIPTION-->" />
+  <meta property="og:url" content="<!--SSG:CANONICAL_URL-->" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/png" href="/brand_assets/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" crossorigin />
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/mobile.css" />
+  <!--SSG:PAGE_STYLES-->
+  <!--SSG:JSONLD-->
+</head>
+<body>
+<!--SSG:NAV-->
+<main class="area-static">
+  <div class="pd-breadcrumb">
+    <a href="/properties.html">Properties</a> <span class="bc-sep">/</span>
+    <span class="bc-current"><!--SSG:AREA_NAME--></span>
+  </div>
 
-  Unlike property.template.html and blog-post.template.html, this is a
-  NEW template with no existing hand-written page to derive from — it
-  must be hand-designed once, using the existing brand system and CSS
-  (style.css / mobile.css / components/nav.html / components/footer.html),
-  per the Knowledge Architecture Part 1 (Area entity) and Part 4
-  (Component System: Hero, Area Snapshot, Market Stats, Nearby Amenities,
-  Schools, Metro, Related Guides, Related Properties, FAQ, CTA).
+  <section class="ph-hero" style="min-height:auto;padding:40px 10%;">
+    <div class="ph-hero-content">
+      <h1 class="ph-hero-title"><!--SSG:AREA_NAME--></h1>
+      <p class="ph-hero-sub"><!--SSG:INTRO_COPY--></p>
+    </div>
+  </section>
 
-  This also depends on the `areas` Supabase table (Static Page Generator
-  Spec §3 / Knowledge Architecture Part 1), which does not exist yet —
-  creating it is out of scope for this foundation sprint.
+  <section class="area-snapshot" style="padding:0 10% 32px;">
+    <ul class="pd-facts">
+      <li><!--SSG:LISTING_COUNT_LABEL--></li>
+      <li><!--SSG:PRICE_RANGE_LABEL--></li>
+      <li><!--SSG:PROPERTY_TYPES_LABEL--></li>
+    </ul>
+  </section>
 
-  This placeholder exists only so the generator's folder structure
-  matches the approved specification. Do not use this file for real page
-  generation yet.
--->
+  <section class="properties-grid-section" style="padding:0 10% 48px;">
+    <h2 style="font-family:var(--font-display);font-weight:300;">Properties in <!--SSG:AREA_NAME--></h2>
+    <div class="properties-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px;">
+      <!--SSG:REPEAT:PROPERTY_CARD-->
+      <a href="<!--SSG:ITEM.url-->" class="prop-card">
+        <div class="prop-card-img"><img src="<!--SSG:ITEM.image-->" alt="<!--SSG:ITEM.name-->" /></div>
+        <div class="prop-card-body">
+          <h3 class="prop-name"><!--SSG:ITEM.name--></h3>
+          <p class="prop-price"><!--SSG:ITEM.price--></p>
+        </div>
+      </a>
+      <!--SSG:/REPEAT-->
+    </div>
+  </section>
+</main>
+<!--SSG:FOOTER-->
+<!--SSG:WHATSAPP-->
+</body>
+</html>
