@@ -46,6 +46,8 @@ export const GENERATOR_ROOT = __dirname;
  */
 export const CACHE_DIR = path.join(GENERATOR_ROOT, '.cache');
 export const MANIFEST_PATH = path.join(CACHE_DIR, 'manifest.json');
+/** Per-build report (counts, warnings, errors) written by build.mjs — distinct from MANIFEST_PATH's future incremental-hash cache. */
+export const BUILD_MANIFEST_PATH = path.join(CACHE_DIR, 'build-manifest.json');
 
 /**
  * Environment-derived runtime settings, read live via getters (not
