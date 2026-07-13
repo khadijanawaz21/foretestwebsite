@@ -66,6 +66,14 @@ test('runBatch: failure record captures the slug when normalization succeeded bu
   assert.match(report.failures[0].reason, /priceAed/);
 });
 
+test('runBatch: succeededPages carries the canonical URL of every generated page, excluding failures', () => {
+  const rows = [makeRow({ id: 1 }), { id: 2 /* missing name/building_name -> fails */ }, makeRow({ id: 3, name: 'Third Unit' })];
+  const report = runBatch(rows, { writePage: () => {} });
+
+  assert.equal(report.succeededPages.length, 2);
+  assert.ok(report.succeededPages.every((p) => typeof p.canonicalUrl === 'string' && p.canonicalUrl.length > 0));
+});
+
 test('runBatch: detects duplicate generated titles and descriptions', () => {
   const rows = [
     makeRow({ id: 1 }),

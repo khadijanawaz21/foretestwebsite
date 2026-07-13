@@ -179,6 +179,7 @@ test('runProductionBuild: happy path cleans, fetches, generates, and writes a su
     generate: () => ({
       totalFound: 1,
       succeeded: 1,
+      succeededPages: [{ canonicalUrl: 'https://fairopportunityrealestate.com/properties/a/unit-1/' }],
       failed: 0,
       failures: [],
       validationWarnings: [],
@@ -188,9 +189,87 @@ test('runProductionBuild: happy path cleans, fetches, generates, and writes a su
     writeManifestFn: (manifest) => {
       writtenManifest = manifest;
     },
+    writeSitemapFn: () => {},
   });
 
   assert.equal(cleanCalled, true);
   assert.equal(writtenManifest.status, 'success');
   assert.equal(writtenManifest.total_found, 1);
+});
+
+test('runProductionBuild: successful generation writes a sitemap containing the generated property URL', async () => {
+  let writtenSitemap = null;
+
+  await runProductionBuild({
+    clean: () => {},
+    fetchProperties: async () => [{ id: 1 }],
+    generate: () => ({
+      totalFound: 1,
+      succeeded: 1,
+      succeededPages: [{ canonicalUrl: 'https://fairopportunityrealestate.com/properties/a/unit-1/' }],
+      failed: 0,
+      failures: [],
+      validationWarnings: [],
+      validationErrors: [],
+      durationMs: 5,
+    }),
+    writeManifestFn: () => {},
+    writeSitemapFn: (xml) => {
+      writtenSitemap = xml;
+    },
+  });
+
+  assert.ok(writtenSitemap);
+  assert.match(writtenSitemap, /<loc>https:\/\/fairopportunityrealestate\.com\/properties\/a\/unit-1\/<\/loc>/);
+});
+
+test('runProductionBuild: a hard generation failure (zero succeeded) does not write a sitemap', async () => {
+  let sitemapWritten = false;
+
+  await assert.rejects(
+    () =>
+      runProductionBuild({
+        clean: () => {},
+        fetchProperties: async () => [{ id: 1 }],
+        generate: () => ({
+          totalFound: 1,
+          succeeded: 0,
+          succeededPages: [],
+          failed: 1,
+          failures: [{ id: 1, slug: null, reason: 'boom' }],
+          validationWarnings: [],
+          validationErrors: [],
+          durationMs: 5,
+        }),
+        writeManifestFn: () => {},
+        writeSitemapFn: () => {
+          sitemapWritten = true;
+        },
+      }),
+    /zero pages were successfully generated/
+  );
+
+  assert.equal(sitemapWritten, false);
+});
+
+test('runProductionBuild: a cleanup failure does not write a sitemap', async () => {
+  let sitemapWritten = false;
+
+  await assert.rejects(
+    () =>
+      runProductionBuild({
+        clean: () => {
+          throw new Error('EACCES');
+        },
+        fetchProperties: async () => [{ id: 1 }],
+        generate: () => ({ totalFound: 1, succeeded: 1, succeededPages: [], failed: 0, failures: [], validationWarnings: [], validationErrors: [], durationMs: 1 }),
+        writeManifestFn: () => {},
+        writeSitemapFn: () => {
+          sitemapWritten = true;
+        },
+      }),
+    /Build aborted: could not clean output directory/
+  );
+
+  assert.equal(sitemapWritten, false);
 });

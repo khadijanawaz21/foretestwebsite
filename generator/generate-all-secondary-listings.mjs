@@ -78,6 +78,7 @@ export function runBatch(rows, { writePage = writePageToDisk } = {}) {
   return {
     totalFound: rows.length,
     succeeded: succeeded.length,
+    succeededPages: succeeded.map((r) => ({ canonicalUrl: r.canonicalUrl })),
     failed: failures.length,
     failures,
     validationWarnings,

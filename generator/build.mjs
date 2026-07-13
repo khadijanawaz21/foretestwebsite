@@ -9,7 +9,10 @@
  * Always writes a build manifest — including when cleanup or the
  * Supabase fetch itself fails — and hard-fails the build (non-zero exit)
  * if cleanup fails, zero listings are found, or zero pages succeed.
- * Individual listing failures remain non-fatal — see runBatch().
+ * Individual listing failures remain non-fatal — see runBatch(). On a
+ * successful generation pass (only), also (re)writes sitemap.xml from
+ * the static page list plus every generated property's canonical URL —
+ * see lib/sitemap.mjs. A failed build never writes or overwrites it.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -17,7 +20,8 @@ import { createLogger } from './lib/logger.mjs';
 import { fetchPublishedProperties } from './lib/supabase.mjs';
 import { runBatch } from './generate-all-secondary-listings.mjs';
 import { cleanPropertiesOutputDir, PROPERTIES_OUTPUT_DIR } from './lib/output-cleanup.mjs';
-import { CACHE_DIR, BUILD_MANIFEST_PATH } from './config.mjs';
+import { buildSitemapEntries, buildSitemapXml, writeSitemap } from './lib/sitemap.mjs';
+import { CACHE_DIR, BUILD_MANIFEST_PATH, SITEMAP_PATH } from './config.mjs';
 
 const logger = createLogger('build');
 
@@ -106,6 +110,7 @@ export async function runProductionBuild({
   fetchProperties = fetchPublishedProperties,
   generate = runBatch,
   writeManifestFn = writeManifest,
+  writeSitemapFn = writeSitemap,
 } = {}) {
   const startedAt = Date.now();
   logger.info('FORE static page generator — production build starting');
@@ -142,6 +147,10 @@ export async function runProductionBuild({
   if (failureReason) {
     throw new Error(failureReason);
   }
+
+  const sitemapXml = buildSitemapXml(buildSitemapEntries(report));
+  writeSitemapFn(sitemapXml);
+  logger.info(`Wrote sitemap: ${path.relative(process.cwd(), SITEMAP_PATH)}`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
