@@ -4,14 +4,17 @@
  * Place schema input) from an aggregate computed by
  * generator/lib/aggregate-area.mjs.
  *
- * IMPORTANT — interim content only: the `areas` Supabase table described in
- * the Static Page Generator Spec §3 (with a human-authored, REQUIRED
- * intro_copy field) does not exist yet. Until it does, introCopy here is a
+ * IMPORTANT — interim content only: the `areas`/`area_translations` schema
+ * (scripts/create-areas-table.sql, scripts/migration-area-i18n-and-revisions.sql)
+ * has been designed but not yet applied to the live Supabase project, and
+ * has no rows either way. Until it's populated, introCopy here is a
  * data-derived sentence assembled from real aggregate stats — factual, not
  * fabricated, but not the unique editorial copy the anti-thin-content rule
  * (Spec §10 / Knowledge Architecture Part 3) actually calls for. Replace
- * this with real `areas.intro_copy` once that table and its content exist
- * (Phase D).
+ * this with real `area_translations.intro_copy` (locale='en', or the
+ * request's locale once i18n is wired up) once that table has content
+ * (Phase D). Note intro_copy now lives in `area_translations`, not on
+ * `areas` directly — see the i18n migration.
  */
 import { ValidationError } from './errors.mjs';
 
