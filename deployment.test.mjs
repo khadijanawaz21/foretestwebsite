@@ -1,11 +1,15 @@
 /**
  * deployment.test.mjs
- * Guards against the exact regression that broke the Vercel Preview
- * Deployment: the redirect manifest must be a production deployment
- * artifact at the repo root (like sitemap.xml), not a generator/.cache/
- * file — Vercel's Edge Function bundler excludes gitignored/.cache
- * paths from middleware.js's static import trace regardless of what
- * buildCommand recreates there at build time.
+ * Guards against two regressions that each broke Vercel deployment:
+ * (1) the redirect manifest must be a production deployment artifact at
+ * the repo root (like sitemap.xml), not a generator/.cache/ file, and
+ * (2) middleware.js must NOT statically import it — Vercel's Edge
+ * Function bundler excludes gitignored paths from a static-import trace
+ * regardless of what buildCommand recreates there at build time or which
+ * directory the file lives in (this broke both the .cache/ location and,
+ * later, the repo-root location — see middleware.js's doc comment).
+ * middleware.js instead fetches the manifest at request time as an
+ * ordinary static asset.
  * Run: node --test deployment.test.mjs
  */
 import { test } from 'node:test';
@@ -20,14 +24,16 @@ test('REDIRECT_MANIFEST_PATH is a repo-root deployment artifact, not a generator
   assert.equal(REDIRECT_MANIFEST_PATH.startsWith(CACHE_DIR), false);
 });
 
-test("middleware.js statically imports the redirect manifest from the exact path config.mjs defines", () => {
+test('middleware.js does not statically import the redirect manifest (Edge bundler excludes gitignored import targets)', () => {
   const middlewareSource = fs.readFileSync(path.join(REPO_ROOT, 'middleware.js'), 'utf8');
-  const expectedSpecifier = `./${path.relative(REPO_ROOT, REDIRECT_MANIFEST_PATH)}`;
+  const importLines = middlewareSource.split('\n').filter((line) => line.trim().startsWith('import '));
+  assert.ok(importLines.every((line) => !line.includes('redirect-manifest.json')));
+  assert.ok(importLines.every((line) => !line.includes('generator/.cache')));
+});
 
-  const importLine = middlewareSource.split('\n').find((line) => line.startsWith('import redirectManifest'));
-  assert.ok(importLine, 'expected an import statement for redirectManifest');
-  assert.equal(importLine, `import redirectManifest from '${expectedSpecifier}' with { type: 'json' };`);
-  assert.doesNotMatch(importLine, /generator\/\.cache/);
+test('middleware.js fetches the redirect manifest at runtime as a static asset instead', () => {
+  const middlewareSource = fs.readFileSync(path.join(REPO_ROOT, 'middleware.js'), 'utf8');
+  assert.match(middlewareSource, /fetch\(new URL\(['"]\/redirect-manifest\.json['"]/);
 });
 
 test('.gitignore treats redirect-manifest.json the same as sitemap.xml (repo-root generated artifact)', () => {
