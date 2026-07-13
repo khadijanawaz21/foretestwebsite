@@ -48,13 +48,22 @@ export const CACHE_DIR = path.join(GENERATOR_ROOT, '.cache');
 export const MANIFEST_PATH = path.join(CACHE_DIR, 'manifest.json');
 
 /**
- * Environment-derived runtime settings, read once, here, with no
- * hardcoded fallback values. See module doc comment above.
+ * Environment-derived runtime settings, read live via getters (not
+ * snapshotted at import time) so process.env changes made after this
+ * module first loads — e.g. by a test's setup code, since ES module
+ * imports are hoisted above other top-level statements — are respected.
+ * No hardcoded fallback values. See module doc comment above.
  */
 export const config = {
-  siteUrl: process.env.SITE_BASE_URL,
-  logLevel: process.env.GENERATOR_LOG_LEVEL,
-  supabaseUrl: process.env.SUPABASE_URL,
+  get siteUrl() {
+    return process.env.SITE_BASE_URL;
+  },
+  get logLevel() {
+    return process.env.GENERATOR_LOG_LEVEL;
+  },
+  get supabaseUrl() {
+    return process.env.SUPABASE_URL;
+  },
 };
 
 /** Environment variables the generator depends on. See .env.example. */
