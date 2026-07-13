@@ -12,6 +12,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fetchPublishedProperties } from './lib/supabase.mjs';
 import { buildPropertyPage } from './generate-property-page.mjs';
+import { normalizeSecondaryListing } from './lib/normalize-property.mjs';
 import { validateGeneratedPages } from './lib/validate.mjs';
 import { createLogger } from './lib/logger.mjs';
 import { REPO_ROOT } from './config.mjs';
@@ -22,6 +23,15 @@ function writePageToDisk(result) {
   const outputPath = path.join(REPO_ROOT, result.outputRelativePath);
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, result.html, 'utf8');
+}
+
+/** Best-effort slug lookup for a failure record — undefined if normalization itself is what failed. */
+function attemptSlug(row) {
+  try {
+    return normalizeSecondaryListing(row).slug;
+  } catch {
+    return undefined;
+  }
 }
 
 /**
@@ -43,7 +53,12 @@ export function runBatch(rows, { writePage = writePageToDisk } = {}) {
       writePage(result);
       succeeded.push(result);
     } catch (err) {
-      failures.push({ id: row?.id, name: row?.name || row?.building_name || '(unknown)', reason: err.message });
+      failures.push({
+        id: row?.id,
+        slug: attemptSlug(row),
+        name: row?.name || row?.building_name || '(unknown)',
+        reason: err.message,
+      });
     }
   }
 
@@ -78,7 +93,7 @@ function printReport(report) {
   logger.info(`Total listings found:        ${report.totalFound}`);
   logger.info(`Successfully generated:      ${report.succeeded}`);
   logger.info(`Failed:                      ${report.failed}`);
-  report.failures.forEach((f) => logger.info(`  - [${f.id}] ${f.name}: ${f.reason}`));
+  report.failures.forEach((f) => logger.info(`  - [${f.id}]${f.slug ? ` (${f.slug})` : ''} ${f.name}: ${f.reason}`));
   logger.info(`Validation warnings:         ${report.validationWarnings.length}`);
   report.validationWarnings.forEach((w) => logger.info(`  - ${w.message}`));
   logger.info(`Validation errors:           ${report.validationErrors.length}`);

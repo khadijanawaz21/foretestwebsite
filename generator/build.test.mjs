@@ -4,7 +4,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { evaluateBuildFailure, buildManifest } from './build.mjs';
+import { evaluateBuildFailure, buildManifest, buildFetchFailureManifest } from './build.mjs';
 
 test('evaluateBuildFailure: fails when zero listings were found', () => {
   const reason = evaluateBuildFailure({ totalFound: 0, succeeded: 0 });
@@ -26,20 +26,62 @@ test('evaluateBuildFailure: passes when all listings succeeded', () => {
   assert.equal(reason, null);
 });
 
-test('buildManifest: maps the batch report to the required manifest shape', () => {
+test('buildManifest: success case includes existing fields unchanged', () => {
   const manifest = buildManifest({
     totalFound: 8,
-    succeeded: 7,
-    failed: 1,
+    succeeded: 8,
+    failed: 0,
+    failures: [],
     validationWarnings: [{ severity: 'warning', message: 'x' }],
     validationErrors: [],
     durationMs: 42,
   });
   assert.equal(manifest.total_found, 8);
-  assert.equal(manifest.succeeded, 7);
-  assert.equal(manifest.failed, 1);
+  assert.equal(manifest.succeeded, 8);
+  assert.equal(manifest.failed, 0);
   assert.equal(manifest.warnings.length, 1);
   assert.equal(manifest.errors.length, 0);
   assert.equal(manifest.build_duration_ms, 42);
+  assert.equal(typeof manifest.generated_at, 'string');
+  assert.equal(manifest.status, 'success');
+  assert.equal(manifest.failure_stage, null);
+  assert.equal(manifest.error_message, null);
+  assert.deepEqual(manifest.failures, []);
+});
+
+test('buildManifest: generation failure sets status/failure_stage/error_message', () => {
+  const manifest = buildManifest({
+    totalFound: 3,
+    succeeded: 0,
+    failed: 3,
+    failures: [
+      { id: 1, slug: undefined, name: 'A', reason: 'boom' },
+      { id: 2, slug: 'unit-2', name: 'B', reason: 'missing price' },
+    ],
+    validationWarnings: [],
+    validationErrors: [],
+    durationMs: 10,
+  });
+  assert.equal(manifest.status, 'failed');
+  assert.equal(manifest.failure_stage, 'generation');
+  assert.match(manifest.error_message, /zero pages were successfully generated/);
+  assert.deepEqual(manifest.failures, [
+    { id: 1, slug: null, error_message: 'boom' },
+    { id: 2, slug: 'unit-2', error_message: 'missing price' },
+  ]);
+});
+
+test('buildFetchFailureManifest: reflects an unknown total_found and zero-everything-else', () => {
+  const manifest = buildFetchFailureManifest('SUPABASE_URL and/or SERVICE_KEY are not set.', 15);
+  assert.equal(manifest.status, 'failed');
+  assert.equal(manifest.failure_stage, 'fetch');
+  assert.equal(manifest.error_message, 'SUPABASE_URL and/or SERVICE_KEY are not set.');
+  assert.equal(manifest.total_found, null);
+  assert.equal(manifest.succeeded, 0);
+  assert.equal(manifest.failed, 0);
+  assert.deepEqual(manifest.failures, []);
+  assert.deepEqual(manifest.warnings, []);
+  assert.deepEqual(manifest.errors, []);
+  assert.equal(manifest.build_duration_ms, 15);
   assert.equal(typeof manifest.generated_at, 'string');
 });

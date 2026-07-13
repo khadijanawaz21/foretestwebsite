@@ -51,6 +51,21 @@ test('runBatch: continues past a failing row', () => {
   assert.equal(report.failures[0].id, 2);
 });
 
+test('runBatch: failure record has no slug when normalization itself is what failed', () => {
+  const rows = [{ id: 2 /* missing name/building_name */ }];
+  const report = runBatch(rows, { writePage: () => {} });
+  assert.equal(report.failures[0].slug, undefined);
+});
+
+test('runBatch: failure record captures the slug when normalization succeeded but a later step failed', () => {
+  const rows = [makeRow({ id: 4, price: null })]; // normalizes fine; schema builder requires priceAed
+  const report = runBatch(rows, { writePage: () => {} });
+  assert.equal(report.failed, 1);
+  assert.equal(report.failures[0].id, 4);
+  assert.ok(report.failures[0].slug, 'expected a slug to have been captured');
+  assert.match(report.failures[0].reason, /priceAed/);
+});
+
 test('runBatch: detects duplicate generated titles and descriptions', () => {
   const rows = [
     makeRow({ id: 1 }),
