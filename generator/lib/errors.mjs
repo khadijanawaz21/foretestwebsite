@@ -65,3 +65,11 @@ export class SchemaBuildError extends Error {
     this.name = 'SchemaBuildError';
   }
 }
+
+/** Raised by generator/lib/supabase.mjs when a query fails. */
+export class DataFetchError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'DataFetchError';
+  }
+}

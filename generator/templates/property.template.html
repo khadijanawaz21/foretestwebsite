@@ -1,22 +1,59 @@
-<!--
-  PLACEHOLDER — FORE Static Page Generator — Property template
-  Status: NOT YET IMPLEMENTED (scheduled for Sprint 2, SSG Spec Phase B)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><!--SSG:TITLE--></title>
+  <meta name="description" content="<!--SSG:META_DESCRIPTION-->" />
+  <link rel="canonical" href="<!--SSG:CANONICAL_URL-->" />
+  <meta property="og:title" content="<!--SSG:TITLE-->" />
+  <meta property="og:description" content="<!--SSG:META_DESCRIPTION-->" />
+  <meta property="og:url" content="<!--SSG:CANONICAL_URL-->" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="<!--SSG:OG_IMAGE-->" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/png" href="/brand_assets/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" crossorigin />
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/mobile.css" />
+  <!--SSG:PAGE_STYLES-->
+  <!--SSG:JSONLD-->
+</head>
+<body>
+<!--SSG:NAV-->
+<main class="pd-static">
+  <div class="pd-breadcrumb">
+    <a href="/properties.html">Properties</a> <span class="bc-sep">/</span>
+    <span class="bc-current"><!--SSG:LISTING_NAME--></span>
+  </div>
 
-  When implemented, this file will be derived from the existing
-  property-detail.html at the repository root, with SSG marker comments
-  added at the points described in the Static Page Generator
-  Specification §6 (Templating Engine) — e.g. <!--SSG:TITLE-->,
-  <!--SSG:META_DESCRIPTION-->, <!--SSG:JSONLD-->, <!--SSG:LISTING_NAME-->,
-  and a <!--SSG:REPEAT:GALLERY_THUMB--> ... <!--SSG:/REPEAT--> block.
+  <section class="pd-gallery">
+    <div class="pd-gallery-main">
+      <img src="<!--SSG:MAIN_IMAGE-->" alt="<!--SSG:LISTING_NAME-->" />
+    </div>
+    <div class="pd-gallery-thumbs">
+      <!--SSG:REPEAT:GALLERY_THUMB-->
+      <div class="pd-gallery-thumb"><img src="<!--SSG:ITEM.url-->" alt="<!--SSG:ITEM.alt-->" /></div>
+      <!--SSG:/REPEAT-->
+    </div>
+  </section>
 
-  Per the spec's hybrid rendering approach, the existing client-side
-  gallery/price-refresh JavaScript already in property-detail.html will be
-  kept, not rewritten — this template only adds server-baked content on
-  top of it.
-
-  This placeholder exists only so the generator's folder structure and
-  build wiring can be established now (Sprint 1) without touching the
-  live property-detail.html page or changing any current site behavior.
-
-  Do not use this file for real page generation yet.
--->
+  <section class="pd-summary" style="padding:32px 10%;">
+    <h1 class="pd-title"><!--SSG:LISTING_NAME--></h1>
+    <p class="pd-location"><!--SSG:AREA_NAME-->, <!--SSG:CITY--></p>
+    <p class="pd-price"><!--SSG:PRICE_FORMATTED--></p>
+    <ul class="pd-facts">
+      <li><!--SSG:BEDROOMS_LABEL--></li>
+      <li><!--SSG:BATHROOMS_LABEL--></li>
+      <li><!--SSG:AREA_SQFT_LABEL--></li>
+    </ul>
+    <p class="pd-description"><!--SSG:DESCRIPTION--></p>
+  </section>
+</main>
+<!--SSG:FOOTER-->
+<!--SSG:WHATSAPP-->
+<script>window.__LISTING_ID__ = "<!--SSG:LISTING_ID-->";</script>
+</body>
+</html>
