@@ -58,7 +58,7 @@ test('template-engine: unterminated repeat block throws', () => {
   assert.throws(() => extractRepeatBlock('<!--SSG:REPEAT:X-->no close', 'X'));
 });
 
-test('meta: property title and description', () => {
+test('meta: property title and description built from structured fields', () => {
   const entity = {
     bedrooms: 2,
     propertyType: 'Apartment',
@@ -69,11 +69,73 @@ test('meta: property title and description', () => {
     areaSqft: 1120,
     description: 'A bright two-bedroom apartment with marina views and premium finishes throughout.',
   };
-  assert.equal(generateTitle('property', entity), '2BR Apartment for Sale in Beach Vista Tower 2, Dubai Marina | FORE');
-  assert.match(generateDescription('property', entity), /^From AED 1,850,000, 1,120 sq ft\./);
+  const title = generateTitle('property', entity);
+  const description = generateDescription('property', entity);
+  assert.match(title, /^2BR Apartment for Sale in Beach Vista Tower 2, Dubai.* \| FORE$/);
+  assert.ok(title.length >= 50 && title.length <= 65, `title length ${title.length} out of range`);
+  assert.match(description, /^2-bedroom apartment for sale in Beach Vista Tower 2, Dubai Marina\. AED 1,850,000, 1,120 sq ft\./);
+  assert.ok(description.length >= 140 && description.length <= 160, `description length ${description.length} out of range`);
 });
 
-test('meta: override takes precedence', () => {
+test('meta: title ignores the raw listing headline ("name") entirely', () => {
+  // No projectName/buildingName provided (as when the source column is
+  // empty) — the title must fall back to structured area context, never
+  // to an ad-style headline such as "Furnished Studio | 1 Cheque | Vacant".
+  const entity = {
+    bedrooms: 0,
+    propertyType: 'Apartment',
+    offeringType: 'rent',
+    areaName: 'AZIZI Riviera 29',
+  };
+  const title = generateTitle('property', entity);
+  assert.equal(title, 'Studio Apartment for Rent in AZIZI Riviera 29 | FORE');
+});
+
+test('meta: prefers projectName over buildingName for the "place" component', () => {
+  const entity = {
+    bedrooms: 1,
+    propertyType: 'Apartment',
+    offeringType: 'sale',
+    projectName: 'Elitz 3 by Danube',
+    buildingName: 'Elitz',
+    areaName: 'Business Bay',
+  };
+  const title = generateTitle('property', entity);
+  assert.match(title, /^1BR Apartment for Sale in Elitz 3 by Danube, Business Bay/);
+});
+
+test('meta: long generated title is trimmed at a word boundary, not mid-word', () => {
+  const entity = {
+    bedrooms: 4,
+    propertyType: 'Villa',
+    offeringType: 'sale',
+    projectName: 'Vastu Compliant 4BR Villa With Private Pool And Garden',
+    areaName: 'Murooj Al Furjan East',
+  };
+  const title = generateTitle('property', entity);
+  assert.ok(title.length <= 65, `title length ${title.length} exceeds 65`);
+  assert.doesNotMatch(title, /\w-$/); // no mid-word cut
+  assert.match(title, / \| FORE$/); // brand suffix preserved
+});
+
+test('meta: description is trimmed at a word boundary within 140-160 chars', () => {
+  const entity = {
+    bedrooms: 5,
+    propertyType: 'Villa',
+    offeringType: 'sale',
+    areaName: 'Western Residence South',
+    priceAed: 9980000,
+    areaSqft: 8764,
+    handoverYear: 2024,
+    description:
+      'A well-maintained five-bedroom plus maid room villa in the established Western Residence South community, Falcon City of Wonders, with a private pool, landscaped garden, and covered parking for four cars.',
+  };
+  const description = generateDescription('property', entity);
+  assert.ok(description.length <= 160, `description length ${description.length} exceeds 160`);
+  assert.match(description, /[.…]$/); // ends cleanly, not mid-word
+});
+
+test('meta: override takes precedence and is not modified', () => {
   const entity = { propertyType: 'Apartment', buildingName: 'X', areaName: 'Y', metaTitleOverride: 'Custom Title' };
   assert.equal(generateTitle('property', entity), 'Custom Title');
 });

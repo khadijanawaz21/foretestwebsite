@@ -39,6 +39,13 @@ function shortIdSuffix(id) {
  * @param {Record<string, unknown>} row Raw `secondary_listings` row.
  * @returns {object} Normalized Property model (see meta.mjs's PropertyMetaInput
  *   and schema.mjs's buildRealEstateListingSchema for the fields consumed downstream).
+ *
+ * Note: `name` (the listing's on-page display name/H1) intentionally does
+ * NOT feed `buildingName`/`projectName` below — `row.name` is often raw ad
+ * copy ("Furnished Studio | 1 Cheque | Vacant") and must never be used to
+ * build SEO titles/descriptions (see meta.mjs). `buildingName`/`projectName`
+ * are sourced only from their own structured columns and are left
+ * undefined, not backfilled from `name`, when those columns are empty.
  */
 export function normalizeSecondaryListing(row) {
   if (!row || row.id === undefined || row.id === null) {
@@ -60,7 +67,8 @@ export function normalizeSecondaryListing(row) {
     bathrooms: row.bathrooms != null ? Number(row.bathrooms) : undefined,
     propertyType: row.property_type || 'Apartment',
     offeringType: row.offering_type === 'rent' ? 'rent' : 'sale',
-    buildingName: row.building_name || name,
+    projectName: row.project_name || undefined,
+    buildingName: row.building_name || undefined,
     areaName,
     city: row.city || 'Dubai',
     priceAed: row.price != null ? Number(row.price) : undefined,

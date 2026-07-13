@@ -49,10 +49,7 @@ test('normalizeSecondaryListing: studio maps to 0 bedrooms', () => {
 
 test('buildPropertyPage: produces valid HTML with real title/schema/nav/footer', () => {
   const result = buildPropertyPage(SAMPLE_ROW);
-  assert.match(
-    result.html,
-    /<title>2BR Apartment for Sale in Beach Vista Tower 2, Emaar Beachfront \| FORE<\/title>/
-  );
+  assert.match(result.html, /<title>2BR Apartment for Sale in Beach Vista Tower 2, Emaar[^<]* \| FORE<\/title>/);
   assert.match(result.html, /application\/ld\+json/);
   assert.match(result.html, /class="nav-brand"/); // real nav.html content inlined
   assert.match(result.html, /RERA Broker No/); // real footer.html content inlined
