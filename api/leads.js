@@ -1,4 +1,6 @@
 const crypto = require('crypto');
+const { FORE_INBOX, leadNotificationEmail, leadConfirmationEmail } = require('../shared/email/templates');
+const { sendEmail } = require('../shared/email/resend');
 
 const SUPABASE_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
 
@@ -283,6 +285,50 @@ module.exports = async function handler(req, res) {
       await insertLeadActivity(lead.id, serviceKey);
     } catch (activityErr) {
       console.error('[api/leads] lead_activity_insert_failed', { leadId: lead.id, error: String(activityErr) });
+    }
+
+    // Best-effort, optional: email is never allowed to affect the response
+    // or the outcome of the lead capture itself. Wrapped in its own
+    // try/catch (not just Promise.allSettled around the sends) because
+    // template construction itself runs synchronously here — without this,
+    // a throw during construction would fall through to the outer catch
+    // and return a false 500 for a lead that was already saved.
+    try {
+      const resendApiKey = process.env.RESEND_API_KEY;
+      const fromEmail = process.env.RESEND_FROM_EMAIL;
+      if (!resendApiKey || !fromEmail) {
+        console.error('[api/leads] email_not_configured', { leadId: lead.id });
+      } else {
+        const notification = leadNotificationEmail(lead);
+        const confirmation = leadConfirmationEmail(lead);
+
+        const [notificationResult, confirmationResult] = await Promise.allSettled([
+          sendEmail(resendApiKey, {
+            to: FORE_INBOX,
+            from: fromEmail,
+            replyTo: lead.email,
+            subject: notification.subject,
+            html: notification.html,
+            text: notification.text,
+          }),
+          sendEmail(resendApiKey, {
+            to: lead.email,
+            from: fromEmail,
+            subject: confirmation.subject,
+            html: confirmation.html,
+            text: confirmation.text,
+          }),
+        ]);
+
+        if (notificationResult.status === 'rejected') {
+          console.error('[api/leads] internal_email_failed', { leadId: lead.id, error: String(notificationResult.reason) });
+        }
+        if (confirmationResult.status === 'rejected') {
+          console.error('[api/leads] confirmation_email_failed', { leadId: lead.id, error: String(confirmationResult.reason) });
+        }
+      }
+    } catch (emailErr) {
+      console.error('[api/leads] email_failed', { leadId: lead.id, error: String(emailErr) });
     }
 
     return res.status(200).json({ success: true });
