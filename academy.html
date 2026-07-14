@@ -1808,48 +1808,52 @@
             <p class="form-note">We reply to every message within 24 hours. No spam, ever.</p>
 
           </form>
+          <script src="js/lead-submit.js"></script>
           <script>
           function handleAcademyForm(e) {
             e.preventDefault();
             var form = e.target;
             var btn = document.getElementById('academyBtn');
-            btn.disabled = true;
-            btn.textContent = 'Sending…';
 
-            var data = {
-              Name: form.Name.value,
-              Email: form.Email.value,
-              Phone: form.Phone.value,
-              Budget: form.Budget.value,
-              Message: form.Message.value
-            };
+            try {
+              window.FORELead.clearError(btn);
+              btn.disabled = true;
+              btn.textContent = 'Sending…';
 
-            // Send to Google Sheet
-            fetch('https://script.google.com/macros/s/AKfycbykCwZeEaIu0wVdRvzuq7QdCq59C6KzqN1A5yE9C_FBlaYO3mRLgPEspv9bLIrCYtWO/exec', {
-              method: 'POST', mode: 'no-cors',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(data)
-            }).catch(function(){});
-
-            // Also send email
-            var subject = encodeURIComponent('Academy Enquiry — ' + data.Name);
-            var body = encodeURIComponent(
-              'Name: ' + data.Name + '\n' +
-              'Email: ' + data.Email + '\n' +
-              'Phone: ' + data.Phone + '\n' +
-              'Budget: ' + data.Budget + '\n\n' +
-              'Message:\n' + data.Message
-            );
-            window.open('mailto:info@fairopportunityrealestate.com?subject=' + subject + '&body=' + body, '_blank');
-
-            btn.textContent = 'Sent ✓';
-            btn.style.background = '#4a7c4e';
-            setTimeout(function() {
-              btn.textContent = 'Send My Enquiry';
-              btn.style.background = '';
+              window.FORELead.submit({
+                source: 'academy',
+                fullName: form.Name.value,
+                email: form.Email.value,
+                phone: form.Phone.value,
+                message: form.Message.value,
+                budget: form.Budget.value
+              }).then(function () {
+                btn.textContent = 'Sent ✓';
+                btn.style.background = '#4a7c4e';
+                setTimeout(function() {
+                  btn.textContent = 'Send My Enquiry';
+                  btn.style.background = '';
+                  btn.disabled = false;
+                  form.reset();
+                }, 5000);
+              }).catch(function () {
+                btn.disabled = false;
+                btn.textContent = 'Send My Enquiry';
+                window.FORELead.showError(btn, window.FORELead.DEFAULT_ERROR_MESSAGE);
+              });
+            } catch (err) {
               btn.disabled = false;
-              form.reset();
-            }, 5000);
+              btn.textContent = 'Send My Enquiry';
+              var existingFallback = btn.nextElementSibling;
+              if (existingFallback && existingFallback.getAttribute && existingFallback.getAttribute('data-fore-lead-error') === '1') {
+                existingFallback.remove();
+              }
+              var fallbackMsg = document.createElement('p');
+              fallbackMsg.setAttribute('data-fore-lead-error', '1');
+              fallbackMsg.style.cssText = 'color:#F44336;font-size:12px;line-height:1.6;margin-top:8px;';
+              fallbackMsg.textContent = 'Something went wrong — please try again or email us at info@fairopportunityrealestate.com.';
+              btn.insertAdjacentElement('afterend', fallbackMsg);
+            }
           }
           </script>
         </div>

@@ -1191,55 +1191,57 @@
             </button>
             <p class="gv-form-note">Your information is sent directly to our team at info@fairopportunityrealestate.com. We respond within one business day.</p>
           </form>
+          <script src="js/lead-submit.js"></script>
           <script>
           function handleGVForm(e) {
             e.preventDefault();
             var form = e.target;
             var btn = document.getElementById('gvBtn');
-            btn.disabled = true;
-            btn.innerHTML = 'Sending…';
+            var originalBtnHtml = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4z"/></svg> Check My Eligibility';
 
-            var data = {
-              FirstName: document.getElementById('gv-first-name').value,
-              LastName: document.getElementById('gv-last-name').value,
-              Email: document.getElementById('gv-email').value,
-              Phone: document.getElementById('gv-phone').value,
-              Country: document.getElementById('gv-country').value,
-              Budget: document.getElementById('gv-budget').value,
-              PropertySituation: document.getElementById('gv-property').value,
-              Timeline: document.getElementById('gv-timeline').value,
-              Message: document.getElementById('gv-message').value
-            };
+            try {
+              window.FORELead.clearError(btn);
+              btn.disabled = true;
+              btn.innerHTML = 'Sending…';
 
-            // Send to Google Sheet
-            fetch('https://script.google.com/macros/s/AKfycbwN771HcwIxe2cTue6eCU11Jeqb2Rd1wEjLifs969TXRNsrYfVnX6z_l7IOfhI-NYnb/exec', {
-              method: 'POST', mode: 'no-cors',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(data)
-            }).catch(function(){});
-
-            // Also send email
-            var subject = encodeURIComponent('Golden Visa Enquiry — ' + data.FirstName + ' ' + data.LastName);
-            var body = encodeURIComponent(
-              'Name: ' + data.FirstName + ' ' + data.LastName + '\n' +
-              'Email: ' + data.Email + '\n' +
-              'Phone: ' + data.Phone + '\n' +
-              'Country: ' + data.Country + '\n' +
-              'Budget: ' + data.Budget + '\n' +
-              'Property Situation: ' + data.PropertySituation + '\n' +
-              'Timeline: ' + data.Timeline + '\n\n' +
-              'Message:\n' + data.Message
-            );
-            window.open('mailto:info@fairopportunityrealestate.com?subject=' + subject + '&body=' + body, '_blank');
-
-            btn.innerHTML = 'Sent ✓';
-            btn.style.background = '#4a7c4e';
-            setTimeout(function() {
-              btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22l-4-9-9-4z"/></svg> Check My Eligibility';
-              btn.style.background = '';
+              window.FORELead.submit({
+                source: 'golden-visa',
+                firstName: document.getElementById('gv-first-name').value,
+                lastName: document.getElementById('gv-last-name').value,
+                email: document.getElementById('gv-email').value,
+                phone: document.getElementById('gv-phone').value,
+                country: document.getElementById('gv-country').value,
+                message: document.getElementById('gv-message').value,
+                budget: document.getElementById('gv-budget').value,
+                propertySituation: document.getElementById('gv-property').value,
+                timeline: document.getElementById('gv-timeline').value
+              }).then(function () {
+                btn.innerHTML = 'Sent ✓';
+                btn.style.background = '#4a7c4e';
+                setTimeout(function() {
+                  btn.innerHTML = originalBtnHtml;
+                  btn.style.background = '';
+                  btn.disabled = false;
+                  form.reset();
+                }, 5000);
+              }).catch(function () {
+                btn.disabled = false;
+                btn.innerHTML = originalBtnHtml;
+                window.FORELead.showError(btn, window.FORELead.DEFAULT_ERROR_MESSAGE);
+              });
+            } catch (err) {
               btn.disabled = false;
-              form.reset();
-            }, 5000);
+              btn.innerHTML = originalBtnHtml;
+              var existingFallback = btn.nextElementSibling;
+              if (existingFallback && existingFallback.getAttribute && existingFallback.getAttribute('data-fore-lead-error') === '1') {
+                existingFallback.remove();
+              }
+              var fallbackMsg = document.createElement('p');
+              fallbackMsg.setAttribute('data-fore-lead-error', '1');
+              fallbackMsg.style.cssText = 'color:#F44336;font-size:12px;line-height:1.6;margin-top:8px;';
+              fallbackMsg.textContent = 'Something went wrong — please try again or email us at info@fairopportunityrealestate.com.';
+              btn.insertAdjacentElement('afterend', fallbackMsg);
+            }
           }
           </script>
         </div>

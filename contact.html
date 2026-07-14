@@ -120,46 +120,48 @@
   <script src="js/components.js" defer></script>
   <script src="js/main.js" defer></script>
   <script src="js/mobile.js" defer></script>
+  <script src="js/lead-submit.js"></script>
   <script>
     async function handleForm(e) {
       e.preventDefault();
       var form = e.target;
       var btn = document.getElementById('contact-submit-btn');
-      btn.disabled = true;
-      btn.textContent = 'Sending…';
+      var originalBtnText = btn.textContent;
 
-      var data = {
-        FirstName: form.firstName.value,
-        LastName:  form.lastName.value,
-        Email:     form.email.value,
-        Country:   form.country.value,
-        Budget:    form.budget.value,
-        Interest:  form.interest.value
-      };
-
-      // Send to Google Sheet
       try {
-        await fetch('https://script.google.com/macros/s/AKfycbx2wnOWYcJEM3ty2j3ctIHLFMlJyMVm3hMjiI9cXeFzKZfxnfUzQMYB5QkUa2k6wd4wLg/exec', {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
+        window.FORELead.clearError(btn);
+        btn.disabled = true;
+        btn.textContent = 'Sending…';
+
+        await window.FORELead.submit({
+          source: 'contact',
+          firstName: form.firstName.value,
+          lastName: form.lastName.value,
+          email: form.email.value,
+          country: form.country.value,
+          budget: form.budget.value,
+          interest: form.interest.value
         });
-      } catch (_) {}
 
-      // Also send email
-      var subject = encodeURIComponent('New Contact Lead — ' + data.FirstName + ' ' + data.LastName);
-      var body = encodeURIComponent(
-        'Name: ' + data.FirstName + ' ' + data.LastName + '\n' +
-        'Email: ' + data.Email + '\n' +
-        'Country: ' + data.Country + '\n' +
-        'Budget: ' + data.Budget + '\n' +
-        'Interest: ' + data.Interest
-      );
-      window.open('mailto:info@fairopportunityrealestate.com?subject=' + subject + '&body=' + body, '_blank');
-
-      document.getElementById('contact-form-wrapper').innerHTML =
-        '<p style="font-family:\'Cormorant Garamond\',serif;font-size:1.5rem;font-style:italic;color:#C9A84C;text-align:center;line-height:1.6;">Thank you — we\'ll be in touch within 24 hours.</p>';
+        document.getElementById('contact-form-wrapper').innerHTML =
+          '<p style="font-family:\'Cormorant Garamond\',serif;font-size:1.5rem;font-style:italic;color:#C9A84C;text-align:center;line-height:1.6;">Thank you — we\'ll be in touch within 24 hours.</p>';
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = originalBtnText;
+        if (window.FORELead && window.FORELead.showError) {
+          window.FORELead.showError(btn, window.FORELead.DEFAULT_ERROR_MESSAGE);
+        } else {
+          var existingFallback = btn.nextElementSibling;
+          if (existingFallback && existingFallback.getAttribute && existingFallback.getAttribute('data-fore-lead-error') === '1') {
+            existingFallback.remove();
+          }
+          var fallbackMsg = document.createElement('p');
+          fallbackMsg.setAttribute('data-fore-lead-error', '1');
+          fallbackMsg.style.cssText = 'color:#F44336;font-size:12px;line-height:1.6;margin-top:8px;';
+          fallbackMsg.textContent = 'Something went wrong — please try again or email us at info@fairopportunityrealestate.com.';
+          btn.insertAdjacentElement('afterend', fallbackMsg);
+        }
+      }
     }
   </script>
 </body>

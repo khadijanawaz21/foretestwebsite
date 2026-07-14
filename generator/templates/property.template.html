@@ -366,6 +366,7 @@
 </div>
 
 <script>window.__LISTING_ID__ = "<!--SSG:LISTING_ID-->";</script>
+<script src="/js/lead-submit.js"></script>
 <script>
 (function () {
   var IMAGES = <!--SSG:GALLERY_JSON-->;
@@ -423,29 +424,49 @@
     var message = fd.get('message') || '';
     var prop = document.querySelector('.pd2-title') ? document.querySelector('.pd2-title').textContent : 'Property';
     var propId = window.__LISTING_ID__ || '';
-
-    fetch('https://script.google.com/macros/s/AKfycbyPlR3JmYi8pJTm3zBUadHNMtNUvGpNhFMKb-4jH6UlArBsaUh8w6zIPvSz1XdiKxAQ0Q/exec', {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ Name: name, Phone: phone, Email: email, Property: prop, PropertyID: propId, Message: message })
-    }).catch(function () {});
-
-    var subject = encodeURIComponent('Viewing Request — ' + prop);
-    var body = encodeURIComponent(
-      'Name: ' + name + '\n' + 'Phone: ' + phone + '\n' + 'Email: ' + email + '\n' +
-      'Property: ' + prop + '\n' + 'Property ID: ' + propId + '\n\n' + 'Message:\n' + message
-    );
-    window.open('mailto:info@fairopportunityrealestate.com?subject=' + subject + '&body=' + body, '_blank');
-
     var btn = document.getElementById('pd2SubmitBtn');
     var orig = btn.textContent;
-    btn.textContent = 'Sent ✓';
-    btn.disabled = true;
-    setTimeout(function () {
-      btn.textContent = orig;
+
+    try {
+      window.FORELead.clearError(btn);
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+
+      window.FORELead.submit({
+        source: 'property-enquiry',
+        fullName: name,
+        phone: phone,
+        email: email,
+        message: message,
+        propertyId: propId,
+        propertyTitle: prop,
+        propertyUrl: window.location.href
+      }).then(function () {
+        btn.textContent = 'Sent ✓';
+        btn.disabled = true;
+        setTimeout(function () {
+          btn.textContent = orig;
+          btn.disabled = false;
+          form.reset();
+        }, 5000);
+      }).catch(function () {
+        btn.disabled = false;
+        btn.textContent = orig;
+        window.FORELead.showError(btn, window.FORELead.DEFAULT_ERROR_MESSAGE);
+      });
+    } catch (err) {
       btn.disabled = false;
-      form.reset();
-    }, 5000);
+      btn.textContent = orig;
+      var existingFallback = btn.nextElementSibling;
+      if (existingFallback && existingFallback.getAttribute && existingFallback.getAttribute('data-fore-lead-error') === '1') {
+        existingFallback.remove();
+      }
+      var fallbackMsg = document.createElement('p');
+      fallbackMsg.setAttribute('data-fore-lead-error', '1');
+      fallbackMsg.style.cssText = 'color:#F44336;font-size:12px;line-height:1.6;margin-top:8px;';
+      fallbackMsg.textContent = 'Something went wrong — please try again or email us at info@fairopportunityrealestate.com.';
+      btn.insertAdjacentElement('afterend', fallbackMsg);
+    }
   });
 })();
 </script>
