@@ -11,6 +11,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mp4-muxer@5.1.3/build/mp4-muxer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -153,6 +155,30 @@
     .btn-download { width: 100%; background: var(--gold); color: var(--bg); font-family: var(--font-ui); font-size: 9.5px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; border: none; border-radius: 2px; padding: 14px; cursor: pointer; transition: background 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
     .btn-download:hover { background: var(--gold-light); }
     .btn-download:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Output selector */
+    .output-toggle { display: flex; flex-wrap: wrap; gap: 8px; }
+    .output-pill { flex: 1 1 calc(50% - 4px); min-width: 120px; background: var(--bg); border: 0.5px solid var(--subtle-border); border-radius: 2px; padding: 10px 8px; text-align: center; cursor: pointer; transition: all 0.2s; }
+    .output-pill.active { border-color: var(--gold-border); background: rgba(201,169,110,0.08); }
+    .output-pill.disabled { cursor: not-allowed; opacity: 0.4; }
+    .output-pill-label { font-size: 9px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--white-35); }
+    .output-pill.active .output-pill-label { color: var(--gold); }
+    .output-pill-hint { font-size: 8px; color: var(--white-20); letter-spacing: 1px; margin-top: 2px; }
+
+    /* Carousel strip */
+    .carousel-section { margin-top: 20px; width: 100%; }
+    .carousel-section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .btn-download-all { background: none; border: 0.5px solid var(--gold-border); color: var(--gold); font-family: var(--font-ui); font-size: 8.5px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; border-radius: 2px; padding: 9px 16px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+    .btn-download-all:hover { background: rgba(201,169,110,0.1); }
+    .btn-download-all:disabled { opacity: 0.4; cursor: not-allowed; }
+    .carousel-strip { display: flex; gap: 16px; overflow-x: auto; padding: 4px 4px 12px; max-width: 100%; }
+    .carousel-slide-item { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .carousel-slide-thumb-wrap { overflow: hidden; border-radius: 8px; box-shadow: 0 8px 40px rgba(0,0,0,0.6); }
+    .carousel-slide-canvas { position: relative; overflow: hidden; font-family: 'Cormorant Garamond', Georgia, serif; }
+    .carousel-slide-canvas * { box-sizing: border-box; }
+    .carousel-slide-num { font-size: 9px; color: var(--white-35); letter-spacing: 1.5px; text-transform: uppercase; }
+    .carousel-slide-dl { background: none; border: 0.5px solid var(--subtle-border); color: var(--white-50); border-radius: 2px; padding: 4px 10px; font-size: 8px; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+    .carousel-slide-dl:hover { border-color: var(--gold-border); color: var(--gold); }
 
     /* Preview */
     .preview-panel { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 32px 32px 48px; overflow-y: auto; gap: 20px; background: #080808; }
@@ -326,6 +352,27 @@
         </div>
       </div>
 
+      <!-- ══ OUTPUT ══ -->
+      <div class="sidebar-section">
+        <div class="section-label">Output</div>
+        <div class="output-toggle" id="outputToggle">
+          <div class="output-pill active disabled" data-output="poster">
+            <div class="output-pill-label">Poster</div>
+          </div>
+          <div class="output-pill active" data-output="carousel">
+            <div class="output-pill-label">IG Carousel</div>
+          </div>
+          <div class="output-pill disabled" data-output="story">
+            <div class="output-pill-label">IG Story</div>
+            <div class="output-pill-hint">Coming soon</div>
+          </div>
+          <div class="output-pill disabled" data-output="linkedin">
+            <div class="output-pill-label">LinkedIn</div>
+            <div class="output-pill-hint">Coming soon</div>
+          </div>
+        </div>
+      </div>
+
       <!-- ══ SOURCE ══ -->
       <div class="sidebar-section">
         <div class="section-label">Source</div>
@@ -443,6 +490,17 @@
       <div class="poster-preview-wrap" id="previewWrap">
         <div class="poster-canvas" id="posterPreview"></div>
       </div>
+
+      <div class="carousel-section" id="carouselSection" style="display:none;">
+        <div class="carousel-section-head">
+          <div class="preview-label">Carousel Slides</div>
+          <button class="btn-download-all" id="downloadAllBtn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download All (.zip)
+          </button>
+        </div>
+        <div class="carousel-strip" id="carouselStrip"></div>
+      </div>
     </div>
   </div>
 </div>
@@ -540,6 +598,8 @@ let S = {
   beds: '', baths: '', sqft: '',
   image: '', amenities: [], agent: '',
   video: '', videoFile: null,
+  listing: null,
+  outputs: { poster: true, carousel: true },
 };
 
 // ══ AUTH ══
@@ -585,7 +645,7 @@ function updateFmtHint() {
 async function loadListings() {
   try {
     const { data, error } = await db.from(TABLE)
-      .select('id,name,price,offering_type,listing_type,bedrooms,bathrooms,area_sqft,location,image_main,features,agent')
+      .select('id,name,price,offering_type,listing_type,bedrooms,bathrooms,area_sqft,location,city,image_main,images,features,agent,description,building_name,view,property_type,developer,project_name,handover_date,payment_plan,completion_percentage,rental_yield,original_price')
       .order('created_at', { ascending: false });
     if (error) throw error;
     S.listings = data || [];
@@ -632,6 +692,7 @@ function selectListing(id) {
   const l = S.listings.find(x => x.id === id);
   if (!l) return;
   S.selectedId = id;
+  S.listing = l;
   S.badge = l.listing_type === 'secondary_offplan' ? 'OFF-PLAN' : l.offering_type === 'rent' ? 'FOR RENT' : 'FOR SALE';
   S.title    = l.name || '';
   S.location = l.location || '';
@@ -663,6 +724,17 @@ document.querySelectorAll('.mode-btn').forEach(b => {
     document.getElementById('manualSection').style.display  = S.mode === 'manual' ? '' : 'none';
     renderPoster();
   });
+});
+
+// ══ OUTPUT SELECTOR ══
+document.getElementById('outputToggle').addEventListener('click', e => {
+  const pill = e.target.closest('[data-output]');
+  if (!pill || pill.classList.contains('disabled')) return;
+  const key = pill.dataset.output;
+  if (key !== 'carousel') return; // only carousel is togglable today; poster is always on
+  S.outputs.carousel = !S.outputs.carousel;
+  pill.classList.toggle('active', S.outputs.carousel);
+  renderCarousel();
 });
 
 document.querySelectorAll('[data-badge]').forEach(b => {
@@ -1213,6 +1285,521 @@ function getPosterHTML(fmt, data) {
   }
 }
 
+// ══════════════════════════════════════════════════
+// CONTENT GENERATOR — carousel presentation
+// (format-agnostic content + selection logic; the render
+// functions below are today's one "Instagram" renderer —
+// a future format would add new render* functions over
+// the same content objects, not new content logic.)
+// ══════════════════════════════════════════════════
+
+// ── Brand configuration — every new slide reads visuals from here, not inline literals ──
+const BRAND = {
+  name: 'FORE',
+  logoUrl: LOGO_URL,
+  website: 'fairopportunityrealestate.com',
+  websiteUrl: 'https://fairopportunityrealestate.com',
+  whatsappFallback: '971542445867',
+  colors: { gold: '#C9A96E', goldLight: '#E2C99A', goldDark: '#9A7A48', ink: '#0A0A0A', cream: '#F2EBE0' },
+  fontDisplay: "'Cormorant Garamond', Georgia, serif",
+  fontUI: "'Montserrat', sans-serif",
+  ctaLabel: 'Book a Viewing',
+};
+const CAROUSEL_THUMB_SCALE = 0.16;
+
+// ── Deterministic string hash (djb2) — used wherever a stable, repeatable pick is needed ──
+function hashString(str) {
+  let h = 5381;
+  for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0;
+  return h;
+}
+function clampWords(str, max) {
+  const words = str.trim().split(/\s+/);
+  return words.length <= max ? str.trim() : words.slice(0, max).join(' ') + '.';
+}
+function slugify(str) {
+  return (str || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'listing';
+}
+
+// ── Image selection priority — deterministic filename/keyword match, no AI/CV ──
+const IMAGE_PRIORITY_KEYWORDS = [
+  ['exterior', 'building', 'facade', 'front'],
+  ['living', 'lounge', 'lobby'],
+  ['view', 'skyline', 'balcony', 'terrace'],
+  ['pool'],
+  ['kitchen'],
+  ['bedroom', 'master'],
+  ['bathroom'],
+  ['amenity', 'amenities', 'gym', 'spa'],
+];
+function rankImageUrl(url) {
+  const s = (url || '').toLowerCase().replace(/[-_]|%20/g, ' ');
+  for (let i = 0; i < IMAGE_PRIORITY_KEYWORDS.length; i++) {
+    if (IMAGE_PRIORITY_KEYWORDS[i].some(kw => s.includes(kw))) return i;
+  }
+  return Infinity;
+}
+// Stable sort: matched images rank earlier; unmatched images keep their original
+// relative order rather than being shuffled to the back.
+function sortImagesByPriority(urls) {
+  return urls
+    .map((url, idx) => ({ url, idx, rank: rankImageUrl(url) }))
+    .sort((a, b) => (a.rank - b.rank) || (a.idx - b.idx))
+    .map(x => x.url);
+}
+function parseImageList(listing) {
+  return (listing.images || '').split(',').map(s => s.trim()).filter(Boolean);
+}
+// Remaining gallery images (cover excluded), priority-sorted.
+function galleryPool(listing) {
+  const all = parseImageList(listing);
+  const cover = listing.image_main || '';
+  const unique = [...new Set(all)].filter(u => u !== cover);
+  return sortImagesByPriority(unique);
+}
+
+// ── Natural-dimension cache (aspect ratio) — read once per URL, reused forever this session ──
+const imgDimsCache = {};
+function getImageDims(url) {
+  if (imgDimsCache[url]) return Promise.resolve(imgDimsCache[url]);
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => { const d = { w: img.naturalWidth || 1, h: img.naturalHeight || 1 }; imgDimsCache[url] = d; resolve(d); };
+    img.onerror = () => { const d = { w: 4, h: 3 }; imgDimsCache[url] = d; resolve(d); };
+    img.src = url;
+  });
+}
+// Adaptive gallery grouping: full-bleed for a wide/panoramic or leftover image,
+// 50/50 split for two images with compatible aspect ratios. A real, measurable
+// heuristic — not a claim about which photo is "best".
+async function groupGalleryImages(sortedUrls) {
+  const dims = await Promise.all(sortedUrls.map(getImageDims));
+  const ratios = sortedUrls.map((url, i) => ({ url, ratio: dims[i].w / dims[i].h }));
+  const groups = [];
+  let i = 0;
+  while (i < ratios.length) {
+    const cur = ratios[i];
+    const next = ratios[i + 1];
+    const isWide = cur.ratio >= 1.4;
+    if (!isWide && next) {
+      const bothPortrait = cur.ratio < 1 && next.ratio < 1;
+      const bothWide = cur.ratio >= 1 && cur.ratio < 1.4 && next.ratio >= 1 && next.ratio < 1.4;
+      if (bothPortrait || bothWide) { groups.push({ layout: 'split', images: [cur.url, next.url] }); i += 2; continue; }
+    }
+    groups.push({ layout: 'full', images: [cur.url] });
+    i += 1;
+  }
+  return groups;
+}
+
+// ── Local deterministic summary generator — no AI/API call ──
+// Each template lists which fields it needs; only templates whose fields are
+// fully present are eligible, so missing data is handled by *selection*, never
+// by leaving a gap in a sentence.
+const SUMMARY_TEMPLATES = [
+  { req: ['beds','location','sqft'], t: d => `A beautifully designed ${d.beds}-bedroom ${d.propertyType} in ${d.location}, offering ${d.sqft} sq ft of contemporary living${d.view ? ` with ${d.view} views` : ''}.` },
+  { req: ['location'], t: d => `Modern living meets exceptional convenience in this residence located in ${d.location}.` },
+  { req: ['beds'], t: d => `An elegant ${d.beds}-bedroom home featuring generous interiors, premium finishes, and access to world-class amenities.` },
+  { req: ['location','view'], t: d => `Experience refined ${d.view} living in this thoughtfully designed ${d.propertyType} in ${d.location}.` },
+  { req: [], t: () => `A ready-to-move residence combining spacious layouts with a highly desirable location.` },
+  { req: ['location','beds','baths'], t: d => `This ${d.beds}-bedroom, ${d.baths}-bathroom ${d.propertyType} in ${d.location} balances comfort, space, and considered design.` },
+  { req: ['developer','location'], t: d => `Developed by ${d.developer}, this address in ${d.location} sets a new benchmark for refined living.` },
+  { req: ['sqft','location'], t: d => `Set across ${d.sqft} sq ft in ${d.location}, this ${d.propertyType} is designed for effortless everyday living.` },
+  { req: ['amenity','location'], t: d => `Steps from ${d.amenity}, this ${d.propertyType} in ${d.location} offers a lifestyle few addresses can match.` },
+  { req: ['view'], t: d => `Wake up to ${d.view} views in a home built for those who notice the details.` },
+  { req: ['beds','location'], t: d => `A considered ${d.beds}-bedroom layout in ${d.location}, made for effortless everyday living.` },
+  { req: ['statusPhrase','location'], t: d => `${d.statusPhrase} in ${d.location}, this ${d.propertyType} is built for those who expect more.` },
+  { req: ['building','location'], t: d => `Part of ${d.building}, this residence in ${d.location} pairs privacy with prime positioning.` },
+  { req: ['sqft'], t: d => `Generously proportioned at ${d.sqft} sq ft, every room here is designed to breathe.` },
+  { req: ['location'], t: d => `A quietly confident address in ${d.location}, built for long-term living.` },
+  { req: ['beds','view'], t: d => `${d.beds}-bedroom living, elevated — with ${d.view} views that change the way a home feels.` },
+  { req: ['developer'], t: d => `A ${d.developer} address defined by considered design and lasting quality.` },
+  { req: ['amenity'], t: d => `Everyday life here is shaped by ${d.amenity} and the calm that comes with real amenity.` },
+  { req: ['location','propertyType'], t: d => `A ${d.propertyType} in ${d.location}, designed for those who value space as much as location.` },
+  { req: [], t: () => `A refined home designed around comfort, light, and considered proportions.` },
+  { req: ['baths','location'], t: d => `With ${d.baths} bathrooms and a prime position in ${d.location}, this home is built for real family living.` },
+  { req: ['building'], t: d => `Set within ${d.building}, this residence pairs everyday comfort with lasting quality.` },
+  { req: ['location','sqft','beds'], t: d => `${d.sqft} sq ft of ${d.beds}-bedroom living in ${d.location} — spacious, considered, and ready to call home.` },
+  { req: ['statusPhrase'], t: d => `${d.statusPhrase}, this home is designed for those who know exactly what they're looking for.` },
+  { req: ['view','location'], t: d => `Few addresses in ${d.location} offer ${d.view} views quite like this one.` },
+  { req: [], t: () => `A distinctive home built on quality, light, and a genuinely considered layout.` },
+];
+function buildSummary(listing) {
+  const beds = listing.bedrooms && listing.bedrooms !== '0' ? (isStudio(listing.bedrooms) ? 'studio' : listing.bedrooms) : '';
+  const data = {
+    beds,
+    baths: listing.bathrooms || '',
+    location: (listing.location || '').split(',')[0].trim(),
+    sqft: listing.area_sqft ? Number(listing.area_sqft).toLocaleString() : '',
+    view: (listing.view || '').toLowerCase(),
+    propertyType: (listing.property_type || 'residence').toLowerCase(),
+    developer: listing.developer || '',
+    building: listing.building_name || '',
+    amenity: (listing.features || '').split(',').map(s => s.trim()).filter(Boolean)[0] || '',
+    statusPhrase: listing.listing_type === 'secondary_offplan' ? 'An off-plan opportunity' : (listing.status === 'Vacant' ? 'Ready to move in' : ''),
+  };
+  const eligible = SUMMARY_TEMPLATES.filter(tpl => tpl.req.every(k => data[k]));
+  const pickList = eligible.length ? eligible : SUMMARY_TEMPLATES.filter(tpl => tpl.req.length === 0);
+  const idx = hashString(String(listing.id || listing.name || '')) % pickList.length;
+  return clampWords(pickList[idx].t(data), 35);
+}
+
+// ── Tier classification — content volume proportional to property significance ──
+const LUXURY_PROPERTY_TYPES = ['Villa','Penthouse','Duplex','Bungalow','Compound','Full Floor','Whole Building'];
+const LUXURY_PRICE_THRESHOLD = 5000000;
+function isStudio(bedrooms) { return String(bedrooms || '').trim().toLowerCase() === 'studio'; }
+function classifyTier(listing) {
+  const bedsNum = isStudio(listing.bedrooms) ? 0 : parseInt(listing.bedrooms, 10);
+  const isLuxuryType = LUXURY_PROPERTY_TYPES.includes(listing.property_type);
+  const isLuxuryPrice = Number(listing.price || 0) >= LUXURY_PRICE_THRESHOLD;
+  if (isLuxuryType || bedsNum >= 4 || isLuxuryPrice) return { tier: 'luxury', min: 6, max: 8 };
+  if (!isNaN(bedsNum) && bedsNum <= 1) return { tier: 'compact', min: 4, max: 6 };
+  return { tier: 'multi', min: 5, max: 7 }; // 2-3 beds, or unknown bedroom data (neutral default)
+}
+
+// ── Slide content (plain data, no HTML/visual concerns) ──
+function overviewContent(listing) {
+  const facts = [];
+  if (listing.bedrooms) facts.push({ label: isStudio(listing.bedrooms) ? 'Studio' : 'Beds', value: isStudio(listing.bedrooms) ? '—' : listing.bedrooms });
+  if (listing.bathrooms) facts.push({ label: 'Baths', value: listing.bathrooms });
+  if (listing.area_sqft) facts.push({ label: 'Sqft', value: Number(listing.area_sqft).toLocaleString() });
+  if (listing.price) facts.push({ label: 'Price', value: 'AED ' + Number(listing.price).toLocaleString() });
+  return { title: listing.name || '', location: listing.location || '', summary: buildSummary(listing), facts };
+}
+function amenitiesContent(listing) {
+  const feats = (listing.features || '').split(',').map(s => s.trim()).filter(Boolean);
+  return { items: feats.slice(0, 8).map(f => ({ icon: ICONS[f] || ICONS.default, label: f })) };
+}
+function investmentContent(listing) {
+  const rows = [{ label: 'Status', value: listing.listing_type === 'secondary_offplan' ? 'Off-Plan' : 'Ready Property' }];
+  if (listing.developer) rows.push({ label: 'Developer', value: listing.developer });
+  if (listing.project_name) rows.push({ label: 'Project', value: listing.project_name });
+  if (listing.payment_plan) rows.push({ label: 'Payment Plan', value: listing.payment_plan });
+  if (listing.rental_yield) rows.push({ label: 'Rental Yield', value: listing.rental_yield });
+  if (listing.handover_date) rows.push({ label: 'Handover', value: listing.handover_date });
+  if (listing.completion_percentage) rows.push({ label: 'Completion', value: listing.completion_percentage + '%' });
+  if (listing.original_price) rows.push({ label: 'Original Price', value: 'AED ' + Number(listing.original_price).toLocaleString() });
+  return { rows };
+}
+function locationContent(listing) {
+  const parts = (listing.location || '').split(',').map(s => s.trim()).filter(Boolean);
+  return { community: parts[0] || listing.city || '', sub: parts.slice(1).join(', '), landmarks: Array.isArray(listing.landmarks) ? listing.landmarks : null };
+}
+async function resolveListingUrl(listing) {
+  if (!listing || !listing.id) return BRAND.websiteUrl;
+  try {
+    const mod = await import('/js/property-canonical-url.mjs');
+    const path = mod.secondaryListingCanonicalPath(listing);
+    return path ? (window.location.origin + path) : BRAND.websiteUrl;
+  } catch { return BRAND.websiteUrl; }
+}
+const qrCache = {};
+async function getQrDataUrl(target) {
+  if (qrCache[target]) return qrCache[target];
+  try {
+    const url = await QRCode.toDataURL(target, { margin: 1, width: 240, color: { dark: '#0A0A0A', light: '#FFFFFF' } });
+    qrCache[target] = url;
+    return url;
+  } catch { return ''; }
+}
+async function ctaContent(listing, ctaImage) {
+  const agentData = getAgentData();
+  const qrTarget = await resolveListingUrl(listing);
+  const qrDataUrl = await getQrDataUrl(qrTarget);
+  const whatsappNumber = (agentData.agentPhone || BRAND.whatsappFallback).replace(/[^0-9]/g, '');
+  return {
+    image: ctaImage, ctaLabel: BRAND.ctaLabel, whatsappUrl: `https://wa.me/${whatsappNumber}`,
+    website: BRAND.website, qrTarget, qrDataUrl,
+    agentName: agentData.agentName, agentPhone: agentData.agentPhone, agentPhoto: agentData.agentPhoto, agentInitials: agentData.agentInitials,
+  };
+}
+
+// ── Orchestration: quality filter + tiered slide budget, images protected first ──
+async function buildSlides(listing, S) {
+  const isManual = !listing || !listing.id;
+  const coverContent = { badge: S.badge, title: S.title, location: S.location, price: S.price, beds: S.beds, baths: S.baths, sqft: S.sqft, image: S.image, video: '', videoMode: false, amenities: S.amenities, ...getAgentData() };
+  const slides = [{ type: 'cover', content: coverContent }];
+
+  if (isManual) {
+    slides.push({ type: 'cta', content: await ctaContent(listing || {}, S.image) });
+    return slides;
+  }
+
+  const { max } = classifyTier(listing);
+  const isOffplan = listing.listing_type === 'secondary_offplan';
+
+  slides.push({ type: 'overview', content: overviewContent(listing) });
+
+  const pool = galleryPool(listing);
+  let galleryGroups = pool.length ? await groupGalleryImages(pool) : [];
+
+  const amenities = amenitiesContent(listing);
+  const investment = investmentContent(listing);
+  const loc = locationContent(listing);
+  const hasAmenities  = amenities.items.length >= 3;
+  const hasInvestment = investment.rows.length >= 3; // Status + at least 2 real fields
+  const hasLocation   = !!(loc.sub || (loc.landmarks && loc.landmarks.length));
+
+  let optional = [];
+  if (hasAmenities)  optional.push({ type: 'amenities',  content: amenities,  key: 'amenities' });
+  if (hasInvestment) optional.push({ type: 'investment', content: investment, key: 'investment' });
+  if (hasLocation)   optional.push({ type: 'location',   content: loc,        key: 'location' });
+
+  // Off-plan: the story is the investment, so protect it last. Ready listings
+  // (especially luxury): the story is imagery, so protect Gallery last instead.
+  const trimOrder = isOffplan ? ['amenities', 'gallery', 'location'] : ['location', 'investment', 'amenities', 'gallery'];
+  const total = () => 3 + galleryGroups.length + optional.length; // Cover + Overview + CTA are fixed anchors
+  for (const key of trimOrder) {
+    if (total() <= max) break;
+    if (key === 'gallery') {
+      // Clamp directly to whatever's left in the budget — never below 1 slide —
+      // rather than trimming one at a time, so this holds regardless of how many
+      // photos the listing has.
+      const allowed = Math.max(1, max - 3 - optional.length);
+      if (galleryGroups.length > allowed) galleryGroups = galleryGroups.slice(0, allowed);
+    } else {
+      const idx = optional.findIndex(o => o.key === key);
+      if (idx !== -1) optional.splice(idx, 1);
+    }
+  }
+
+  galleryGroups.forEach(g => slides.push({ type: 'gallery', content: g }));
+  optional.forEach(o => slides.push({ type: o.type, content: o.content }));
+
+  // CTA image is deliberately different from whichever image the Gallery used as its hero.
+  const used = new Set(galleryGroups.flatMap(g => g.images));
+  const ctaImage = pool.find(u => !used.has(u)) || pool[0] || listing.image_main || S.image;
+  slides.push({ type: 'cta', content: await ctaContent(listing, ctaImage) });
+
+  return slides;
+}
+
+// ── Renderers: one per slide type, boxless editorial look, reading BRAND ──
+function renderOverviewSlide(fmt, content) {
+  const { w } = FORMATS[fmt];
+  const u = w / 1080;
+  const pad = Math.round(80 * u);
+  const { title, location, summary, facts } = content;
+  const factsRow = facts.length ? `<div style="display:flex;gap:${Math.round(48*u)}px;margin-top:${Math.round(48*u)}px;flex-wrap:wrap;">
+    ${facts.map(f => `<div>
+      <div style="font-family:${BRAND.fontDisplay};font-weight:400;font-size:${Math.round(46*u)}px;color:#fff;line-height:1;">${esc(String(f.value))}</div>
+      <div style="font-family:${BRAND.fontUI};font-weight:400;font-size:${Math.round(12*u)}px;color:rgba(255,255,255,0.4);letter-spacing:0.2em;text-transform:uppercase;margin-top:${Math.round(6*u)}px;">${esc(f.label)}</div>
+    </div>`).join('')}
+  </div>` : '';
+  return `
+    <div style="position:absolute;inset:0;background:${BRAND.colors.ink};"></div>
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:${pad}px;">
+      <div style="font-family:${BRAND.fontUI};font-weight:500;font-size:${Math.round(14*u)}px;color:${BRAND.colors.gold};letter-spacing:0.3em;text-transform:uppercase;margin-bottom:${Math.round(20*u)}px;">${esc(location)}</div>
+      <div style="font-family:${BRAND.fontDisplay};font-style:italic;font-weight:600;font-size:${Math.round(64*u)}px;color:#fff;line-height:1.05;letter-spacing:-0.01em;max-width:${Math.round(880*u)}px;">${esc(title)}</div>
+      <div style="font-family:${BRAND.fontUI};font-weight:300;font-size:${Math.round(19*u)}px;line-height:1.7;color:rgba(255,255,255,0.55);margin-top:${Math.round(32*u)}px;max-width:${Math.round(760*u)}px;">${esc(summary)}</div>
+      ${factsRow}
+    </div>`;
+}
+function renderGallerySlide(fmt, content) {
+  const { layout, images } = content;
+  if (layout === 'full') return `<img src="${esc(images[0])}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />`;
+  return `<div style="position:absolute;inset:0;display:flex;flex-direction:column;">
+    <div style="flex:1;overflow:hidden;"><img src="${esc(images[0])}" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
+    <div style="flex:1;overflow:hidden;"><img src="${esc(images[1])}" style="width:100%;height:100%;object-fit:cover;display:block;" /></div>
+  </div>`;
+}
+function renderAmenitiesSlide(fmt, content) {
+  const { w } = FORMATS[fmt];
+  const u = w / 1080;
+  const pad = Math.round(80 * u);
+  const { items } = content;
+  const cols = items.length > 4 ? 2 : 1;
+  return `
+    <div style="position:absolute;inset:0;background:${BRAND.colors.ink};"></div>
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:${pad}px;">
+      <div style="font-family:${BRAND.fontUI};font-weight:500;font-size:${Math.round(14*u)}px;color:${BRAND.colors.gold};letter-spacing:0.3em;text-transform:uppercase;margin-bottom:${Math.round(40*u)}px;">Amenities</div>
+      <div style="display:grid;grid-template-columns:repeat(${cols},1fr);row-gap:${Math.round(40*u)}px;column-gap:${Math.round(40*u)}px;">
+        ${items.map(it => `<div style="display:flex;align-items:center;gap:${Math.round(20*u)}px;">
+          <svg viewBox="0 0 24 24" style="width:${Math.round(30*u)}px;height:${Math.round(30*u)}px;stroke:${BRAND.colors.gold};fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;">${it.icon}</svg>
+          <div style="font-family:${BRAND.fontUI};font-weight:400;font-size:${Math.round(19*u)}px;color:#fff;">${esc(it.label)}</div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+}
+function renderInvestmentSlide(fmt, content) {
+  const { w } = FORMATS[fmt];
+  const u = w / 1080;
+  const pad = Math.round(80 * u);
+  const { rows } = content;
+  return `
+    <div style="position:absolute;inset:0;background:${BRAND.colors.ink};"></div>
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:${pad}px;">
+      <div style="font-family:${BRAND.fontUI};font-weight:500;font-size:${Math.round(14*u)}px;color:${BRAND.colors.gold};letter-spacing:0.3em;text-transform:uppercase;margin-bottom:${Math.round(40*u)}px;">Investment</div>
+      <div style="display:flex;flex-direction:column;gap:${Math.round(26*u)}px;">
+        ${rows.map(r => `<div style="display:flex;align-items:baseline;justify-content:space-between;max-width:${Math.round(880*u)}px;gap:${Math.round(24*u)}px;">
+          <div style="font-family:${BRAND.fontUI};font-weight:300;font-size:${Math.round(16*u)}px;color:rgba(255,255,255,0.4);letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap;">${esc(r.label)}</div>
+          <div style="font-family:${BRAND.fontDisplay};font-weight:500;font-size:${Math.round(30*u)}px;color:#fff;text-align:right;">${esc(String(r.value))}</div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+}
+function renderLocationSlide(fmt, content) {
+  const { w } = FORMATS[fmt];
+  const u = w / 1080;
+  const pad = Math.round(80 * u);
+  const { community, landmarks } = content;
+  return `
+    <div style="position:absolute;inset:0;background:${BRAND.colors.ink};"></div>
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:${pad}px;">
+      <div style="font-family:${BRAND.fontUI};font-weight:500;font-size:${Math.round(14*u)}px;color:${BRAND.colors.gold};letter-spacing:0.3em;text-transform:uppercase;margin-bottom:${Math.round(24*u)}px;">Location</div>
+      <div style="font-family:${BRAND.fontDisplay};font-style:italic;font-weight:600;font-size:${Math.round(72*u)}px;color:#fff;line-height:1;">${esc(community)}</div>
+      ${landmarks && landmarks.length
+        ? `<div style="margin-top:${Math.round(40*u)}px;display:flex;flex-direction:column;gap:${Math.round(14*u)}px;">${landmarks.map(l => `<div style="font-family:${BRAND.fontUI};font-size:${Math.round(18*u)}px;color:rgba(255,255,255,0.6);">${esc(l.time||'')} ${esc(l.name||'')}</div>`).join('')}</div>`
+        : `<div style="margin-top:${Math.round(48*u)}px;width:${Math.round(340*u)}px;height:${Math.round(200*u)}px;border:0.5px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;"><div style="font-family:${BRAND.fontUI};font-size:${Math.round(11*u)}px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);">Map — coming soon</div></div>`}
+    </div>`;
+}
+function renderCTASlide(fmt, content) {
+  const { w } = FORMATS[fmt];
+  const u = w / 1080;
+  const pad = Math.round(64 * u);
+  const { image, ctaLabel, website, agentName, agentPhone, agentPhoto, agentInitials, qrDataUrl, logoSrc } = content;
+  const agentHTML = agentName ? buildAgentHTML(agentName, agentPhone, agentPhoto, agentInitials, Math.round(72*u), Math.round(22*u), Math.round(16*u), u) : '';
+  return `
+    ${image ? `<img src="${esc(image)}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />` : `<div style="position:absolute;inset:0;background:${BRAND.colors.ink};"></div>`}
+    <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(6,6,6,0.96) 0%,rgba(6,6,6,0.75) 40%,rgba(6,6,6,0.15) 75%,transparent 100%);"></div>
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:${pad}px;">
+      <img src="${logoSrc || BRAND.logoUrl}" style="width:${Math.round(220*u)}px;height:auto;margin-bottom:${Math.round(36*u)}px;" />
+      <div style="font-family:${BRAND.fontDisplay};font-style:italic;font-weight:600;font-size:${Math.round(56*u)}px;color:#fff;line-height:1;margin-bottom:${Math.round(28*u)}px;">${esc(ctaLabel)}</div>
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:${Math.round(24*u)}px;">
+        <div>
+          <div style="font-family:${BRAND.fontUI};font-size:${Math.round(16*u)}px;color:${BRAND.colors.gold};margin-bottom:${Math.round(6*u)}px;">WhatsApp · ${esc(website)}</div>
+          ${agentHTML}
+        </div>
+        ${qrDataUrl ? `<img src="${qrDataUrl}" style="width:${Math.round(120*u)}px;height:${Math.round(120*u)}px;background:#fff;padding:${Math.round(8*u)}px;border-radius:4px;flex-shrink:0;" />` : ''}
+      </div>
+    </div>`;
+}
+function renderSlideByType(type, fmt, content) {
+  switch (type) {
+    case 'cover':      return getPosterHTML(fmt, content);
+    case 'overview':   return renderOverviewSlide(fmt, content);
+    case 'gallery':    return renderGallerySlide(fmt, content);
+    case 'amenities':  return renderAmenitiesSlide(fmt, content);
+    case 'investment': return renderInvestmentSlide(fmt, content);
+    case 'location':   return renderLocationSlide(fmt, content);
+    case 'cta':        return renderCTASlide(fmt, content);
+    default:           return '';
+  }
+}
+
+// ── Carousel preview + capture ──
+let carouselSlides = [];
+let carouselRenderToken = 0;
+
+async function renderCarousel() {
+  const section = document.getElementById('carouselSection');
+  const strip = document.getElementById('carouselStrip');
+  if (!S.outputs.carousel) { section.style.display = 'none'; return; }
+
+  const listing = S.mode === 'browse' ? S.listing : null;
+  if (S.mode === 'browse' && !listing) { section.style.display = 'none'; return; }
+  if (S.mode === 'manual' && !S.title) { section.style.display = 'none'; return; }
+
+  const token = ++carouselRenderToken;
+  const listingLike = listing || {
+    name: S.title, location: S.location, price: (S.price||'').replace(/,/g,''),
+    bedrooms: S.beds, bathrooms: S.baths, area_sqft: (S.sqft||'').replace(/,/g,''),
+    image_main: S.image, features: S.amenities.join(', '),
+  };
+
+  // Show a loading state immediately — building the presentation (gallery aspect-ratio
+  // measurement in particular) can take a moment the first time a listing is selected.
+  section.style.display = 'block';
+  strip.innerHTML = '<div class="loading-state">Generating carousel…</div>';
+
+  const slides = await buildSlides(listingLike, S);
+  if (token !== carouselRenderToken) return; // superseded by a newer render
+
+  carouselSlides = slides;
+  section.style.display = 'block';
+
+  const fmt = FORMATS[S.fmt];
+  strip.innerHTML = slides.map((s, i) => {
+    const html = renderSlideByType(s.type, S.fmt, s.content);
+    return `<div class="carousel-slide-item">
+      <div class="carousel-slide-thumb-wrap" style="width:${Math.round(fmt.w*CAROUSEL_THUMB_SCALE)}px;height:${Math.round(fmt.h*CAROUSEL_THUMB_SCALE)}px;">
+        <div class="carousel-slide-canvas" style="width:${fmt.w}px;height:${fmt.h}px;transform:scale(${CAROUSEL_THUMB_SCALE});transform-origin:top left;">${html}</div>
+      </div>
+      <div class="carousel-slide-num">${i+1} / ${slides.length}</div>
+      <button type="button" class="carousel-slide-dl" data-slide-idx="${i}">Download</button>
+    </div>`;
+  }).join('');
+
+  strip.querySelectorAll('[data-slide-idx]').forEach(btn => {
+    btn.addEventListener('click', () => downloadSingleSlide(parseInt(btn.dataset.slideIdx, 10)));
+  });
+}
+
+// ── Downloads: single slide + "Download All" (.zip) — capture only ever runs on demand ──
+async function resolveContentForCapture(type, content) {
+  if (type === 'cover') {
+    const [image, logoSrc, agentPhoto] = await Promise.all([toDataURL(content.image), toDataURL(LOGO_URL), toDataURL(content.agentPhoto)]);
+    return { ...content, image, logoSrc, agentPhoto };
+  }
+  if (type === 'gallery') {
+    return { ...content, images: await Promise.all(content.images.map(toDataURL)) };
+  }
+  if (type === 'cta') {
+    const [image, agentPhoto, logoSrc] = await Promise.all([toDataURL(content.image), toDataURL(content.agentPhoto), toDataURL(BRAND.logoUrl)]);
+    return { ...content, image, agentPhoto, logoSrc };
+  }
+  return content;
+}
+async function captureSlideToDataURL(type, content, fmt) {
+  const captureContent = await resolveContentForCapture(type, content);
+  const dims = FORMATS[fmt];
+  const cap = document.getElementById('posterCapture');
+  cap.style.width = dims.w + 'px';
+  cap.style.height = dims.h + 'px';
+  cap.style.transform = 'none';
+  cap.innerHTML = renderSlideByType(type, fmt, captureContent);
+  await document.fonts.ready;
+  await new Promise(r => setTimeout(r, 300));
+  const canvas = await html2canvas(cap, { width: dims.w, height: dims.h, scale: 1, useCORS: false, allowTaint: false, backgroundColor: '#060e17', logging: false });
+  return canvas.toDataURL('image/png');
+}
+async function downloadSingleSlide(idx) {
+  const slide = carouselSlides[idx];
+  if (!slide) return;
+  const btn = document.querySelector(`[data-slide-idx="${idx}"]`);
+  if (btn) { btn.disabled = true; btn.textContent = '...'; }
+  try {
+    const dataUrl = await captureSlideToDataURL(slide.type, slide.content, S.fmt);
+    const a = document.createElement('a');
+    a.download = `FORE-carousel-${slugify(S.title)}-slide-${idx+1}.png`;
+    a.href = dataUrl;
+    a.click();
+  } catch (err) { showToast('Slide download failed', true); console.error(err); }
+  finally { if (btn) { btn.disabled = false; btn.textContent = 'Download'; } }
+}
+document.getElementById('downloadAllBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('downloadAllBtn');
+  if (!carouselSlides.length) return;
+  btn.disabled = true;
+  const original = btn.innerHTML;
+  btn.innerHTML = '<span class="spinner"></span> Zipping...';
+  try {
+    const zip = new JSZip();
+    for (let i = 0; i < carouselSlides.length; i++) {
+      const slide = carouselSlides[i];
+      const dataUrl = await captureSlideToDataURL(slide.type, slide.content, S.fmt);
+      zip.file(`slide-${i+1}-${slide.type}.png`, dataUrl.split(',')[1], { base64: true });
+    }
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const a = document.createElement('a');
+    a.download = `FORE-carousel-${slugify(S.title)}-${Date.now()}.zip`;
+    a.href = URL.createObjectURL(blob);
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  } catch (err) { showToast('Download all failed', true); console.error(err); }
+  finally { btn.disabled = false; btn.innerHTML = original; }
+});
+
 // ══ VIDEO STATE ══
 function updateDownloadBtn() {
   const btn = document.getElementById('downloadBtn');
@@ -1308,6 +1895,7 @@ function renderPoster() {
   const wrap = document.getElementById('previewWrap');
   wrap.style.width  = Math.round(fmt.w * scale) + 'px';
   wrap.style.height = Math.round(fmt.h * scale) + 'px';
+  renderCarousel();
 }
 
 window.addEventListener('resize', () => { clearTimeout(window._rrt); window._rrt = setTimeout(renderPoster, 150); });
