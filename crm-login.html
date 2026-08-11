@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FORE — CRM Login</title>
+  <link rel="icon" type="image/png" href="brand_assets/favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #C9A96E;
+      --gold-light: #E2C99A;
+      --gold-dark: #9A7A48;
+      --gold-border: rgba(201,169,110,0.22);
+      --subtle-border: rgba(255,255,255,0.06);
+      --bg: #0A0A0A;
+      --bg-dark2: #161616;
+      --white: #FFFFFF;
+      --white-35: rgba(255,255,255,0.35);
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-ui: 'Montserrat', sans-serif;
+      --error: #F44336;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--font-ui);
+      font-weight: 300;
+      font-size: 13px;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .login-card {
+      background: var(--bg-dark2);
+      border: 0.5px solid var(--gold-border);
+      border-radius: 3px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-logo {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 4px;
+      margin-bottom: 8px;
+    }
+
+    .login-subtitle {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--white-35);
+      margin-bottom: 36px;
+    }
+
+    form { display: flex; flex-direction: column; gap: 14px; }
+
+    .login-input {
+      width: 100%;
+      background: var(--bg);
+      border: 0.5px solid var(--subtle-border);
+      border-radius: 2px;
+      color: var(--white);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 300;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    .login-input:focus { border-color: var(--gold-border); }
+    .login-input::placeholder { color: var(--white-35); }
+
+    .login-btn {
+      width: 100%;
+      margin-top: 4px;
+      background: var(--gold);
+      color: var(--bg);
+      font-family: var(--font-ui);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 2px;
+      padding: 14px 30px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .login-btn:hover { background: var(--gold-light); }
+    .login-btn:active { background: var(--gold-dark); }
+    .login-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+    .login-btn:disabled { opacity: 0.5; cursor: default; }
+
+    .login-error {
+      color: var(--error);
+      font-size: 11px;
+      margin-top: 4px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="login-logo">FORE</div>
+    <div class="login-subtitle">Internal CRM</div>
+    <form id="loginForm">
+      <input type="email" id="email" class="login-input" placeholder="Email" autocomplete="username" required />
+      <input type="password" id="password" class="login-input" placeholder="Password" autocomplete="current-password" required />
+      <button type="submit" id="loginBtn" class="login-btn">Sign In</button>
+      <div id="loginError" class="login-error"></div>
+    </form>
+  </div>
+
+  <script>
+    // Same public anon key already used throughout this site (admin.html,
+    // api/listings.js, etc.) — not a secret. Real access control happens
+    // server-side in api/crm/*.js via shared/crm/auth.js, never here.
+    const SUPABASE_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhbWtuZWtkYnRybXhvcHl3Z3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NjMxOTksImV4cCI6MjA4OTAzOTE5OX0.HCmQ_4cyuImr3S1wQ-V6oW2G2U4a1rzMUlLPqHC-OeA';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const form = document.getElementById('loginForm');
+    const btn = document.getElementById('loginBtn');
+    const errorEl = document.getElementById('loginError');
+
+    async function redirectIfAlreadySignedIn() {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) window.location.replace('/crm.html');
+    }
+    redirectIfAlreadySignedIn();
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorEl.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Signing in…';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        errorEl.textContent = 'Invalid email or password.';
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
+        return;
+      }
+
+      window.location.replace('/crm.html');
+    });
+  </script>
+</body>
+</html>

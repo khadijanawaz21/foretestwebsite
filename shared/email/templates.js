@@ -16,6 +16,8 @@ const SOURCE_LABELS = {
   'golden-visa': 'Golden Visa',
   academy: 'Academy',
   'property-enquiry': 'Property Enquiry',
+  bayut: 'Bayut',
+  propertyfinder: 'Property Finder',
 };
 
 function sourceLabel(source) {
@@ -159,8 +161,88 @@ function leadConfirmationEmail(lead) {
   };
 }
 
+function leadAssignedEmail(lead, agent) {
+  const subject = `New lead assigned: ${lead.full_name}`;
+
+  const rows = [
+    detailRow('Reference', lead.id),
+    detailRow('Source', sourceLabel(lead.source)),
+    detailRow('Name', lead.full_name),
+    detailRow('Email', lead.email),
+    detailRow('Phone', lead.phone),
+    detailRow('Property', lead.property_title),
+    detailRow('Message', lead.message),
+  ].join('');
+
+  const bodyHtml = `
+    <h1 style="font-size:18px;color:#1a1a1a;margin:0 0 16px 0;">A lead has been assigned to you, ${escapeHtml(agent.name.split(' ')[0])}</h1>
+    <table cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;">${rows}</table>
+    <p style="font-size:13px;color:#333;line-height:1.7;margin:16px 0 0 0;">Please follow up as soon as possible and update the lead's status in the CRM.</p>
+  `;
+
+  const textLines = [
+    `A lead has been assigned to you, ${agent.name.split(' ')[0]}`,
+    '',
+    `Reference: ${lead.id}`,
+    `Source: ${sourceLabel(lead.source)}`,
+    `Name: ${lead.full_name}`,
+    `Email: ${lead.email}`,
+    lead.phone ? `Phone: ${lead.phone}` : null,
+    lead.property_title ? `Property: ${lead.property_title}` : null,
+    lead.message ? `Message: ${lead.message}` : null,
+    '',
+    "Please follow up as soon as possible and update the lead's status in the CRM.",
+  ].filter(Boolean);
+
+  return {
+    subject,
+    html: baseLayout({ bodyHtml }),
+    text: textLines.join('\n'),
+  };
+}
+
+// Sent once per CRM account by scripts/setup-crm-accounts.mjs — never by
+// any live route. `inviteLink` is a Supabase Auth invite action_link
+// (see supabase.auth.admin.generateLink({type:'invite',...})); the
+// recipient sets their own password there, so no password is ever
+// generated or transmitted by this script or this template.
+function crmInviteEmail({ name, inviteLink, role }) {
+  const subject = 'Set up your FORE CRM access';
+  const roleLabel = role === 'admin' ? 'admin' : 'agent';
+  const firstName = (name || '').split(' ')[0] || name;
+
+  const bodyHtml = `
+    <h1 style="font-size:20px;font-weight:400;color:#1a1a1a;margin:0 0 16px 0;">Hi ${escapeHtml(firstName)},</h1>
+    <p style="font-size:14px;color:#333;line-height:1.7;margin:0 0 16px 0;">
+      You've been set up with ${roleLabel} access to the FORE CRM. Use the link below to set your password and sign in.
+    </p>
+    <p style="margin:0 0 24px 0;">
+      <a href="${inviteLink}" style="display:inline-block;background:${BRAND.gold};color:#1a1a1a;padding:12px 24px;text-decoration:none;font-size:14px;border-radius:2px;">Set up my account</a>
+    </p>
+    <p style="font-size:12px;color:${BRAND.lightGray};line-height:1.6;margin:0;">
+      If the button doesn't work, copy and paste this link into your browser:<br>${escapeHtml(inviteLink)}
+    </p>
+  `;
+
+  const text = [
+    `Hi ${firstName},`,
+    '',
+    `You've been set up with ${roleLabel} access to the FORE CRM. Use the link below to set your password and sign in.`,
+    '',
+    inviteLink,
+  ].join('\n');
+
+  return {
+    subject,
+    html: baseLayout({ bodyHtml }),
+    text,
+  };
+}
+
 module.exports = {
   FORE_INBOX,
   leadNotificationEmail,
   leadConfirmationEmail,
+  leadAssignedEmail,
+  crmInviteEmail,
 };
