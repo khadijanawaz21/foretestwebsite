@@ -12,7 +12,7 @@ import { propertyPagePath } from './canonical-url.mjs';
 const ORGANIZATION_FACTS = {
   name: 'Fair Opportunity Real Estate',
   alternateName: 'FORE',
-  telephone: '+971506508799',
+  telephone: '+971542445867',
   email: 'info@fairopportunityrealestate.com',
   streetAddress: 'Office 3602, 36th Floor, Burj Al Salam Tower, Trade Center',
   addressLocality: 'Dubai',

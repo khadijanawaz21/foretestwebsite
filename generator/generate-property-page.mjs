@@ -83,11 +83,15 @@ function renderAgentSectionHtml(agentName) {
   }
   buttons += `<a href="mailto:${escapeHtml(agent.email)}" class="pd2-agent-btn email">Email</a>`;
 
+  const photoHtml = agent.photo
+    ? `<img class="pd2-agent-photo" src="${escapeHtml(agent.photo)}" alt="${escapeHtml(agent.name)}" onerror="this.style.display='none'" />`
+    : '';
+
   return `
     <section class="pd2-section pd2-agent">
       <h2 class="pd2-section-title">Your Agent</h2>
       <div class="pd2-agent-card">
-        <img class="pd2-agent-photo" src="${escapeHtml(agent.photo)}" alt="${escapeHtml(agent.name)}" onerror="this.style.display='none'" />
+        ${photoHtml}
         <div>
           <div class="pd2-agent-name">${escapeHtml(agent.name)}</div>
           <div class="pd2-agent-role">${escapeHtml(agent.role)}</div>

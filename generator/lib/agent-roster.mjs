@@ -10,21 +10,13 @@
  */
 
 const ROSTER = {
-  'Anastasiia Guseva': {
-    photo: '/assets/team/anastasiia_new.jpeg',
+  'Abdel': {
+    photo: '',
     role: 'Real Estate Consultant',
-    languages: 'English, Russian',
-    email: 'anastasiia@fairopportunityrealestate.com',
-    whatsapp: '971507842145',
-    phone: '+971 50 784 2145',
-  },
-  'Dennis Gabriel Agasi': {
-    photo: '/assets/team/Dennis.jpeg',
-    role: 'Real Estate Consultant',
-    languages: 'English',
-    email: 'gabrielagasi@fairopportunityrealestate.com',
-    whatsapp: '971562174878',
-    phone: '+971 56 217 4878',
+    languages: 'English, Arabic',
+    email: 'info@fairopportunityrealestate.com',
+    whatsapp: '971542445867',
+    phone: '+971 54 244 5867',
   },
   'Angelo Salgado': {
     photo: '/assets/team/Angelo.jpeg',
