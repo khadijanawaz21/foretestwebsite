@@ -157,7 +157,7 @@
   <script>
     const SUPABASE_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhbWtuZWtkYnRybXhvcHl3Z3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NjMxOTksImV4cCI6MjA4OTAzOTE5OX0.HCmQ_4cyuImr3S1wQ-V6oW2G2U4a1rzMUlLPqHC-OeA';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const main = document.getElementById('main');
     const roleLabel = document.getElementById('roleLabel');
@@ -169,7 +169,7 @@
     const STATUSES = ['new', 'assigned', 'contacted', 'qualified', 'won', 'lost', 'closed'];
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
-      await supabase.auth.signOut();
+      await supabaseClient.auth.signOut();
       window.location.replace('/crm-login.html');
     });
 
@@ -195,13 +195,13 @@
     }
 
     async function authedFetch(url) {
-      const { data } = await supabase.auth.getSession();
+      const { data } = await supabaseClient.auth.getSession();
       if (!data.session) { window.location.replace('/crm-login.html'); throw new Error('no session'); }
       return fetch(url, { headers: { Authorization: `Bearer ${data.session.access_token}` } });
     }
 
     async function authedPost(url, body) {
-      const { data } = await supabase.auth.getSession();
+      const { data } = await supabaseClient.auth.getSession();
       if (!data.session) { window.location.replace('/crm-login.html'); throw new Error('no session'); }
       return fetch(url, {
         method: 'POST',
@@ -405,7 +405,7 @@
 
     // ── Boot ────────────────────────────────────────────────────────
     async function boot() {
-      const { data } = await supabase.auth.getSession();
+      const { data } = await supabaseClient.auth.getSession();
       if (!data.session) { window.location.replace('/crm-login.html'); return; }
 
       const whoamiRes = await authedFetch('/api/crm/whoami');

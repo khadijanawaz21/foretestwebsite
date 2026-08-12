@@ -134,14 +134,14 @@
     // server-side in api/crm/*.js via shared/crm/auth.js, never here.
     const SUPABASE_URL = 'https://famknekdbtrmxopywgsj.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZhbWtuZWtkYnRybXhvcHl3Z3NqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NjMxOTksImV4cCI6MjA4OTAzOTE5OX0.HCmQ_4cyuImr3S1wQ-V6oW2G2U4a1rzMUlLPqHC-OeA';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const form = document.getElementById('loginForm');
     const btn = document.getElementById('loginBtn');
     const errorEl = document.getElementById('loginError');
 
     async function redirectIfAlreadySignedIn() {
-      const { data } = await supabase.auth.getSession();
+      const { data } = await supabaseClient.auth.getSession();
       if (data.session) window.location.replace('/crm.html');
     }
     redirectIfAlreadySignedIn();
@@ -155,7 +155,7 @@
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value;
 
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
 
       if (error) {
         errorEl.textContent = 'Invalid email or password.';
