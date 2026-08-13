@@ -75,7 +75,7 @@
       padding: 18px 24px; flex: 1;
       box-shadow: 0 8px 24px -12px rgba(0,0,0,0.6);
     }
-    .stat-num { font-family: var(--font-display); font-size: 30px; font-weight: 600; color: var(--gold); }
+    .stat-num { font-family: var(--font-ui); font-size: 30px; font-weight: 600; color: var(--gold); }
     .stat-label { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--white-50); margin-top: 4px; }
 
     .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
@@ -139,6 +139,8 @@
     }
     .property-link:hover { background: rgba(201,169,110,0.16); border-color: var(--gold); }
     .property-link:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+    .contact-actions { display: flex; gap: 6px; margin-top: 6px; }
   </style>
 </head>
 <body>
@@ -182,16 +184,40 @@
         .replace(/'/g, '&#39;');
     }
 
-    // "View Listing ↗" — only when the lead actually has a FORE listing
+    // "View Property ↗" — only when the lead actually has a FORE listing
     // URL. Uses lead.property_url verbatim (already returned by
     // /api/crm/list-leads and /api/crm/agent-leads) — never reconstructed
     // from property_id, which is a loose text snapshot with no guarantee
     // of still resolving to a live listing. Opens in a new tab so working
-    // a lead never navigates the agent away from the CRM.
+    // a lead never navigates the agent away from the CRM. Deliberately
+    // FORE-only — Property Finder's API has no reliable public listing
+    // URL to link out to.
     function propertyLinkHtml(lead) {
       const url = (lead.property_url || '').trim();
       if (!url) return '';
-      return `<a class="property-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">View Listing ↗</a>`;
+      return `<a class="property-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">View Property ↗</a>`;
+    }
+
+    // Phone actions (Call/WhatsApp) — built only from digits extracted
+    // from lead.phone, so nothing beyond 0-9 can ever reach the href; no
+    // action renders at all if no digits remain.
+    function phoneDigits(phone) {
+      return (phone || '').replace(/[^\d]/g, '');
+    }
+    function contactCellHtml(lead) {
+      const digits = phoneDigits(lead.phone);
+      const actions = digits
+        ? `<div class="contact-actions">
+            <a class="property-link" href="${escapeHtml('tel:+' + digits)}">Call ↗</a>
+            <a class="property-link" href="${escapeHtml('https://wa.me/' + digits)}" target="_blank" rel="noopener noreferrer">WhatsApp ↗</a>
+          </div>`
+        : '';
+      return `
+        <div><strong>${escapeHtml(lead.full_name)}</strong></div>
+        <div class="muted small">${escapeHtml(lead.phone || '')}</div>
+        <div class="muted small">${escapeHtml(lead.email || '')}</div>
+        ${actions}
+      `;
     }
 
     async function authedFetch(url) {
@@ -269,11 +295,7 @@
         body.innerHTML = leads.map((lead) => `
           <tr>
             <td><span class="badge badge-${lead.source}">${SOURCE_LABELS[lead.source] || lead.source}</span></td>
-            <td>
-              <div><strong>${escapeHtml(lead.full_name)}</strong></div>
-              <div class="muted small">${escapeHtml(lead.phone || '')}</div>
-              <div class="muted small">${escapeHtml(lead.email || '')}</div>
-            </td>
+            <td>${contactCellHtml(lead)}</td>
             <td>
               <div>${escapeHtml(lead.property_title || '—')}</div>
               ${propertyLinkHtml(lead)}
@@ -360,11 +382,7 @@
       body.innerHTML = leads.map((lead) => `
         <tr>
           <td><span class="badge badge-${lead.source}">${SOURCE_LABELS[lead.source] || lead.source}</span></td>
-          <td>
-            <div><strong>${escapeHtml(lead.full_name)}</strong></div>
-            <div class="muted small">${escapeHtml(lead.phone || '')}</div>
-            <div class="muted small">${escapeHtml(lead.email || '')}</div>
-          </td>
+          <td>${contactCellHtml(lead)}</td>
           <td>
             <div>${escapeHtml(lead.property_title || '—')}</div>
             ${propertyLinkHtml(lead)}
