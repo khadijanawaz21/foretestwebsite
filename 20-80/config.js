@@ -16,10 +16,15 @@ window.CAMPAIGN_CONFIG = {
   landingPagePath: '/20-80',
 
   // ── Payment plan structure (the campaign's core, verified offer) ──
+  // A generic 20/80 split: 20% during construction (this may include a
+  // booking payment plus further instalments — the split WITHIN the 20%
+  // varies by project and developer, so it isn't broken out further
+  // here), and the remaining 80% at handover. Do not add a fixed
+  // booking/construction sub-split unless it's confirmed for every
+  // project on this campaign — the page already discloses that it varies.
   paymentPlan: {
-    booking: 10,       // % at booking
-    construction: 40,  // % during construction
-    handover: 50,      // % at handover
+    construction: 20,  // % during construction (booking + any staged instalments)
+    handover: 80,      // % at handover
   },
 
   // ── WhatsApp (reused from the site-wide configured number — do not
