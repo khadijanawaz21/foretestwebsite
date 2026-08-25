@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dubai 20/80 Payment Plan | FORE — Fair Opportunity Real Estate</title>
+  <meta name="description" content="Own a Dubai off-plan property with 10% at booking, 40% during construction, and 50% at handover. Get current 20/80 payment plan options from FORE." />
+  <meta name="robots" content="noindex, follow" />
+
+  <link rel="icon" type="image/png" href="../brand_assets/favicon.png" />
+  <link rel="apple-touch-icon" href="../brand_assets/favicon.png" />
+  <link rel="canonical" href="https://fairopportunityrealestate.com/20-80" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Own a Dubai Property With Just 10% Upfront | FORE" />
+  <meta property="og:description" content="20/80 payment plan — 10% at booking, 40% during construction, 50% at handover. Get current options from FORE." />
+  <meta property="og:image" content="../assets/images/20-80-hero.jpg" />
+  <meta property="og:url" content="https://fairopportunityrealestate.com/20-80" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" crossorigin />
+
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="../mobile.css" />
+
+  <link rel="preload" as="image" href="../assets/images/20-80-hero-mobile.webp" media="(max-width: 768px)" />
+  <link rel="preload" as="image" href="../assets/images/20-80-hero.webp" media="(min-width: 769px)" />
+
+  <style>
+    /* ═══ Campaign page — scoped styles (prefixed c80-) ═══ */
+    body { overflow-x: hidden; }
+    a { color: inherit; }
+
+    .c80-header {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 22px 24px;
+    }
+    .c80-header img { height: 22px; display: block; }
+    .c80-header-tag {
+      font-family: var(--font-ui);
+      font-size: 8px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--white-50);
+      border-left: 1px solid var(--gold-border);
+      padding-left: 10px;
+      line-height: 1.4;
+    }
+
+    /* ─── HERO ─── */
+    .c80-hero {
+      position: relative;
+      min-height: 100svh;
+      display: flex;
+      align-items: flex-end;
+      padding: 120px 24px 56px;
+    }
+    .c80-hero-media { position: absolute; inset: 0; z-index: 0; }
+    .c80-hero-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .c80-hero-media::after {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(180deg, rgba(10,10,10,0.55) 0%, rgba(10,10,10,0.35) 35%, rgba(10,10,10,0.88) 100%),
+        linear-gradient(90deg, rgba(10,10,10,0.75) 0%, rgba(10,10,10,0.15) 60%);
+    }
+    .c80-hero-inner { position: relative; z-index: 1; max-width: 620px; }
+    .c80-eyebrow {
+      display: flex; align-items: center; gap: 12px;
+      font-family: var(--font-ui); font-size: 10px; font-weight: 600;
+      letter-spacing: 3.5px; text-transform: uppercase; color: var(--gold);
+      margin-bottom: 18px;
+    }
+    .c80-eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--gold); }
+    .c80-h1 {
+      font-family: var(--font-display);
+      font-weight: 500;
+      font-size: clamp(34px, 5.6vw, 60px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 18px;
+    }
+    .c80-h1 em { font-style: italic; color: var(--gold-light); }
+    .c80-hero-sub {
+      font-size: 15px; font-weight: 300; line-height: 1.7;
+      color: var(--white-85); max-width: 480px; margin-bottom: 30px;
+    }
+    .c80-hero-sub strong { color: var(--gold-light); font-weight: 500; }
+
+    .c80-split-row {
+      display: flex; gap: 0; margin-bottom: 34px;
+      border: 0.5px solid var(--gold-border);
+      border-radius: 4px; overflow: hidden;
+      background: rgba(10,10,10,0.45);
+      backdrop-filter: blur(6px);
+      max-width: 460px;
+    }
+    .c80-split-cell { flex: 1; padding: 16px 10px; text-align: center; border-right: 0.5px solid var(--gold-border); }
+    .c80-split-cell:last-child { border-right: none; }
+    .c80-split-num { font-family: var(--font-display); font-size: 30px; font-weight: 600; color: var(--gold-light); line-height: 1; }
+    .c80-split-label { font-size: 8.5px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--white-50); margin-top: 6px; }
+
+    .c80-cta-row { display: flex; flex-wrap: wrap; gap: 14px; }
+    .c80-btn-primary {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: var(--gold); color: var(--bg);
+      font-family: var(--font-ui); font-size: 10.5px; font-weight: 600;
+      letter-spacing: 2.5px; text-transform: uppercase;
+      padding: 16px 32px; border-radius: 2px; border: none; cursor: pointer;
+      text-decoration: none; transition: background 0.25s ease, transform 0.15s ease;
+    }
+    .c80-btn-primary:hover { background: var(--gold-light); }
+    .c80-btn-primary:active { transform: scale(0.98); }
+    .c80-btn-wa {
+      display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+      background: transparent; color: var(--white);
+      border: 0.5px solid var(--white-20);
+      font-family: var(--font-ui); font-size: 10.5px; font-weight: 500;
+      letter-spacing: 2px; text-transform: uppercase;
+      padding: 15.5px 26px; border-radius: 2px; text-decoration: none;
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    .c80-btn-wa:hover { border-color: var(--gold-border); background: rgba(201,169,110,0.08); }
+    .c80-btn-wa svg { flex-shrink: 0; }
+
+    /* ─── SECTION SHELL ─── */
+    .c80-section { padding: 72px 24px; max-width: 1080px; margin: 0 auto; }
+    .c80-section-alt { background: var(--bg-dark); }
+    .c80-section-head { text-align: center; max-width: 640px; margin: 0 auto 44px; }
+    .c80-section-tag {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+      font-family: var(--font-ui); font-size: 9px; font-weight: 500;
+      letter-spacing: 3.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 14px;
+    }
+    .c80-section-tag::before, .c80-section-tag::after { content: ''; width: 20px; height: 1px; background: var(--gold-border); }
+    .c80-section-title {
+      font-family: var(--font-display); font-weight: 500;
+      font-size: clamp(26px, 3.6vw, 38px); line-height: 1.15; letter-spacing: -0.01em; color: var(--white);
+    }
+    .c80-section-title em { font-style: italic; color: var(--gold-light); }
+    .c80-section-sub { font-size: 13.5px; color: var(--white-50); line-height: 1.8; margin-top: 14px; }
+
+    /* ─── PAYMENT TIMELINE ─── */
+    .c80-timeline { display: flex; flex-direction: column; gap: 0; position: relative; }
+    .c80-stage {
+      display: flex; align-items: flex-start; gap: 20px;
+      padding: 26px 0; border-bottom: 0.5px solid var(--subtle-border);
+    }
+    .c80-stage:last-child { border-bottom: none; }
+    .c80-stage-num {
+      font-family: var(--font-display); font-size: 13px; color: var(--white-35);
+      flex-shrink: 0; width: 30px; padding-top: 6px;
+    }
+    .c80-stage-pct {
+      font-family: var(--font-display); font-weight: 600; font-size: 48px;
+      color: var(--gold); line-height: 1; flex-shrink: 0; width: 110px;
+    }
+    .c80-stage-body { padding-top: 4px; }
+    .c80-stage-title { font-size: 15px; font-weight: 500; color: var(--white); margin-bottom: 4px; }
+    .c80-stage-desc { font-size: 12.5px; color: var(--white-50); line-height: 1.7; max-width: 440px; }
+
+    @media (min-width: 860px) {
+      .c80-timeline { flex-direction: row; gap: 0; }
+      .c80-stage {
+        flex-direction: column; align-items: flex-start; gap: 14px;
+        border-bottom: none; border-right: 0.5px solid var(--subtle-border);
+        padding: 0 32px; flex: 1;
+      }
+      .c80-stage:first-child { padding-left: 0; }
+      .c80-stage:last-child { border-right: none; padding-right: 0; }
+      .c80-stage-num { width: auto; padding-top: 0; }
+      .c80-stage-pct { width: auto; font-size: 56px; }
+    }
+
+    /* ─── CALCULATOR ─── */
+    .c80-calc {
+      background: var(--bg-dark2); border: 0.5px solid var(--subtle-border);
+      border-radius: 6px; padding: 36px 28px; max-width: 620px; margin: 0 auto;
+    }
+    .c80-calc-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--white-35); margin-bottom: 8px; }
+    .c80-calc-input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .c80-calc-prefix { font-family: var(--font-display); font-size: 22px; color: var(--gold); flex-shrink: 0; }
+    .c80-calc-input {
+      flex: 1; background: var(--bg-dark3); border: 0.5px solid var(--subtle-border); border-radius: 2px;
+      padding: 14px 16px; font-family: var(--font-display); font-size: 24px; font-weight: 500;
+      color: var(--white); outline: none; width: 100%; min-width: 0;
+    }
+    .c80-calc-input:focus { border-color: var(--gold-border); }
+    .c80-calc-note { font-size: 11px; color: var(--white-35); line-height: 1.6; margin-bottom: 28px; }
+    .c80-calc-rows { display: flex; flex-direction: column; gap: 0; }
+    .c80-calc-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 0; border-top: 0.5px solid var(--subtle-border);
+    }
+    .c80-calc-row-label { display: flex; align-items: center; gap: 12px; }
+    .c80-calc-row-pct {
+      font-family: var(--font-ui); font-size: 11px; font-weight: 600; color: var(--gold);
+      background: rgba(201,169,110,0.1); border: 0.5px solid var(--gold-border);
+      border-radius: 20px; padding: 4px 10px; min-width: 40px; text-align: center;
+    }
+    .c80-calc-row-name { font-size: 12.5px; color: var(--white-70); }
+    .c80-calc-row-val { font-family: var(--font-display); font-size: 17px; font-weight: 500; color: var(--white); }
+
+    /* ─── PROPERTY TYPES ─── */
+    .c80-types-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+    .c80-type-card {
+      background: var(--bg-dark2); border: 0.5px solid var(--subtle-border); border-radius: 6px;
+      padding: 26px 22px; transition: border-color 0.2s ease;
+    }
+    .c80-type-card:hover { border-color: var(--gold-border); }
+    .c80-type-name { font-family: var(--font-display); font-size: 20px; color: var(--white); margin-bottom: 10px; }
+    .c80-type-meta { font-size: 12px; color: var(--white-50); line-height: 1.8; margin-bottom: 14px; }
+    .c80-type-meta strong { color: var(--gold-light); font-weight: 500; }
+
+    /* ─── WHY IT MATTERS ─── */
+    .c80-why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 24px; }
+    .c80-why-card { padding: 4px 0; }
+    .c80-why-num { font-family: var(--font-display); font-size: 13px; color: var(--gold); margin-bottom: 10px; }
+    .c80-why-title { font-size: 15.5px; font-weight: 500; color: var(--white); margin-bottom: 8px; }
+    .c80-why-desc { font-size: 12.5px; color: var(--white-50); line-height: 1.75; }
+
+    /* ─── DUBAI SECTION ─── */
+    .c80-dubai-text { font-size: 13.5px; color: var(--white-70); line-height: 1.9; max-width: 720px; margin: 0 auto; text-align: center; }
+
+    /* ─── TRUST ─── */
+    .c80-trust-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: center; }
+    .c80-trust-blurb { font-size: 13px; color: var(--white-50); line-height: 1.9; margin-bottom: 20px; }
+    .c80-trust-facts { display: flex; flex-direction: column; gap: 12px; }
+    .c80-trust-fact { display: flex; gap: 10px; font-size: 12px; color: var(--white-70); line-height: 1.7; }
+    .c80-trust-fact svg { flex-shrink: 0; margin-top: 2px; }
+    .c80-dev-strip { text-align: center; }
+    .c80-dev-strip-label { font-size: 10.5px; color: var(--white-35); margin-bottom: 20px; letter-spacing: 0.5px; }
+    .c80-dev-logos { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 30px 40px; }
+    .c80-dev-logos img { height: 22px; opacity: 0.55; filter: brightness(0) invert(1); transition: opacity 0.2s ease; }
+    .c80-dev-logos img:hover { opacity: 0.9; }
+    @media (max-width: 860px) { .c80-trust-grid { grid-template-columns: 1fr; gap: 32px; } }
+
+    /* ─── FAQ (reuses golden-visa.html's gv-faq-* pattern) ─── */
+    .c80-faq-list { display: flex; flex-direction: column; gap: 0; max-width: 760px; margin: 0 auto; }
+    .gv-faq-item { border-bottom: 0.5px solid rgba(255,255,255,0.06); }
+    .gv-faq-item:first-child { border-top: 0.5px solid rgba(255,255,255,0.06); }
+    .gv-faq-q { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; cursor: pointer; gap: 20px; user-select: none; }
+    .gv-faq-q-text { font-family: var(--font-display); font-size: 16px; font-weight: 400; color: var(--white); line-height: 1.3; transition: color 0.2s ease; }
+    .gv-faq-item.open .gv-faq-q-text { color: var(--gold-light); }
+    .gv-faq-icon { width: 20px; height: 20px; border: 0.5px solid var(--gold-border); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.25s ease, border-color 0.25s ease; }
+    .gv-faq-item.open .gv-faq-icon { background: rgba(201,169,110,0.12); border-color: rgba(201,169,110,0.5); }
+    .gv-faq-icon svg { width: 9px; height: 9px; stroke: var(--gold); stroke-width: 2; stroke-linecap: round; transition: transform 0.3s ease; }
+    .gv-faq-item.open .gv-faq-icon svg { transform: rotate(45deg); }
+    .gv-faq-a { overflow: hidden; max-height: 0; transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1); }
+    .gv-faq-item.open .gv-faq-a { max-height: 400px; }
+    .gv-faq-a-inner { padding-bottom: 20px; font-size: 12.5px; font-weight: 300; line-height: 1.8; color: var(--white-50); }
+
+    /* ─── LEAD FORM ─── */
+    .c80-form-wrap {
+      background: var(--bg-dark2); border: 0.5px solid var(--gold-border);
+      border-radius: 8px; padding: 44px 32px; max-width: 640px; margin: 0 auto;
+    }
+    .c80-form-head { text-align: center; margin-bottom: 30px; }
+    .c80-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 560px) { .c80-form-row { grid-template-columns: 1fr; } }
+    .c80-privacy-note { font-size: 10.5px; color: var(--white-35); line-height: 1.7; margin-top: 14px; text-align: center; }
+    .c80-privacy-note a { color: var(--white-50); text-decoration: underline; }
+
+    /* ─── STICKY MOBILE CTA ─── */
+    .c80-sticky-cta {
+      display: none;
+      position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+      background: rgba(10,10,10,0.92); backdrop-filter: blur(10px);
+      border-top: 0.5px solid var(--gold-border);
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      transform: translateY(0); transition: transform 0.3s ease;
+    }
+    .c80-sticky-cta.c80-hide { transform: translateY(110%); }
+    .c80-sticky-cta a {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      background: #25D366; color: #08150c; font-family: var(--font-ui);
+      font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      padding: 14px; border-radius: 4px; text-decoration: none;
+    }
+    @media (max-width: 768px) {
+      .c80-sticky-cta { display: block; }
+      body { padding-bottom: 62px; }
+    }
+
+    /* ─── FOOTER LEGAL SPACING ─── */
+    .c80-footer-legal { padding: 26px 24px; text-align: center; background: var(--bg-dark); }
+    .c80-footer-legal p { font-size: 10px; color: var(--white-20); line-height: 1.7; max-width: 620px; margin: 0 auto 10px; }
+    .c80-footer-legal a { font-size: 10px; color: var(--white-35); text-decoration: none; margin: 0 8px; }
+    .c80-footer-legal a:hover { color: var(--gold); }
+
+    @media (max-width: 640px) {
+      .c80-hero { padding: 90px 20px 40px; align-items: flex-end; }
+      .c80-section { padding: 56px 20px; }
+      .c80-split-row { max-width: 100%; }
+      .c80-cta-row { flex-direction: column; }
+      .c80-cta-row a { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════ MINIMAL HEADER -->
+  <div class="c80-header">
+    <img src="../brand_assets/acronymlogo.png" alt="FORE" />
+    <span class="c80-header-tag">FAIR OPPORTUNITY.<br>REAL ESTATE.</span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ HERO -->
+  <section class="c80-hero">
+    <div class="c80-hero-media">
+      <picture>
+        <source media="(max-width: 768px)" srcset="../assets/images/20-80-hero-mobile.webp" type="image/webp" />
+        <source media="(max-width: 768px)" srcset="../assets/images/20-80-hero-mobile.jpg" />
+        <source srcset="../assets/images/20-80-hero.webp" type="image/webp" />
+        <img src="../assets/images/20-80-hero.jpg" alt="Dubai skyline" fetchpriority="high" />
+      </picture>
+    </div>
+    <div class="c80-hero-inner fade-in">
+      <p class="c80-eyebrow">Dubai Off-Plan Property</p>
+      <h1 class="c80-h1">Own a Dubai property with just <em>10% upfront.</em></h1>
+      <p class="c80-hero-sub"><strong>20/80 payment plan</strong> — with 50% payable at handover.</p>
+
+      <div class="c80-split-row" id="c80HeroSplit">
+        <div class="c80-split-cell"><div class="c80-split-num">10%</div><div class="c80-split-label">Booking</div></div>
+        <div class="c80-split-cell"><div class="c80-split-num">40%</div><div class="c80-split-label">Construction</div></div>
+        <div class="c80-split-cell"><div class="c80-split-num">50%</div><div class="c80-split-label">Handover</div></div>
+      </div>
+
+      <div class="c80-cta-row">
+        <a href="#lead-form" class="c80-btn-primary" data-c80-cta="hero-primary">Get Available Options</a>
+        <a href="#" class="c80-btn-wa" data-c80-whatsapp data-c80-cta="hero-whatsapp">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20.52 3.48A11.93 11.93 0 0012 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.98L0 24l6.18-1.58A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-3.2-1.25-6.21-3.48-8.52z" fill="#25D366"/></svg>
+          WhatsApp an Advisor
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ HOW IT WORKS -->
+  <section class="c80-section">
+    <div class="c80-section-head fade-in">
+      <div class="c80-section-tag">The Structure</div>
+      <h2 class="c80-section-title">How the 20/80 payment plan <em>works.</em></h2>
+    </div>
+    <div class="c80-timeline fade-in">
+      <div class="c80-stage">
+        <div class="c80-stage-num">01</div>
+        <div class="c80-stage-pct">10%</div>
+        <div class="c80-stage-body">
+          <div class="c80-stage-title">At booking</div>
+          <div class="c80-stage-desc">Secure the property with a 10% booking payment to reserve your unit.</div>
+        </div>
+      </div>
+      <div class="c80-stage">
+        <div class="c80-stage-num">02</div>
+        <div class="c80-stage-pct">40%</div>
+        <div class="c80-stage-body">
+          <div class="c80-stage-title">During construction</div>
+          <div class="c80-stage-desc">40% is paid in stages across the construction period, following the project's payment schedule.</div>
+        </div>
+      </div>
+      <div class="c80-stage">
+        <div class="c80-stage-num">03</div>
+        <div class="c80-stage-pct">50%</div>
+        <div class="c80-stage-body">
+          <div class="c80-stage-title">At handover</div>
+          <div class="c80-stage-desc">The remaining 50% is due when the property is complete and the keys are handed to you.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ CALCULATOR -->
+  <section class="c80-section c80-section-alt">
+    <div class="c80-section-head fade-in">
+      <div class="c80-section-tag">Run The Numbers</div>
+      <h2 class="c80-section-title">See what your payments <em>could look like.</em></h2>
+      <p class="c80-section-sub">Enter a property price to see exactly how the 20/80 split breaks down.</p>
+    </div>
+    <div class="c80-calc fade-in">
+      <div class="c80-calc-label">Property Price</div>
+      <div class="c80-calc-input-row">
+        <span class="c80-calc-prefix">AED</span>
+        <input type="text" inputmode="numeric" class="c80-calc-input" id="c80CalcInput" value="1,000,000" aria-label="Property price in AED" />
+      </div>
+      <p class="c80-calc-note">Example figure for illustration only — not a specific property's price. Contact us for current listings and exact pricing.</p>
+      <div class="c80-calc-rows" id="c80CalcRows"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ PROPERTY TYPES (config-driven, hidden if empty) -->
+  <section class="c80-section" id="c80TypesSection" style="display:none;">
+    <div class="c80-section-head fade-in">
+      <div class="c80-section-tag">Available Now</div>
+      <h2 class="c80-section-title">Property types on the <em>20/80 plan.</em></h2>
+    </div>
+    <div class="c80-types-grid" id="c80TypesGrid"></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ WHY IT MATTERS -->
+  <section class="c80-section c80-section-alt">
+    <div class="c80-section-head fade-in">
+      <div class="c80-section-tag">Why It Matters</div>
+      <h2 class="c80-section-title">Built for how buyers <em>actually plan.</em></h2>
+    </div>
+    <div class="c80-why-grid fade-in">
+      <div class="c80-why-card">
+        <div class="c80-why-num">01</div>
+        <div class="c80-why-title">Lower initial commitment</div>
+        <div class="c80-why-desc">Start with 10% instead of the full price upfront — a lower entry point to secure the property.</div>
+      </div>
+      <div class="c80-why-card">
+        <div class="c80-why-num">02</div>
+        <div class="c80-why-title">Spread construction payments</div>
+        <div class="c80-why-desc">The 40% construction portion is paid in stages, following the project's build schedule rather than in one lump sum.</div>
+      </div>
+      <div class="c80-why-card">
+        <div class="c80-why-num">03</div>
+        <div class="c80-why-title">Defer the final 50%</div>
+        <div class="c80-why-desc">The largest portion isn't due until handover — when the property is complete and ready.</div>
+      </div>
+      <div class="c80-why-card">
+        <div class="c80-why-num">04</div>
+        <div class="c80-why-title">More time to plan</div>
+        <div class="c80-why-desc">This structure gives you time to plan your capital around the construction period, rather than committing it all at once.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ DUBAI -->
+  <section class="c80-section">
+    <div class="c80-section-head fade-in">
+      <div class="c80-section-tag">Why Dubai</div>
+      <h2 class="c80-section-title">A global city, <em>built for investment.</em></h2>
+    </div>
+    <p class="c80-dubai-text fade-in">
+      Dubai remains one of the world's most connected cities — an international business hub with global airline access, modern infrastructure, and a lifestyle that draws residents and investors from around the world. Flexible developer payment plans like 20/80 are one of the more accessible ways international buyers get started in the market, without needing the full purchase price upfront.
+    </p>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ TRUST -->
+  <section class="c80-section c80-section-alt">
+    <div class="c80-trust-grid">
+      <div class="fade-in">
+        <div class="c80-section-tag" style="justify-content:flex-start;">About FORE</div>
+        <h2 class="c80-section-title" style="text-align:left;margin-bottom:16px;">Property for life <em>and investment.</em></h2>
+        <p class="c80-trust-blurb">Fair Opportunity Real Estate makes Dubai property investment accessible to international investors at every budget. We sell direct from Dubai's biggest developers — same price, full after-sale support.</p>
+        <div class="c80-trust-facts">
+          <div class="c80-trust-fact"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> RERA Broker No: 31740, regulated by the Dubai Land Department</div>
+          <div class="c80-trust-fact"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Office 3602, Burj Al Salam Tower, Trade Center, Dubai</div>
+          <div class="c80-trust-fact"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> A dedicated advisor guides you from enquiry through to handover</div>
+        </div>
+      </div>
+      <div class="c80-dev-strip fade-in">
+        <div class="c80-dev-strip-label">We sell direct from Dubai's leading developers</div>
+        <div class="c80-dev-logos">
+          <img src="../assets/developers/emaar.png" alt="Emaar" />
+          <img src="../assets/developers/damac.png" alt="DAMAC" />
+          <img src="../assets/developers/sobha.png" alt="Sobha" />
+          <img src="../assets/developers/binghatti.png" alt="Binghatti" />
+          <img src="../assets/developers/danube.png" alt="Danube" />
+          <img src="../assets/developers/samana.png" alt="Samana" />
+          <img src="../assets/developers/nakheel.png" alt="Nakheel" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ FAQ -->
+  <section class="c80-section">
+    <div class="c80-section-head fade-in">
+      <div class="c80-section-tag">Questions</div>
+      <h2 class="c80-section-title">Frequently <em>asked.</em></h2>
+    </div>
+    <div class="c80-faq-list fade-in" id="c80FaqList">
+
+      <div class="gv-faq-item open">
+        <div class="gv-faq-q"><span class="gv-faq-q-text">How does the 20/80 payment plan work?</span><span class="gv-faq-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span></div>
+        <div class="gv-faq-a"><div class="gv-faq-a-inner">You pay 10% at booking, 40% during construction according to the project's payment schedule, and the remaining 50% at handover — when the property is complete and the keys are handed over.</div></div>
+      </div>
+
+      <div class="gv-faq-item">
+        <div class="gv-faq-q"><span class="gv-faq-q-text">When is the 50% payable?</span><span class="gv-faq-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span></div>
+        <div class="gv-faq-a"><div class="gv-faq-a-inner">The final 50% is due at handover, once the property is completed and ready for key transfer. The exact date depends on the individual project's construction timeline — we'll confirm this for any property before you commit.</div></div>
+      </div>
+
+      <div class="gv-faq-item">
+        <div class="gv-faq-q"><span class="gv-faq-q-text">What properties are available?</span><span class="gv-faq-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span></div>
+        <div class="gv-faq-a"><div class="gv-faq-a-inner">Availability changes regularly as new phases release and existing units sell. Send us your budget and preferences via the form or WhatsApp and we'll share the current options that match on the 20/80 plan.</div></div>
+      </div>
+
+      <div class="gv-faq-item">
+        <div class="gv-faq-q"><span class="gv-faq-q-text">Is this suitable for investors and end users?</span><span class="gv-faq-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span></div>
+        <div class="gv-faq-a"><div class="gv-faq-a-inner">Yes. The 20/80 structure is used by both investors, who benefit from spreading capital across the construction period, and end users planning to move in at handover. What's right for you depends on your goals and timeline — an advisor can help you think it through.</div></div>
+      </div>
+
+      <div class="gv-faq-item">
+        <div class="gv-faq-q"><span class="gv-faq-q-text">Are all projects on the same payment plan?</span><span class="gv-faq-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span></div>
+        <div class="gv-faq-a"><div class="gv-faq-a-inner">No. Payment plans vary by developer and project — some offer 20/80, others use different structures. We'll confirm the exact payment plan for any specific property before you commit to anything.</div></div>
+      </div>
+
+      <div class="gv-faq-item">
+        <div class="gv-faq-q"><span class="gv-faq-q-text">Can I get current prices and availability?</span><span class="gv-faq-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span></div>
+        <div class="gv-faq-a"><div class="gv-faq-a-inner">Yes — submit the form below or message us on WhatsApp and an advisor will send you current, verified prices and availability for properties on the 20/80 plan.</div></div>
+      </div>
+
+      <div class="gv-faq-item">
+        <div class="gv-faq-q"><span class="gv-faq-q-text">What happens after I enquire?</span><span class="gv-faq-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span></div>
+        <div class="gv-faq-a"><div class="gv-faq-a-inner">A FORE advisor will reach out — typically within 24 hours — to understand your budget and goals, then share the specific properties and payment schedules that match.</div></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ LEAD FORM -->
+  <section class="c80-section c80-section-alt" id="lead-form">
+    <div class="c80-form-wrap fade-in">
+      <div class="c80-form-head">
+        <div class="c80-section-tag" style="justify-content:center;">Get Started</div>
+        <h2 class="c80-section-title">Get the current <em>20/80 options.</em></h2>
+        <p class="c80-section-sub">Tell us what you're looking for and we'll send you the most relevant available properties, prices and payment schedules.</p>
+      </div>
+
+      <div id="c80-form-wrapper">
+        <form class="contact-form" id="c80Form" onsubmit="return c80HandleSubmit(event)">
+          <div class="c80-form-row">
+            <div class="form-field">
+              <label class="form-label">Full Name</label>
+              <input class="form-input" type="text" name="fullName" placeholder="James Wilson" required />
+            </div>
+            <div class="form-field">
+              <label class="form-label">WhatsApp Number</label>
+              <input class="form-input" type="tel" name="phone" placeholder="+971 5X XXX XXXX" required />
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Email</label>
+            <input class="form-input" type="email" name="email" placeholder="james@example.com" required />
+          </div>
+          <div class="c80-form-row">
+            <div class="form-field">
+              <label class="form-label">Purchase Purpose</label>
+              <select class="form-select" name="purchasePurpose">
+                <option value="" disabled selected>Select one</option>
+                <option value="Investment">Investment</option>
+                <option value="Personal use">Personal use</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Approximate Budget</label>
+              <select class="form-select" name="budget">
+                <option value="" disabled selected>Select a range</option>
+                <option value="Under AED 750K">Under AED 750K</option>
+                <option value="AED 750K-1M">AED 750K – 1M</option>
+                <option value="AED 1M-2M">AED 1M – 2M</option>
+                <option value="AED 2M+">AED 2M+</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Purchase Timeline</label>
+            <select class="form-select" name="timeline">
+              <option value="" disabled selected>Select one</option>
+              <option value="Immediately">Immediately</option>
+              <option value="1-3 months">1–3 months</option>
+              <option value="3-6 months">3–6 months</option>
+              <option value="Just researching">Just researching</option>
+            </select>
+          </div>
+          <!-- Honeypot -->
+          <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" aria-hidden="true" />
+          <button type="submit" id="c80-submit-btn" class="btn-primary" style="width:100%;padding:16px;font-size:11px;">Get Available Options</button>
+          <p class="c80-privacy-note">By submitting, you agree to be contacted by a FORE advisor. See our <a href="../privacy.html">Privacy Policy</a>.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════ LEGAL FOOTER -->
+  <div class="c80-footer-legal">
+    <p>&copy; 2026 FORE — Fair Opportunity Real Estate. All rights reserved. RERA Broker No: 31740. Regulated by the Dubai Land Department (DLD) and the Real Estate Regulatory Agency (RERA).</p>
+    <a href="../privacy.html">Privacy Policy</a>
+    <a href="../terms.html">Terms of Use</a>
+  </div>
+
+  <!-- ═══════════════════════════════════════════ STICKY MOBILE CTA -->
+  <div class="c80-sticky-cta" id="c80StickyCta">
+    <a href="#" data-c80-whatsapp data-c80-cta="sticky-whatsapp">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="#08150c"><path d="M20.52 3.48A11.93 11.93 0 0012 0C5.37 0 0 5.37 0 12c0 2.11.55 4.16 1.6 5.98L0 24l6.18-1.58A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-3.2-1.25-6.21-3.48-8.52zm-8.52 18.4a9.9 9.9 0 01-5.04-1.38l-.36-.21-3.73.96.99-3.62-.23-.37A9.88 9.88 0 012.1 12C2.1 6.53 6.53 2.1 12 2.1c2.63 0 5.1 1.02 6.96 2.88A9.79 9.79 0 0121.9 12c0 5.47-4.43 9.88-9.9 9.88z"/></svg>
+      WhatsApp an Advisor
+    </a>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="../js/lead-submit.js"></script>
+  <script>
+    (function () {
+      var cfg = window.CAMPAIGN_CONFIG || {};
+
+      /* ── WhatsApp links ── */
+      function waUrl() {
+        var msg = encodeURIComponent(cfg.whatsappMessage || '');
+        return 'https://wa.me/' + (cfg.whatsappNumber || '') + '?text=' + msg;
+      }
+      document.querySelectorAll('[data-c80-whatsapp]').forEach(function (el) {
+        el.setAttribute('href', waUrl());
+        el.setAttribute('target', '_blank');
+        el.setAttribute('rel', 'noopener');
+        el.addEventListener('click', function () {
+          if (window.fbq) window.fbq('track', 'Contact');
+        });
+      });
+
+      /* ── Meta Pixel (only activates if a Pixel ID is configured) ── */
+      if (cfg.metaPixelId) {
+        (function (f, b, e, v, n, t, s) {
+          if (f.fbq) return; n = f.fbq = function () { n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments); };
+          if (!f._fbq) f._fbq = n; n.push = n; n.loaded = true; n.version = '2.0'; n.queue = [];
+          t = b.createElement(e); t.async = true; t.src = v;
+          s = b.getElementsByTagName(e)[0]; s.parentNode.insertBefore(t, s);
+        })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+        window.fbq('init', cfg.metaPixelId);
+        window.fbq('track', 'PageView');
+        window.fbq('track', 'ViewContent', { content_name: 'Dubai 20/80 Payment Plan', content_category: 'Real Estate' });
+      }
+
+      /* ── Payment calculator ── */
+      var plan = cfg.paymentPlan || { booking: 10, construction: 40, handover: 50 };
+      var calcInput = document.getElementById('c80CalcInput');
+      var calcRows = document.getElementById('c80CalcRows');
+
+      function fmt(n) { return 'AED ' + Math.round(n).toLocaleString('en-US'); }
+
+      function renderCalc() {
+        var raw = (calcInput.value || '').replace(/[^\d]/g, '');
+        var price = parseInt(raw, 10);
+        if (!price || price < 0) price = 0;
+        calcRows.innerHTML = [
+          ['Booking', plan.booking, price * plan.booking / 100],
+          ['Construction', plan.construction, price * plan.construction / 100],
+          ['Handover', plan.handover, price * plan.handover / 100]
+        ].map(function (row) {
+          return '<div class="c80-calc-row">' +
+            '<div class="c80-calc-row-label"><span class="c80-calc-row-pct">' + row[1] + '%</span><span class="c80-calc-row-name">' + row[0] + '</span></div>' +
+            '<div class="c80-calc-row-val">' + fmt(row[2]) + '</div>' +
+          '</div>';
+        }).join('');
+      }
+      calcInput.addEventListener('input', function () {
+        var cursorFromEnd = calcInput.value.length - calcInput.selectionStart;
+        var digits = calcInput.value.replace(/[^\d]/g, '');
+        calcInput.value = digits ? parseInt(digits, 10).toLocaleString('en-US') : '';
+        var pos = Math.max(0, calcInput.value.length - cursorFromEnd);
+        calcInput.setSelectionRange(pos, pos);
+        renderCalc();
+      });
+      renderCalc();
+
+      /* ── Property types (config-driven, hidden if empty) ── */
+      var types = cfg.propertyTypes || [];
+      if (types.length) {
+        var grid = document.getElementById('c80TypesGrid');
+        grid.innerHTML = types.map(function (t) {
+          var meta = [];
+          if (t.priceFromAED) meta.push('From <strong>' + fmt(t.priceFromAED) + '</strong>');
+          if (t.sizeFromSqft) meta.push(t.sizeFromSqft + ' sqft+');
+          if (t.feature) meta.push(t.feature);
+          return '<div class="c80-type-card">' +
+            '<div class="c80-type-name">' + t.type + '</div>' +
+            '<div class="c80-type-meta">' + meta.join('<br>') + '</div>' +
+            '<a href="#lead-form" class="btn-ghost" style="font-size:9px;letter-spacing:2px;">Enquire</a>' +
+          '</div>';
+        }).join('');
+        document.getElementById('c80TypesSection').style.display = '';
+      }
+
+      /* ── FAQ accordion ── */
+      document.querySelectorAll('#c80FaqList .gv-faq-item').forEach(function (item) {
+        item.querySelector('.gv-faq-q').addEventListener('click', function () {
+          var isOpen = item.classList.contains('open');
+          document.querySelectorAll('#c80FaqList .gv-faq-item').forEach(function (i) { i.classList.remove('open'); });
+          if (!isOpen) item.classList.add('open');
+        });
+      });
+
+      /* ── Fade-in on scroll ── */
+      var fadeObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            fadeObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+      document.querySelectorAll('.fade-in').forEach(function (el) { fadeObserver.observe(el); });
+
+      /* ── Sticky CTA: hide while the lead form is in view ── */
+      var stickyCta = document.getElementById('c80StickyCta');
+      var leadForm = document.getElementById('lead-form');
+      if (stickyCta && leadForm) {
+        var formObserver = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            stickyCta.classList.toggle('c80-hide', entry.isIntersecting);
+          });
+        }, { threshold: 0.15 });
+        formObserver.observe(leadForm);
+      }
+
+      /* ── Form submission ── */
+      window.c80HandleSubmit = function (e) {
+        e.preventDefault();
+        var form = e.target;
+        var btn = document.getElementById('c80-submit-btn');
+        var originalText = btn.textContent;
+
+        window.FORELead.clearError(btn);
+        btn.disabled = true;
+        btn.textContent = 'Sending…';
+
+        window.FORELead.submit({
+          source: 'contact',
+          fullName: form.fullName.value,
+          email: form.email.value,
+          phone: form.phone.value,
+          purchasePurpose: form.purchasePurpose.value,
+          budget: form.budget.value,
+          timeline: form.timeline.value,
+          campaign: cfg.campaignName,
+          landingPage: cfg.landingPagePath,
+          website: form.website.value
+        }).then(function () {
+          if (window.fbq) window.fbq('track', 'Lead', { content_name: 'Dubai 20/80 Payment Plan' });
+          document.getElementById('c80-form-wrapper').innerHTML =
+            '<p style="font-family:\'Cormorant Garamond\',serif;font-size:1.4rem;font-style:italic;color:var(--gold-light);text-align:center;line-height:1.6;padding:20px 0;">Thank you — a FORE advisor will be in touch within 24 hours.</p>';
+        }).catch(function () {
+          btn.disabled = false;
+          btn.textContent = originalText;
+          window.FORELead.showError(btn, window.FORELead.DEFAULT_ERROR_MESSAGE);
+        });
+      };
+    })();
+  </script>
+</body>
+</html>

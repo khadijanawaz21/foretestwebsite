@@ -1,6 +1,12 @@
 {
   "buildCommand": "node generator/build.mjs",
   "outputDirectory": ".",
+  "rewrites": [
+    {
+      "source": "/20-80",
+      "destination": "/20-80/index.html"
+    }
+  ],
   "functions": {
     "api/sync-listings.js": {
       "maxDuration": 60
